@@ -1,0 +1,296 @@
+import SwiftUI
+import SwiftData
+
+/// The primary screen — a full-screen iMessage-style chat with the pronunciation coach.
+struct CoachView: View {
+
+    @Environment(\.modelContext) private var modelContext
+    @Query(filter: #Predicate<AccentProfile> { _ in true }) private var profiles: [AccentProfile]
+    @ObservedObject private var subs   = SubscriptionManager.shared
+    @ObservedObject private var streak = StreakService.shared
+
+    @State private var vm: CoachViewModel?
+    @State private var showSettings   = false
+    @State private var showOnboarding = false
+    @State private var showPaywall    = false
+
+    private var profile: AccentProfile? { profiles.first }
+
+    // MARK: - Body
+
+    var body: some View {
+        NavigationStack {
+            ZStack(alignment: .bottom) {
+                Color(.systemGroupedBackground).ignoresSafeArea()
+
+                if let vm {
+                    chatLayout(vm: vm)
+                        .confetti(isActive: Binding(
+                            get: { vm.showConfetti },
+                            set: { vm.showConfetti = $0 }
+                        ))
+                } else {
+                    loadingState
+                }
+            }
+            .navigationTitle("Coach")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { toolbarItems }
+            .sheet(isPresented: $showSettings,   onDismiss: rebuild) { SettingsView() }
+            .sheet(isPresented: $showOnboarding, onDismiss: rebuild) {
+                if let p = profile { OnboardingView(profile: p) }
+            }
+            .sheet(isPresented: $showPaywall) {
+                PaywallView {
+                    if let word = vm?.paywallTriggerWord {
+                        vm?.paywallTriggerWord = nil
+                        vm?.resumeRecording(for: word)
+                    }
+                }
+            }
+            .onChange(of: vm?.paywallTriggerWord) { _, newWord in
+                if newWord != nil { showPaywall = true }
+            }
+            .task { await bootstrap() }
+        }
+    }
+
+    // MARK: - Chat layout
+
+    private func chatLayout(vm: CoachViewModel) -> some View {
+        VStack(spacing: 0) {
+            // ── Message list ──────────────────────────────────
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(spacing: 10) {
+                        ForEach(vm.messages) { msg in
+                            MessageBubbleView(message: msg) { word in
+                                vm.speakWord(word)
+                            }
+                            .id(msg.id)
+                        }
+
+                        // Streaming / thinking bubble
+                        if vm.coachState == .thinking || !vm.streamingText.isEmpty {
+                            StreamingBubbleView(text: vm.streamingText)
+                                .id("streaming")
+                        }
+
+                        Color.clear.frame(height: 4).id("bottom")
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 4)
+                }
+                .scrollDismissesKeyboard(.interactively)
+                .onChange(of: vm.messages.count)  { _, _ in scrollToBottom(proxy) }
+                .onChange(of: vm.streamingText)   { _, _ in scrollToBottom(proxy) }
+                .onChange(of: vm.coachState)      { _, _ in scrollToBottom(proxy) }
+            }
+
+            // ── Error banner ──────────────────────────────────
+            if let err = vm.errorMessage {
+                ErrorBannerView(message: err) {
+                    HapticsService.light()
+                    vm.errorMessage = nil
+                }
+            }
+
+            // ── Recording bar ─────────────────────────────────
+            let isRecordingActive: Bool = {
+                switch vm.coachState {
+                case .awaitingAttempt, .recording, .analyzing: return true
+                default: return false
+                }
+            }()
+
+            if isRecordingActive {
+                RecordingWidget(vm: vm)
+            }
+
+            // ── Text input bar ────────────────────────────────
+            InputBar(vm: vm)
+        }
+        .animation(.spring(duration: 0.3), value: isRecordingBarVisible(vm))
+    }
+
+    // MARK: - Loading placeholder
+
+    private var loadingState: some View {
+        VStack(spacing: 16) {
+            ProgressView().scaleEffect(1.2)
+            Text("Starting your coach…")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    // MARK: - Toolbar
+
+    @ToolbarContentBuilder
+    private var toolbarItems: some ToolbarContent {
+        // Accent / onboarding pill
+        ToolbarItem(placement: .topBarLeading) {
+            Button { showOnboarding = true } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "person.crop.circle")
+                    Text(profile?.nativeLanguage ?? "Set accent")
+                        .font(.caption.weight(.medium))
+                }
+                .font(.caption)
+                .foregroundStyle(.indigo)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.indigo.opacity(0.1))
+                .clipShape(Capsule())
+            }
+            .accessibilityLabel("Edit accent profile")
+        }
+
+        // Streak badge
+        ToolbarItem(placement: .topBarLeading) {
+            StreakBadge(streak: streak.currentStreak, practicedToday: streak.practicedToday)
+        }
+
+        // Free-words badge (non-subscribers only)
+        if !subs.hasActiveSubscription {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { showPaywall = true } label: {
+                    FreeWordsBadge(remaining: subs.wordsRemaining)
+                }
+            }
+        }
+
+        ToolbarItem(placement: .topBarTrailing) {
+            Button { showSettings = true } label: {
+                Image(systemName: "gearshape")
+            }
+            .accessibilityLabel("Settings")
+        }
+    }
+
+    // MARK: - Bootstrap
+
+    private func bootstrap() async {
+        if profiles.isEmpty {
+            let p = AccentProfile()
+            modelContext.insert(p)
+            try? modelContext.save()
+        }
+
+        guard let p = profiles.first else { return }
+
+        guard p.onboardingCompleted else {
+            showOnboarding = true
+            return
+        }
+
+        let newVM = CoachViewModel(accentProfile: p, modelContext: modelContext)
+        vm = newVM
+        await newVM.startSession()
+    }
+
+    private func rebuild() {
+        guard let p = profiles.first else { return }
+        let newVM = CoachViewModel(accentProfile: p, modelContext: modelContext)
+        vm = newVM
+        Task { await newVM.startSession() }
+    }
+
+    // MARK: - Helpers
+
+    private func scrollToBottom(_ proxy: ScrollViewProxy) {
+        withAnimation(.easeOut(duration: 0.2)) { proxy.scrollTo("bottom") }
+    }
+
+    private func isRecordingBarVisible(_ vm: CoachViewModel) -> Bool {
+        switch vm.coachState {
+        case .awaitingAttempt, .recording, .analyzing: return true
+        default: return false
+        }
+    }
+}
+
+// MARK: - Streak badge
+
+struct StreakBadge: View {
+    let streak: Int
+    let practicedToday: Bool
+    @State private var bounce = false
+
+    var body: some View {
+        HStack(spacing: 3) {
+            Text("🔥")
+                .font(.caption)
+                .scaleEffect(bounce ? 1.3 : 1.0)
+            Text(streak > 0 ? "\(streak)" : "–")
+                .font(.caption.weight(.bold))
+                .foregroundStyle(streak > 0 ? .orange : .secondary)
+        }
+        .padding(.horizontal, 7)
+        .padding(.vertical, 4)
+        .background(streak > 0 ? Color.orange.opacity(0.12) : Color(.secondarySystemFill))
+        .clipShape(Capsule())
+        .onAppear {
+            if streak > 0 {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.5).delay(0.5)) { bounce = true }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { bounce = false }
+            }
+        }
+        .accessibilityLabel("\(streak) day streak")
+    }
+}
+
+// MARK: - Error banner
+
+private struct ErrorBannerView: View {
+    let message: String
+    let onDismiss: () -> Void
+
+    var body: some View {
+        HStack {
+            Label(message, systemImage: "exclamationmark.triangle.fill")
+                .font(.caption)
+                .foregroundStyle(.white)
+                .lineLimit(2)
+            Spacer()
+            Button(action: onDismiss) {
+                Image(systemName: "xmark")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.white)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(Color.red.gradient)
+    }
+}
+
+// MARK: - Free words badge
+
+private struct FreeWordsBadge: View {
+    let remaining: Int
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: remaining == 0 ? "lock.fill" : "sparkles")
+                .font(.caption2)
+            Text(remaining == 0 ? "Upgrade" : "\(remaining) free")
+                .font(.caption.weight(.semibold))
+        }
+        .foregroundStyle(badgeColor)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(badgeColor.opacity(0.12))
+        .clipShape(Capsule())
+    }
+
+    private var badgeColor: Color {
+        switch remaining {
+        case 3...: return .indigo
+        case 1...2: return .orange
+        default: return .red
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+  "functions": {
+    "api/chat.js": {
+      "runtime": "@vercel/node@5.0.0"
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "POST, OPTIONS" }
+      ]
+    }
+  ]
+}

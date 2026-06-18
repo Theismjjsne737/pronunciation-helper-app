@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ForgeCoach — Future-proof your career</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #020617; color: #e2e8f0; margin: 0; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0f172a; }
+  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .lesson-content h2 { font-size: 1.4rem; font-weight: 700; color: #f1f5f9; margin: 1.5rem 0 0.75rem; }
+  .lesson-content h3 { font-size: 1.1rem; font-weight: 600; color: #cbd5e1; margin: 1.25rem 0 0.5rem; }
+  .lesson-content p { color: #94a3b8; line-height: 1.75; margin-bottom: 1rem; }
+  .lesson-content ul { color: #94a3b8; line-height: 1.75; margin-bottom: 1rem; padding-left: 1.5rem; list-style: disc; }
+  .lesson-content li { margin-bottom: 0.4rem; }
+  .lesson-content .callout { background: #1e293b; border-left: 3px solid #6366f1; padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; margin: 1.25rem 0; }
+  .lesson-content .callout p { margin: 0; color: #cbd5e1; }
+  .lesson-content strong { color: #e2e8f0; }
+  .lesson-content .example-box { background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 1.25rem; margin: 1.25rem 0; }
+  .lesson-content .example-box .label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; color: #6366f1; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .progress-bar { height: 3px; background: #1e293b; border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #6366f1, #8b5cf6); border-radius: 2px; transition: width 0.4s ease; }
+  .tab-btn { position: relative; padding: 0.75rem 1.5rem; font-weight: 600; font-size: 0.875rem; transition: all 0.2s; border-bottom: 2px solid transparent; cursor: pointer; }
+  .tab-btn.active { color: #6366f1; border-bottom-color: #6366f1; }
+  .tab-btn:not(.active) { color: #64748b; }
+  .tab-btn:hover:not(.active) { color: #94a3b8; }
+  .skill-card { transition: all 0.2s; cursor: pointer; }
+  .skill-card:hover { border-color: rgba(99,102,241,0.4) !important; background: rgba(15,23,42,0.9) !important; transform: translateY(-1px); }
+  .badge-ai { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+  .badge-human { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); }
+  .badge-data { background: rgba(59,130,246,0.12); color: #93c5fd; border: 1px solid rgba(59,130,246,0.25); }
+  .badge-builder { background: rgba(245,158,11,0.12); color: #fcd34d; border: 1px solid rgba(245,158,11,0.25); }
+  .badge-finance { background: rgba(148,163,184,0.12); color: #cbd5e1; border: 1px solid rgba(148,163,184,0.25); }
+  .badge-design { background: rgba(236,72,153,0.12); color: #f9a8d4; border: 1px solid rgba(236,72,153,0.25); }
+  .badge-eng { background: rgba(251,146,60,0.12); color: #fed7aa; border: 1px solid rgba(251,146,60,0.25); }
+  .trend-up-hot { color: #f97316; }
+  .trend-up { color: #22c55e; }
+  .trend-stable { color: #94a3b8; }
+  .trend-down { color: #ef4444; }
+  .trend-danger { color: #dc2626; }
+  .lesson-nav-dot { width: 10px; height: 10px; border-radius: 50%; cursor: pointer; transition: all 0.2s; }
+  .quiz-option { cursor: pointer; transition: all 0.2s; border: 2px solid #1e293b; }
+  .quiz-option:hover { border-color: #6366f1; background: rgba(99,102,241,0.05); }
+  .quiz-option.selected { border-color: #6366f1; background: rgba(99,102,241,0.1); }
+  .quiz-option.correct { border-color: #22c55e; background: rgba(34,197,94,0.1); }
+  .quiz-option.wrong { border-color: #ef4444; background: rgba(239,68,68,0.1); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-in { animation: fadeIn 0.3s ease forwards; }
+  .glow-btn { box-shadow: 0 0 20px rgba(99,102,241,0.3); }
+  .glow-btn:hover { box-shadow: 0 0 30px rgba(99,102,241,0.5); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav" class="bg-slate-950/80 backdrop-blur-sm border-b border-slate-800 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-8">
+      <a href="#/" onclick="nav('academy')" class="flex items-center gap-2 text-white font-bold text-lg cursor-pointer">
+        <span class="text-indigo-500">⚡</span> ForgeCoach
+      </a>
+      <div class="hidden md:flex items-center gap-6 text-sm">
+        <a onclick="nav('quiz')" class="text-slate-300 hover:text-white cursor-pointer transition">Quiz</a>
+        <a onclick="nav('academy')" class="text-slate-300 hover:text-white cursor-pointer transition">Academy</a>
+        <a onclick="nav('challenges')" class="text-slate-300 hover:text-white cursor-pointer transition">Challenge</a>
+        <a onclick="nav('index-page')" class="text-slate-300 hover:text-white cursor-pointer transition">Index</a>
+        <a onclick="nav('blog')" class="text-slate-300 hover:text-white cursor-pointer transition">Blog</a>
+        <a onclick="nav('methodology')" class="text-slate-300 hover:text-white cursor-pointer transition">Methodology</a>
+        <a onclick="nav('faq')" class="text-slate-300 hover:text-white cursor-pointer transition">FAQ</a>
+      </div>
+    </div>
+    <div id="nav-auth" class="flex items-center gap-3">
+      <!-- Dynamically populated based on auth state -->
+    </div>
+  </div>
+</nav>
+
+<!-- =========== ACADEMY PAGE =========== -->
+<div id="page-academy" class="page">
+  <div class="max-w-7xl mx-auto px-4 py-16">
+    <!-- Hero -->
+    <div class="text-center mb-16">
+      <div class="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 uppercase tracking-wider">
+        Forge Academy
+      </div>
+      <h1 class="text-4xl md:text-6xl font-black text-white mb-4 leading-tight">
+        Master the skills.<br><span class="text-indigo-400">Then prove it.</span>
+      </h1>
+      <p class="text-slate-400 text-lg max-w-2xl mx-auto mb-8">
+        AI-generated learning paths tailored to each skill. Build real confidence, then earn a verifiable credential through rigorous Challenge assessment.
+      </p>
+      <div class="flex flex-wrap justify-center gap-6 text-sm text-slate-400 mb-10">
+        <span class="flex items-center gap-1.5"><span class="text-indigo-400">⚡</span> 7 lessons per skill</span>
+        <span class="flex items-center gap-1.5"><span class="text-indigo-400">🎯</span> Adaptive difficulty</span>
+        <span class="flex items-center gap-1.5"><span class="text-indigo-400">🏆</span> Verifiable on completion</span>
+        <span class="flex items-center gap-1.5"><span class="text-indigo-400">🤖</span> AI-personalized path</span>
+      </div>
+      <div class="flex flex-wrap justify-center gap-3">
+        <div class="text-xs text-slate-500 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-full">You are here: <span class="text-slate-300">Forge Academy</span></div>
+        <div class="text-xs text-slate-500 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-full">Challenge ready prep</div>
+        <div class="text-xs text-slate-500 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-full">Tracks market demand</div>
+      </div>
+    </div>
+
+    <!-- Rising Skills -->
+    <div class="mb-12">
+      <div class="flex items-center gap-3 mb-6">
+        <h2 class="text-xl font-bold text-white">Rising Skills</h2>
+        <span class="text-xs bg-green-500/10 border border-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Growing demand</span>
+      </div>
+      <div id="rising-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+    </div>
+
+    <!-- Declining Skills -->
+    <div class="mb-16">
+      <div class="flex items-center gap-3 mb-6">
+        <h2 class="text-xl font-bold text-white">Declining Skills</h2>
+        <span class="text-xs bg-red-500/10 border border-red-500/20 text-red-400 px-2 py-0.5 rounded-full">AI displacement risk</span>
+      </div>
+      <div id="declining-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-10 text-center mb-16">
+      <div class="text-indigo-400 text-xs font-bold uppercase tracking-widest mb-3">How Forge Academy Works</div>
+      <h2 class="text-2xl font-bold text-white mb-10">Your degree gets you in the door.<br><span class="text-indigo-400">ForgeCoach proves you're ready for what's next.</span></h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-xl bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center text-2xl mx-auto mb-4">📚</div>
+          <div class="text-indigo-400 text-sm font-bold mb-2">1. Learn</div>
+          <p class="text-slate-400 text-sm">AI generates a 7-lesson curriculum tailored to each skill. Each lesson builds on the previous.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-xl bg-violet-500/15 border border-violet-500/25 flex items-center justify-center text-2xl mx-auto mb-4">🎯</div>
+          <div class="text-violet-400 text-sm font-bold mb-2">2. Practice</div>
+          <p class="text-slate-400 text-sm">Each lesson includes scenario-based practice questions that mirror the challenge format.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-xl bg-green-500/15 border border-green-500/25 flex items-center justify-center text-2xl mx-auto mb-4">🏆</div>
+          <div class="text-green-400 text-sm font-bold mb-2">3. Prove</div>
+          <p class="text-slate-400 text-sm">Take the timed challenge and earn a publicly verifiable credential with an embeddable badge.</p>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-center gap-3">
+        <button onclick="nav('academy')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-lg font-semibold cursor-pointer transition glow-btn">Get Started Free</button>
+        <button onclick="nav('challenges')" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-lg font-semibold cursor-pointer transition border border-slate-700">Browse Challenges</button>
+        <button onclick="nav('methodology')" class="bg-transparent hover:bg-slate-800/50 text-slate-400 px-6 py-3 rounded-lg font-semibold cursor-pointer transition border border-slate-800">Our Methodology</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========== CHALLENGE PAGE =========== -->
+<div id="page-challenge" class="page">
+  <div class="max-w-6xl mx-auto px-4 py-10">
+    <a onclick="nav('academy')" class="inline-flex items-center gap-1.5 text-slate-400 hover:text-white text-sm mb-8 cursor-pointer transition">
+      ← Back to Skills
+    </a>
+
+    <!-- Skill Header -->
+    <div class="mb-8">
+      <div class="flex items-center gap-2 mb-3">
+        <span id="challenge-icon" class="text-sm"></span>
+        <span id="challenge-category" class="text-xs font-semibold px-2 py-0.5 rounded-full"></span>
+        <span id="challenge-trend" class="text-xs font-bold"></span>
+      </div>
+      <h1 id="challenge-title" class="text-3xl md:text-4xl font-black text-white mb-3"></h1>
+      <p id="challenge-tagline" class="text-slate-400 text-lg"></p>
+    </div>
+    <p id="challenge-description" class="text-slate-400 mb-6 max-w-3xl leading-relaxed"></p>
+
+    <!-- What You'll Demonstrate -->
+    <div class="mb-8">
+      <h3 class="text-sm font-semibold text-slate-300 mb-3">What You'll Demonstrate:</h3>
+      <div id="challenge-skills" class="flex flex-wrap gap-2"></div>
+    </div>
+
+    <!-- Before you start -->
+    <div class="bg-amber-500/5 border border-amber-500/20 rounded-xl p-5 mb-8">
+      <p class="text-amber-400 text-sm font-semibold mb-2">Before you start:</p>
+      <ul class="text-slate-400 text-sm space-y-1 list-disc pl-4">
+        <li>Read each scenario carefully — these questions test applied judgment.</li>
+        <li>Take your time. You have 30 seconds or more per question.</li>
+        <li>Stay on this tab during the assessment. Leaving will be recorded.</li>
+        <li>If you close your browser, you can resume — but the timer continues.</li>
+        <li>Written responses are scored on both correctness and communication clarity.</li>
+      </ul>
+    </div>
+
+    <!-- Tabs -->
+    <div class="border-b border-slate-800 mb-8 flex">
+      <button id="tab-prove" class="tab-btn active" onclick="switchTab('prove')">Prove</button>
+      <button id="tab-prepare" class="tab-btn" onclick="switchTab('prepare')">Prepare</button>
+    </div>
+
+    <!-- PROVE TAB -->
+    <div id="content-prove" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Left: Auth -->
+      <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/25 flex items-center justify-center">⚠️</div>
+          <div>
+            <div class="text-white font-semibold">Sign in to take challenges</div>
+            <div class="text-slate-400 text-sm">Create a free account to verify your skills and earn credentials.</div>
+          </div>
+        </div>
+        <button onclick="nav('signup')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-semibold transition glow-btn mb-3">Create Account</button>
+        <button onclick="nav('learn')" class="w-full text-indigo-400 hover:text-indigo-300 text-sm text-center transition cursor-pointer">Try 3 sample questions first →</button>
+      </div>
+
+      <!-- Right: Assessment Rigor -->
+      <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8">
+        <h3 class="text-white font-semibold mb-4">Assessment Rigor</h3>
+        <ul class="space-y-2 text-sm text-slate-400 mb-6">
+          <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> AI-generated unique questions every attempt</li>
+          <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Scenario-based — tests judgment, not memorization</li>
+          <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> No backward navigation during assessment</li>
+          <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Cooldown on failure prevents brute-forcing</li>
+          <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Difficulty escalates after repeated attempts</li>
+          <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> 3-tier mastery: Foundational → Intermediate → Advanced</li>
+        </ul>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-3 text-center">
+            <div class="text-xs text-slate-500 mb-1">Foundational</div>
+            <div class="text-white text-sm font-bold">10q · 80%</div>
+            <div class="text-slate-500 text-xs">30 min</div>
+          </div>
+          <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-3 text-center">
+            <div class="text-xs text-slate-500 mb-1">Intermediate</div>
+            <div class="text-white text-sm font-bold">15q · 80%</div>
+            <div class="text-slate-500 text-xs">40 min</div>
+          </div>
+          <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-3 text-center">
+            <div class="text-xs text-slate-500 mb-1">Advanced</div>
+            <div class="text-white text-sm font-bold">20q · 85%</div>
+            <div class="text-slate-500 text-xs">50 min</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREPARE TAB -->
+    <div id="content-prepare" class="hidden">
+      <!-- Academy Learning Path -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Learning Path -->
+        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-8">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center text-base">🤖</div>
+            <h2 class="text-white font-bold text-lg">Forge Academy Learning Path</h2>
+          </div>
+          <h3 class="text-slate-300 font-semibold mb-2">Personalized Learning Path</h3>
+          <p class="text-slate-400 text-sm mb-6">AI generates a 7-lesson curriculum tailored to this skill. Each lesson builds on the previous, covering the exact topics tested in the challenge assessment.</p>
+
+          <div id="lesson-list" class="space-y-3 mb-6"></div>
+
+          <div class="flex items-center gap-4 text-xs text-slate-400 mb-6">
+            <span>7 lessons</span>
+            <span>~2 hours total</span>
+            <span>Adaptive difficulty</span>
+            <span>Practice exercises</span>
+          </div>
+
+          <button id="start-learning-btn" onclick="startLearningGated()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-xl font-bold text-base transition glow-btn">Start Learning</button>
+
+          <div class="mt-6 pt-6 border-t border-slate-800">
+            <h3 class="text-white font-semibold text-sm mb-2">Already know this skill?</h3>
+            <p class="text-slate-400 text-sm mb-3">Skip the prep and go straight to the challenge assessment.</p>
+            <button onclick="switchTab('prove')" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white py-2.5 rounded-xl font-semibold text-sm transition">Go to Challenge →</button>
+          </div>
+        </div>
+
+        <!-- Right: Rigor + Verification -->
+        <div class="space-y-6">
+          <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
+            <h3 class="text-white font-semibold mb-4">Assessment Rigor</h3>
+            <ul class="space-y-2 text-sm text-slate-400">
+              <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> AI-generated unique questions every attempt</li>
+              <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Scenario-based — tests judgment, not memorization</li>
+              <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> No backward navigation during assessment</li>
+              <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Cooldown on failure prevents brute-forcing</li>
+              <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> 3-tier mastery: Foundational → Intermediate → Advanced</li>
+            </ul>
+            <div class="grid grid-cols-3 gap-2 mt-4">
+              <div class="bg-slate-950/50 border border-slate-800 rounded-lg p-2 text-center">
+                <div class="text-xs text-slate-500">Foundational</div>
+                <div class="text-white text-xs font-bold">10q · 80% · 30min</div>
+              </div>
+              <div class="bg-slate-950/50 border border-slate-800 rounded-lg p-2 text-center">
+                <div class="text-xs text-slate-500">Intermediate</div>
+                <div class="text-white text-xs font-bold">15q · 80% · 40min</div>
+              </div>
+              <div class="bg-slate-950/50 border border-slate-800 rounded-lg p-2 text-center">
+                <div class="text-xs text-slate-500">Advanced</div>
+                <div class="text-white text-xs font-bold">20q · 85% · 50min</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
+            <div class="text-xs text-indigo-400 font-bold uppercase tracking-wider mb-3">Publicly Verified</div>
+            <p class="text-slate-400 text-sm mb-4">Passing earns a verified credential with a public verification page. Anyone can verify your score instantly.</p>
+            <ul class="space-y-2 text-sm text-slate-400">
+              <li class="flex items-start gap-2"><span class="text-indigo-400">→</span> Public verification page</li>
+              <li class="flex items-start gap-2"><span class="text-indigo-400">→</span> Embeddable badge for LinkedIn</li>
+              <li class="flex items-start gap-2"><span class="text-indigo-400">→</span> Freshness-tracked credentials</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========== LESSON PAGE =========== -->
+<div id="page-lesson" class="page">
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Lesson Header -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-4">
+        <a id="lesson-back-btn" onclick="" class="inline-flex items-center gap-1.5 text-slate-400 hover:text-white text-sm cursor-pointer transition">← Back to Skill</a>
+        <span id="lesson-skill-name" class="text-xs text-slate-500 bg-slate-900 border border-slate-800 px-3 py-1 rounded-full"></span>
+      </div>
+
+      <!-- Progress -->
+      <div class="flex items-center gap-3 mb-2">
+        <span id="lesson-progress-label" class="text-xs text-slate-500 font-medium whitespace-nowrap"></span>
+        <div class="flex-1 progress-bar">
+          <div id="lesson-progress-fill" class="progress-fill" style="width:0%"></div>
+        </div>
+        <span id="lesson-progress-pct" class="text-xs text-indigo-400 font-semibold whitespace-nowrap"></span>
+      </div>
+
+      <!-- Lesson dots -->
+      <div id="lesson-dots" class="flex items-center gap-2 mt-3"></div>
+    </div>
+
+    <!-- Lesson Card -->
+    <div class="bg-slate-900/70 border border-slate-800 rounded-2xl overflow-hidden">
+      <!-- Lesson Title Bar -->
+      <div class="bg-gradient-to-r from-indigo-950/80 to-slate-900/80 border-b border-slate-800 px-8 py-5">
+        <div class="flex items-center gap-3">
+          <div id="lesson-number-badge" class="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-sm"></div>
+          <div>
+            <div id="lesson-number-label" class="text-xs text-indigo-400 font-semibold uppercase tracking-wider"></div>
+            <h2 id="lesson-title" class="text-white font-bold text-xl"></h2>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lesson Content -->
+      <div id="lesson-body" class="px-8 py-8">
+        <div id="lesson-reading" class="lesson-content"></div>
+        <div id="lesson-quiz" class="hidden"></div>
+      </div>
+
+      <!-- Lesson Footer -->
+      <div class="border-t border-slate-800 px-8 py-5 flex items-center justify-between">
+        <button id="lesson-prev-btn" onclick="lessonNav(-1)" class="flex items-center gap-2 text-slate-400 hover:text-white text-sm transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed">
+          ← Previous
+        </button>
+        <div class="flex items-center gap-3">
+          <span id="lesson-mode-label" class="text-xs text-slate-500"></span>
+          <button id="lesson-next-btn" onclick="lessonAction()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition cursor-pointer glow-btn">
+            Next →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Challenge CTA (shown at end) -->
+    <div id="lesson-completion" class="hidden mt-8 bg-gradient-to-br from-indigo-950/60 to-violet-950/60 border border-indigo-500/30 rounded-2xl p-8 text-center fade-in">
+      <div class="text-4xl mb-4">🎉</div>
+      <h2 class="text-2xl font-black text-white mb-2">Learning Path Complete!</h2>
+      <p class="text-slate-400 mb-6">You've completed all 7 lessons. You're ready to prove your skills and earn your credential.</p>
+      <button onclick="nav('signup')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3.5 rounded-xl font-bold text-base transition glow-btn mb-3">Take the Challenge →</button>
+      <div class="text-slate-500 text-sm">Takes ~30 minutes · Earn a verifiable credential</div>
+    </div>
+  </div>
+</div>
+
+<!-- =========== SIGNUP PAGE =========== -->
+<div id="page-signup" class="page">
+  <div class="min-h-[80vh] flex items-center justify-center px-4">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-8">
+        <div class="text-2xl font-black text-white mb-2">Create your account</div>
+        <p class="text-slate-400">Verify your skills. Earn publicly shareable credentials.</p>
+      </div>
+      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-8">
+        <div class="flex items-start gap-3 mb-6 p-3 bg-slate-950/50 border border-slate-800 rounded-lg">
+          <input type="checkbox" id="terms-check" class="mt-1 cursor-pointer" onchange="updateSignupBtn()">
+          <label for="terms-check" class="text-slate-400 text-sm cursor-pointer">I agree to the <span class="text-indigo-400">Terms of Service</span> and <span class="text-indigo-400">Privacy Policy</span>. ForgeCoach is a performance-based assessment platform.</label>
+        </div>
+        <div class="text-center text-slate-600 text-sm mb-4">Sign up with Email</div>
+        <div class="space-y-3 mb-4">
+          <input type="text" id="signup-name" placeholder="Full Name" class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 text-sm focus:outline-none focus:border-indigo-500 transition" oninput="updateSignupBtn()">
+          <input type="email" id="signup-email" placeholder="Email" class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 text-sm focus:outline-none focus:border-indigo-500 transition" oninput="updateSignupBtn()">
+          <input type="password" id="signup-password" placeholder="Password" class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 text-sm focus:outline-none focus:border-indigo-500 transition" oninput="updateSignupBtn()">
+          <input type="password" id="signup-confirm" placeholder="Confirm password" class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 text-sm focus:outline-none focus:border-indigo-500 transition" oninput="updateSignupBtn()">
+        </div>
+        <button id="signup-btn" disabled class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold transition disabled:opacity-40 disabled:cursor-not-allowed hover:bg-indigo-500" onclick="handleSignup()">Create Account</button>
+        <p class="text-center text-slate-500 text-sm mt-4">Already have an account? <a onclick="nav('login')" class="text-indigo-400 cursor-pointer hover:text-indigo-300">Log in</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========== STUB PAGES =========== -->
+<div id="page-quiz" class="page">
+  <div class="max-w-2xl mx-auto px-4 py-24 text-center">
+    <div class="text-5xl mb-6">🎯</div>
+    <h1 class="text-3xl font-black text-white mb-4">Skill Quiz</h1>
+    <p class="text-slate-400 mb-8">Quick diagnostic to identify your strongest skills and learning gaps.</p>
+    <button onclick="nav('academy')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-semibold transition">Browse Academy Instead</button>
+  </div>
+</div>
+<div id="page-challenges" class="page">
+  <div class="max-w-2xl mx-auto px-4 py-24 text-center">
+    <div class="text-5xl mb-6">⚡</div>
+    <h1 class="text-3xl font-black text-white mb-4">Challenge Mode</h1>
+    <p class="text-slate-400 mb-8">Prove your skills with timed, scenario-based assessments. Earn publicly verifiable credentials.</p>
+    <button onclick="nav('academy')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-semibold transition">View All Skills</button>
+  </div>
+</div>
+<div id="page-index-page" class="page">
+  <div class="max-w-2xl mx-auto px-4 py-24 text-center">
+    <div class="text-5xl mb-6">📊</div>
+    <h1 class="text-3xl font-black text-white mb-4">Forge Index</h1>
+    <p class="text-slate-400 mb-8">Real-time market intelligence on which skills are rising, stable, or declining.</p>
+    <button onclick="nav('academy')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-semibold transition">View Academy</button>
+  </div>
+</div>
+<div id="page-blog" class="page">
+  <div class="max-w-2xl mx-auto px-4 py-24 text-center">
+    <div class="text-5xl mb-6">✍️</div>
+    <h1 class="text-3xl font-black text-white mb-4">Blog</h1>
+    <p class="text-slate-400 mb-8">Insights on AI, careers, and the future of professional skills.</p>
+    <button onclick="nav('academy')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-semibold transition">View Academy</button>
+  </div>
+</div>
+<div id="page-methodology" class="page">
+  <div class="max-w-2xl mx-auto px-4 py-24 text-center">
+    <div class="text-5xl mb-6">🔬</div>
+    <h1 class="text-3xl font-black text-white mb-4">Methodology</h1>
+    <p class="text-slate-400 mb-8">How ForgeCoach tracks market demand, generates curriculum, and validates credentials.</p>
+    <button onclick="nav('academy')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-semibold transition">View Academy</button>
+  </div>
+</div>
+<div id="page-faq" class="page">
+  <div class="max-w-2xl mx-auto px-4 py-24 text-center">
+    <div class="text-5xl mb-6">❓</div>
+    <h1 class="text-3xl font-black text-white mb-4">FAQ</h1>
+    <p class="text-slate-400 mb-8">Answers to common questions about ForgeCoach, credentials, and the assessment process.</p>
+    <button onclick="nav('academy')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-semibold transition">View Academy</button>
+  </div>
+</div>
+<div id="page-login" class="page">
+  <div class="min-h-[80vh] flex items-center justify-center px-4">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-8">
+        <div class="text-2xl font-black text-white mb-2">Welcome back</div>
+        <p class="text-slate-400">Sign in to your ForgeCoach account.</p>
+      </div>
+      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-8">
+        <div class="space-y-3 mb-4">
+          <input type="email" id="login-email" placeholder="Email" class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 text-sm focus:outline-none focus:border-indigo-500 transition">
+          <input type="password" id="login-password" placeholder="Password" class="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 text-sm focus:outline-none focus:border-indigo-500 transition">
+        </div>
+        <button onclick="handleLogin()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-bold transition">Sign In</button>
+        <p class="text-center text-slate-500 text-sm mt-4">No account? <a onclick="nav('signup')" class="text-indigo-400 cursor-pointer hover:text-indigo-300">Get started free</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-slate-950 border-t border-slate-800 mt-20">
+  <div class="max-w-7xl mx-auto px-4 py-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+      <div class="col-span-2 md:col-span-1">
+        <div class="text-white font-black text-lg mb-2"><span class="text-indigo-500">⚡</span> ForgeCoach</div>
+        <p class="text-slate-500 text-sm">Track rising skills. Build what matters. Prove you're ready.</p>
+      </div>
+      <div>
+        <div class="text-slate-300 font-semibold text-sm mb-3">Product</div>
+        <div class="space-y-2 text-slate-500 text-sm">
+          <div onclick="nav('index-page')" class="hover:text-slate-300 cursor-pointer transition">Forge Index</div>
+          <div onclick="nav('academy')" class="hover:text-slate-300 cursor-pointer transition">Forge Academy</div>
+          <div onclick="nav('challenges')" class="hover:text-slate-300 cursor-pointer transition">Challenge Mode</div>
+          <div onclick="nav('blog')" class="hover:text-slate-300 cursor-pointer transition">Blog</div>
+          <div onclick="nav('methodology')" class="hover:text-slate-300 cursor-pointer transition">Methodology</div>
+          <div onclick="nav('faq')" class="hover:text-slate-300 cursor-pointer transition">FAQ</div>
+        </div>
+      </div>
+      <div>
+        <div class="text-slate-300 font-semibold text-sm mb-3">Company</div>
+        <div class="space-y-2 text-slate-500 text-sm">
+          <div class="hover:text-slate-300 cursor-pointer transition">Terms of Service</div>
+          <div class="hover:text-slate-300 cursor-pointer transition">Privacy Policy</div>
+          <div class="hover:text-slate-300 cursor-pointer transition">Disclaimer</div>
+        </div>
+      </div>
+      <div>
+        <div class="text-slate-300 font-semibold text-sm mb-3">Connect</div>
+        <div class="space-y-2 text-slate-500 text-sm">
+          <div class="hover:text-slate-300 cursor-pointer transition">Twitter</div>
+          <div class="hover:text-slate-300 cursor-pointer transition">Contact</div>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-slate-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-2">
+      <div class="text-slate-600 text-sm">© 2026 ForgeCoach. All rights reserved.</div>
+      <div class="text-slate-600 text-sm">The future rewards the prepared.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ============================================================
+// AUTH STATE & MANAGEMENT
+// ============================================================
+let currentUser = null;
+
+function initAuth() {
+  const saved = localStorage.getItem('forgecoach_user');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+  }
+  updateNavBar();
+}
+
+function updateNavBar() {
+  const navAuth = document.getElementById('nav-auth');
+  if (currentUser) {
+    navAuth.innerHTML = `
+      <div class="flex items-center gap-3">
+        <span class="text-sm text-slate-300">Welcome, <strong>${currentUser.name}</strong></span>
+        <button onclick="handleLogout()" class="text-sm text-slate-300 hover:text-white cursor-pointer transition px-3 py-1.5">Log out</button>
+      </div>
+    `;
+  } else {
+    navAuth.innerHTML = `
+      <a onclick="nav('login')" class="text-sm text-slate-300 hover:text-white cursor-pointer transition px-3 py-1.5">Log in</a>
+      <a onclick="nav('signup')" class="text-sm bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium cursor-pointer transition glow-btn">Get Started Free</a>
+    `;
+  }
+}
+
+function updateSignupBtn() {
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value;
+  const confirm = document.getElementById('signup-confirm').value;
+  const terms = document.getElementById('terms-check').checked;
+
+  const btn = document.getElementById('signup-btn');
+  btn.disabled = !(name && email && password && confirm && terms && password === confirm && email.includes('@'));
+}
+
+function handleSignup() {
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value;
+  const confirm = document.getElementById('signup-confirm').value;
+
+  if (!name || !email || !password || !confirm) {
+    alert('Please fill in all fields');
+    return;
+  }
+
+  if (password !== confirm) {
+    alert('Passwords do not match');
+    return;
+  }
+
+  if (!email.includes('@')) {
+    alert('Please enter a valid email');
+    return;
+  }
+
+  // Create user account
+  const user = { name, email, password, createdAt: new Date().toISOString() };
+  localStorage.setItem('forgecoach_user', JSON.stringify(user));
+  currentUser = user;
+  updateNavBar();
+
+  // Clear form and redirect
+  document.getElementById('signup-name').value = '';
+  document.getElementById('signup-email').value = '';
+  document.getElementById('signup-password').value = '';
+  document.getElementById('signup-confirm').value = '';
+  document.getElementById('terms-check').checked = false;
+
+  nav('academy');
+}
+
+function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+
+  if (!email || !password) {
+    alert('Please enter both email and password');
+    return;
+  }
+
+  // Check if user exists (in this demo, we allow any email/password)
+  // In a real app, you'd verify against a backend
+  const user = { email, name: email.split('@')[0], loggedInAt: new Date().toISOString() };
+  localStorage.setItem('forgecoach_user', JSON.stringify(user));
+  currentUser = user;
+  updateNavBar();
+
+  // Clear form and redirect
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-password').value = '';
+
+  nav('academy');
+}
+
+function handleLogout() {
+  localStorage.removeItem('forgecoach_user');
+  currentUser = null;
+  updateNavBar();
+  nav('academy');
+}
+
+function startLearningGated() {
+  if (!currentUser) {
+    alert('You must be logged in to access lessons. Please sign up or log in.');
+    nav('signup');
+    return;
+  }
+  startLearning();
+}
+
+// ============================================================
+// DATA
+// ============================================================
+const SKILLS = [
+  {
+    slug: 'ai-foundations',
+    title: 'AI Foundations',
+    tagline: 'The baseline every professional needs to navigate the AI era',
+    description: 'Understanding what AI can and cannot do — how language models work, where they fail, and how to apply them responsibly — is the baseline every professional needs. This isn\'t about coding. It\'s about judgment.',
+    category: 'AI-Era', trend: 'rising-hot', trendLabel: '🔥 Rising Fast +32%',
+    skills: ['Model Capabilities', 'AI Limitations', 'Responsible Use', 'Practical Application', 'Risk Assessment'],
+    icon: '🤖',
+    lessons: [
+      { title: 'What AI Actually Is (and Isn\'t)', reading: `
+<h2>The Most Misunderstood Technology of Our Era</h2>
+<p>Most people think of AI as either a calculator on steroids or a sentient being about to take over the world. The truth is more interesting — and more useful — than either.</p>
+<p>Modern AI, specifically Large Language Models (LLMs) like GPT-4, Claude, and Gemini, are <strong>pattern-matching systems trained on enormous amounts of human-generated text</strong>. They predict what word should come next based on everything they've seen. That's it. That's the magic.</p>
+<div class="callout"><p>A language model doesn't "know" anything the way you know things. It has learned statistical patterns across billions of documents. When it sounds confident, that's a learned pattern too — not a reflection of accuracy.</p></div>
+<h2>The Three Things AI Is Actually Good At</h2>
+<ul>
+<li><strong>Synthesis:</strong> Combining information from many sources into a coherent summary</li>
+<li><strong>Generation:</strong> Producing fluent, contextually appropriate text, code, or content</li>
+<li><strong>Pattern recognition:</strong> Identifying structure, themes, and categories in large amounts of data</li>
+</ul>
+<h2>The Three Places AI Reliably Fails</h2>
+<ul>
+<li><strong>Novel reasoning:</strong> True creative problem-solving beyond recombination of seen patterns</li>
+<li><strong>Grounding in current reality:</strong> Knowledge cutoffs mean AI can confidently state outdated facts</li>
+<li><strong>Self-awareness of limitations:</strong> AI doesn't reliably know when it doesn't know something</li>
+</ul>
+<h3>The Hallucination Problem</h3>
+<p>AI "hallucinations" — confidently stating false information — aren't bugs. They're a feature of how these systems work. The model optimizes for fluency and coherence, not truth. A well-structured, plausible-sounding answer satisfies the training signal even if it's completely fabricated.</p>
+<div class="example-box"><div class="label">Real Example</div><p>Ask an AI about a specific scientific paper and it may fabricate author names, journal titles, and publication dates that sound completely real. The pattern of "a paper about X" includes details like those, so they get generated — regardless of accuracy.</p></div>
+<h2>Why This Matters for Your Career</h2>
+<p>Professionals who understand AI's actual mechanics make better decisions about when to use it, when to verify it, and when to rely on human judgment instead. That's the skill employers are starting to pay a premium for.</p>`, quiz: { q: 'A colleague uses AI to draft a client report and submits it without review. The report contains a confident citation of a study that doesn\'t exist. What\'s the most accurate explanation for what happened?', options: ['The AI was specifically programmed to fabricate citations in this case', 'The AI optimized for fluency and pattern-matching, generating a plausible-sounding citation without grounding in real sources', 'The AI searched the internet and found an incorrect source', 'This is an isolated bug that rarely occurs in production AI systems'], correct: 1, explanation: 'Language models generate text by predicting plausible next tokens based on training patterns. A reference to a study follows the statistical pattern of academic writing — so the model generates author, title, and journal details that sound right, regardless of whether they exist.' } },
+      { title: 'How LLMs Work: A Mental Model', reading: `
+<h2>The Prediction Engine</h2>
+<p>To use AI effectively, you need a working mental model — not a computer science degree. Here's the one that matters most for professionals:</p>
+<p><strong>An LLM is a very sophisticated autocomplete that has read most of the internet.</strong></p>
+<p>When you give it a prompt, it predicts the most likely continuation based on everything it has learned about how text flows. The reason it can answer medical questions, write legal briefs, and generate code is that all of those things exist in its training data.</p>
+<div class="callout"><p>This explains both AI's strengths (breadth of pattern coverage) and its weaknesses (no true understanding, just sophisticated pattern matching).</p></div>
+<h2>The Training Process in Plain English</h2>
+<ul>
+<li><strong>Pre-training:</strong> The model reads billions of web pages, books, and code. It learns statistical relationships between words and concepts.</li>
+<li><strong>Fine-tuning:</strong> Human trainers rate outputs, teaching the model to produce responses that are helpful, harmless, and honest.</li>
+<li><strong>RLHF:</strong> Reinforcement Learning from Human Feedback — the model learns to optimize for ratings, not just prediction accuracy.</li>
+</ul>
+<h2>Context Windows: Your Working Memory</h2>
+<p>Every LLM has a "context window" — the maximum amount of text it can consider at once. Think of it as working memory. Once information scrolls out of the context window, the AI doesn't remember it.</p>
+<p>Practical implication: if you're working on a complex project, the AI doesn't "remember" your earlier conversations unless you explicitly include that context in your new prompt.</p>
+<h2>Temperature and Creativity</h2>
+<p>Most AI systems let you adjust "temperature" — a parameter that controls how predictable vs. creative the output is. Low temperature = more predictable, higher accuracy. High temperature = more creative, higher risk of errors.</p>
+<div class="example-box"><div class="label">Application</div><p>For factual tasks (summarizing a document, extracting data), use low temperature settings. For brainstorming or creative work, higher temperature produces more varied and surprising outputs.</p></div>`, quiz: { q: 'Your team is using an AI assistant that was last updated 18 months ago. A colleague trusts it to summarize the current competitive landscape. What\'s the most important limitation to flag?', options: ['The AI cannot summarize competitive information accurately', 'The AI\'s knowledge cutoff means it has no information about developments from the past 18 months', 'AI cannot be trusted for any business analysis tasks', 'The AI will refuse to discuss competitor information'], correct: 1, explanation: 'LLMs have a training cutoff date — they have no knowledge of events, products, or market changes that occurred after training. For current competitive intelligence, AI summaries must be supplemented with live research.' } },
+      { title: 'The Capability Map: What AI Can and Cannot Do', reading: `
+<h2>Drawing the Line</h2>
+<p>The single most valuable skill in the AI era isn't knowing how to prompt — it's knowing <em>when</em> to prompt. That requires an accurate map of AI capabilities.</p>
+<h2>Strong AI Territory</h2>
+<ul>
+<li><strong>First drafts:</strong> Generating initial versions of any document, email, or analysis</li>
+<li><strong>Structured summarization:</strong> Condensing long documents into key points</li>
+<li><strong>Code generation:</strong> Writing boilerplate, common patterns, and well-documented solutions</li>
+<li><strong>Brainstorming at scale:</strong> Generating dozens of options, angles, or approaches quickly</li>
+<li><strong>Translation and transformation:</strong> Changing format, tone, or audience of existing content</li>
+</ul>
+<h2>Contested Territory (Use with Caution)</h2>
+<ul>
+<li><strong>Factual claims about specific events:</strong> Plausible but may be wrong</li>
+<li><strong>Numerical reasoning:</strong> Can make arithmetic errors without calculation tools</li>
+<li><strong>Current information:</strong> Everything after training cutoff is unknown</li>
+<li><strong>Domain-specific edge cases:</strong> May miss nuances only a specialist would know</li>
+</ul>
+<h2>Weak AI Territory</h2>
+<ul>
+<li><strong>Reading a room:</strong> Understanding interpersonal dynamics, unspoken context, emotional subtext</li>
+<li><strong>Novel judgment calls:</strong> Decisions that require weighing genuinely new tradeoffs</li>
+<li><strong>Accountability:</strong> Someone must own the output — AI can't be held responsible</li>
+<li><strong>Trust-based relationships:</strong> Client relationships built on human connection and track record</li>
+</ul>
+<div class="callout"><p>The highest-value professionals in the AI era aren't the ones who resist AI or blindly trust it. They're the ones who know exactly where the line is and work accordingly.</p></div>`, quiz: { q: 'A lawyer needs to identify relevant precedents for a complex case. Which of these AI use cases represents the highest-risk application?', options: ['Using AI to draft initial questions for client intake', 'Using AI to identify potential precedents and then personally verifying each one', 'Submitting AI-generated case citations to court without verification', 'Using AI to summarize publicly available case law you already have'], correct: 2, explanation: 'AI hallucinations are well-documented — it can generate case citations that sound real but don\'t exist. Submitting unverified AI output to a court represents both professional misconduct risk and demonstrates the exact failure mode of treating AI-generated content as ground truth.' } },
+      { title: 'Prompting as a Professional Skill', reading: `
+<h2>Why Prompting Matters More Than Most Think</h2>
+<p>The output quality of an AI system is almost entirely determined by input quality. Most people get mediocre results from AI not because the AI is bad, but because they prompt it like a search engine.</p>
+<p>Prompting is a skill. It's learnable, and it compounds — better prompts lead to better outputs that lead to better work, faster.</p>
+<h2>The Four Levers of a Good Prompt</h2>
+<div class="example-box"><div class="label">The RICE Framework</div>
+<p><strong>Role:</strong> Tell the AI what role to play. "You are a senior product manager at a B2B SaaS company..."<br>
+<strong>Instructions:</strong> Be specific about what you want. Not "write a summary" but "write a 3-bullet executive summary focused on risk"<br>
+<strong>Context:</strong> Give the AI everything it needs. Paste the relevant text, explain the situation, include constraints<br>
+<strong>Examples:</strong> When possible, show the AI the format you want by including an example</p>
+</div>
+<h2>Chain of Thought Prompting</h2>
+<p>For complex reasoning tasks, ask the AI to "think step by step" before giving its answer. This forces the model to surface intermediate reasoning, which:</p>
+<ul>
+<li>Catches logical errors earlier</li>
+<li>Makes the output easier to audit</li>
+<li>Produces more reliable conclusions on multi-step problems</li>
+</ul>
+<h2>Iterative Prompting</h2>
+<p>Don't expect to get the perfect output on the first try. Professional prompting is iterative: generate, evaluate, refine. Tell the AI what was wrong with the first output and what to change.</p>
+<div class="callout"><p>"Make this better" is a weak instruction. "Make this more direct, remove the third paragraph, and add a specific example in the conclusion" is the kind of instruction that gets results.</p></div>`, quiz: { q: 'You ask AI: "Write a memo about the budget meeting." The output is generic and misses the key tension your team was navigating. What\'s the most effective next step?', options: ['Switch to a different AI tool', 'Ask the AI to "make it better"', 'Provide a follow-up prompt that specifies: the audience (leadership team), the key tension (growth vs. cost reduction), and the decision that needs to be made', 'Accept that AI cannot write effective internal memos'], correct: 2, explanation: 'Generic prompts produce generic outputs. The AI had no context about the specific tension, audience, or decision. Adding these specifics is exactly the prompting skill that separates professionals who get value from AI from those who don\'t.' } },
+      { title: 'AI Risk and Responsible Use', reading: `
+<h2>The Risks Nobody Talks About Until It\'s Too Late</h2>
+<p>Most conversations about AI risk focus on sci-fi scenarios. The actual risks affecting professionals today are much more mundane — and more immediately relevant.</p>
+<h2>The Four Practical Risks</h2>
+<h3>1. Confidentiality Exposure</h3>
+<p>When you paste client data, internal strategy, or proprietary information into a commercial AI tool, you may be sending it to a third party's servers. Many AI providers use interactions to improve their models.</p>
+<div class="callout"><p>Always check your organization's AI use policy before processing sensitive information. Many enterprises have specific rules about what can and cannot go into external AI tools.</p></div>
+<h3>2. Overreliance and Skill Atrophy</h3>
+<p>Using AI for tasks you used to do manually can degrade those skills over time. If you use AI to write all your first drafts, your baseline writing ability may decline. This creates hidden dependency risk.</p>
+<h3>3. Bias Laundering</h3>
+<p>AI systems inherit biases from their training data. When organizations use AI to make or assist in decisions — hiring, lending, promotion — they may be systematizing historical biases at scale while the automated nature of the process obscures accountability.</p>
+<h3>4. Accountability Gaps</h3>
+<p>AI-generated work needs a human owner. When something goes wrong — a client complaint, a regulatory audit, a factual error — "the AI wrote it" is not an acceptable defense in most professional contexts.</p>
+<h2>The Responsible Use Framework</h2>
+<ul>
+<li><strong>Verify before publish:</strong> Treat AI output like a first draft from an intern, not a final product</li>
+<li><strong>Disclose when relevant:</strong> Many industries are developing norms around AI disclosure</li>
+<li><strong>Protect sensitive data:</strong> Default to internal tools or anonymized inputs for confidential work</li>
+<li><strong>Maintain human judgment:</strong> Use AI to augment your decision-making, not replace it</li>
+</ul>`, quiz: { q: 'An HR professional uses an AI tool to help screen resumes, and the tool disproportionately filters out qualified candidates from certain universities. What type of risk does this represent?', options: ['Technical failure — the AI has a bug that should be reported', 'Bias laundering — the AI is systematizing historical patterns in training data', 'This is an acceptable tradeoff for efficiency gains', 'A risk that only matters if the company gets audited'], correct: 1, explanation: 'When AI is trained on historical data reflecting past hiring decisions (which may embed systemic biases), it can replicate those biases at scale. The process feels neutral ("it\'s just an algorithm") but the discriminatory outcomes can be real and legally actionable. This is bias laundering.' } },
+      { title: 'AI Tools in Your Industry', reading: `
+<h2>Every Industry Has a Different AI Frontier</h2>
+<p>AI isn't affecting every profession equally. Understanding where your specific field sits on the capability curve — and what's coming next — is more valuable than a general understanding of AI.</p>
+<h2>The Task Decomposition Method</h2>
+<p>The best way to assess AI's impact on your role is to decompose your job into its constituent tasks, then assess each task's automation probability independently.</p>
+<div class="example-box"><div class="label">Task Decomposition Example: Marketing Manager</div>
+<p>
+• Write first-draft copy → <span style="color:#22c55e">High automation (85%)</span><br>
+• Analyze campaign performance → <span style="color:#f97316">Medium automation (60%)</span><br>
+• Manage agency relationships → <span style="color:#ef4444">Low automation (15%)</span><br>
+• Understand brand voice nuances → <span style="color:#ef4444">Low automation (20%)</span><br>
+• Present strategy to executives → <span style="color:#ef4444">Low automation (10%)</span>
+</p>
+</div>
+<h2>High-Automation Signal: Structured, Codifiable Tasks</h2>
+<p>Tasks that follow rules, operate on structured data, or require pattern recognition from large datasets are the most automatable. Data entry, standard report generation, basic coding patterns, and template-based document creation are all moving quickly.</p>
+<h2>Low-Automation Signal: Contextual Judgment Tasks</h2>
+<p>Tasks requiring organizational context, relationship awareness, ethical judgment, or creative leaps from genuinely new information remain human-centric. This is where investment of your growth time pays off most.</p>
+<div class="callout"><p>Your goal isn't to avoid AI — it's to shift your effort toward the tasks that are both high-value and hard to automate. Let AI handle the rest.</p></div>`, quiz: { q: 'A financial analyst\'s job includes: (1) pulling data from databases, (2) building standard reporting templates, (3) presenting recommendations to clients, (4) interpreting unusual market conditions. Which tasks are MOST at risk of AI displacement?', options: ['Tasks 3 and 4 — client-facing work is easily automated', 'Tasks 1 and 2 — structured, repetitive data tasks are high automation targets', 'All four tasks are equally at risk', 'None are significantly at risk in the next 5 years'], correct: 1, explanation: 'Data pulling and template-based reporting are highly structured, repetitive tasks that operate on known formats — exactly the profile of work where AI automation is both technically feasible and economically compelling. Interpretation and client relationship tasks require judgment and trust that are much harder to automate.' } },
+      { title: 'Building Your AI-Augmented Workflow', reading: `
+<h2>From "Using AI" to "Working AI-Augmented"</h2>
+<p>There's a big difference between occasionally using AI and building it into your workflow in a way that compounds over time. The professionals winning in the AI era have done the latter.</p>
+<h2>The Workflow Audit</h2>
+<p>Start by auditing your current work week:</p>
+<ul>
+<li>What tasks are you doing that AI could do first? (first drafts, summaries, data extraction)</li>
+<li>What decisions are you making that could be better informed with AI synthesis?</li>
+<li>Where are you spending time on structure that could be templated?</li>
+</ul>
+<h2>The Three Workflow Patterns</h2>
+<h3>Pattern 1: AI First Draft</h3>
+<p>Generate with AI, edit as a human. Used for: emails, reports, proposals, analysis frameworks. Typically saves 40-60% of time on first-draft production.</p>
+<h3>Pattern 2: AI as Research Assistant</h3>
+<p>Use AI to synthesize large amounts of information before you engage with it directly. Review AI's synthesis, then dive into primary sources for the critical pieces. Typical use: competitive analysis, literature reviews, due diligence prep.</p>
+<h3>Pattern 3: AI as Thinking Partner</h3>
+<p>Use AI to stress-test your reasoning, identify gaps in your argument, or generate counterarguments. "Here's my recommendation. What are the three strongest arguments against it?" This is where AI adds surprising value for analytical professionals.</p>
+<div class="callout"><p>The compounding professional advantage isn't using AI for any one task — it's systematically replacing low-value time with high-value time across your entire workflow.</p></div>
+<h2>What You've Learned</h2>
+<p>Across these 7 lessons, you've built the mental model that most professionals are still missing: what AI is, how it works, where it's strong and weak, how to prompt it well, what the risks are, how it's reshaping industries, and how to integrate it into your actual work.</p>
+<p><strong>You're ready to prove it.</strong></p>`, quiz: { q: 'Which of these best describes a professional who has successfully built an AI-augmented workflow?', options: ['Someone who uses AI for every task, reducing their personal involvement to near zero', 'Someone who has identified which parts of their work AI can accelerate, uses AI consistently for those, and has redirected their personal effort to high-judgment, high-value tasks', 'Someone who knows which AI tools exist but uses them only when convenient', 'Someone who avoids AI to protect the quality of their work'], correct: 1, explanation: 'An AI-augmented workflow isn\'t about maximizing AI use — it\'s about strategic allocation. AI handles the high-volume, lower-judgment work; the professional focuses their cognitive energy on the tasks where human judgment adds the most value. This is the compounding professional advantage.' } }
+    ]
+  },
+  {
+    slug: 'ai-risk-assessment',
+    title: 'AI Risk Assessment for Your Role',
+    tagline: 'Map your AI frontier — which tasks are automatable and which are durable',
+    description: 'Every job is a bundle of tasks — some AI will eat, some become more valuable. Professionals who can map their own AI frontier — identifying which tasks are automatable, which are durable, and where to invest their growth — make better career decisions than those who react to disruption after the fact.',
+    category: 'AI-Era', trend: 'rising-hot', trendLabel: '🔥 Rising Fast +24%',
+    skills: ['Task Decomposition', 'Automation Probability Assessment', 'Durable Value Identification', 'Career Strategy', 'Disruption Pattern Recognition'],
+    icon: '🔍',
+    lessons: [
+      { title: 'The Task Decomposition Framework', reading: `
+<h2>Your Job Is a Bundle of Tasks</h2>
+<p>Most people think of their job as a title: "I'm a lawyer" or "I'm an analyst." That framing is increasingly dangerous. In the AI era, what matters is the specific tasks that compose your job — because AI disruption happens at the task level, not the title level.</p>
+<p>The task decomposition framework gives you a systematic way to assess which parts of your role are at risk and which are becoming more valuable.</p>
+<h2>How to Decompose Your Role</h2>
+<ul>
+<li><strong>List every recurring task</strong> you perform in a typical week</li>
+<li><strong>Categorize by type:</strong> information processing, content creation, analysis, relationship management, judgment calls</li>
+<li><strong>Estimate time allocation:</strong> What percentage of your week does each category consume?</li>
+</ul>
+<div class="callout"><p>Most professionals discover they spend 40-60% of their time on tasks that are high automation candidates. This is both a risk and an opportunity.</p></div>
+<h2>The Four Task Categories</h2>
+<div class="example-box"><div class="label">Task Taxonomy</div>
+<p><strong>Structured Processing:</strong> Data entry, standard reporting, document formatting → High AI risk<br>
+<strong>Pattern Analysis:</strong> Research, summarization, trend identification → Medium AI risk<br>
+<strong>Synthesized Judgment:</strong> Strategy, recommendations, complex decisions → Low AI risk (for now)<br>
+<strong>Relational Work:</strong> Client relationships, negotiation, leadership → Very low AI risk</p>
+</div>
+<h2>Why This Matters Now</h2>
+<p>The professionals who will navigate this transition best are those who have a clear map of their own task landscape — and are actively shifting time from high-risk to high-durability tasks.</p>`, quiz: { q: 'A project manager\'s tasks include: scheduling meetings, writing status reports, managing stakeholder expectations, and making resource allocation decisions under uncertainty. Using task decomposition, which tasks are highest automation risk?', options: ['Managing stakeholder expectations and resource allocation decisions', 'Scheduling meetings and writing status reports', 'All tasks are equally at risk', 'None — project management is too complex to automate'], correct: 1, explanation: 'Scheduling and status reporting are structured, rule-following tasks with clear inputs and outputs — high automation candidates. Stakeholder management requires reading organizational dynamics and interpersonal context. Resource allocation under uncertainty requires judgment about incomplete information. These are the durable, high-value tasks.' } },
+      { title: 'Automation Probability: The Scoring Framework', reading: `
+<h2>Not All Automation Is Equal</h2>
+<p>When people say "AI will automate this job," they're usually conflating several different things: full automation (AI does the entire task), augmentation (AI makes humans faster at the task), and transformation (the task changes but doesn't disappear).</p>
+<p>A nuanced risk assessment requires scoring tasks across multiple dimensions.</p>
+<h2>The Four Automation Dimensions</h2>
+<h3>1. Codifiability</h3>
+<p>Can the task be reduced to explicit rules? Can you write instructions specific enough that someone following them exactly would produce the right output? High codifiability = high automation risk.</p>
+<h3>2. Data Richness</h3>
+<p>Is there abundant training data for this task? AI excels where large amounts of labeled examples exist. Rare, novel, or context-dependent situations are harder to automate.</p>
+<h3>3. Output Verifiability</h3>
+<p>Can a non-expert check whether the output is correct? If yes, automation is easier to deploy because quality control is tractable. If verification requires deep expertise, automation is riskier to adopt at scale.</p>
+<h3>4. Consequence Tolerance</h3>
+<p>What's the cost of an error? High-stakes decisions (medical, legal, financial) face regulatory and liability barriers to automation even when technically feasible.</p>
+<div class="callout"><p>A task that scores high on all four dimensions (codifiable, data-rich, verifiable, low-consequence) is a prime automation candidate. Tasks that score low even on one dimension have significant protective friction.</p></div>`, quiz: { q: 'Using the four automation dimensions, which task profile has the LOWEST near-term automation risk?', options: ['Generating standardized risk reports from structured financial data', 'Advising a client through a complex organizational restructuring where the relationships and unstated politics are as important as the technical plan', 'Transcribing audio recordings into written summaries', 'Classifying customer support tickets by category and priority'], correct: 1, explanation: 'The restructuring advisory task scores low on all automation dimensions: it requires reading organizational context that isn\'t codifiable, draws on relationship history that isn\'t in training data, the quality is hard to verify without deep contextual knowledge, and the consequences of bad advice are severe. This is exactly the kind of task that remains durable.' } },
+      { title: 'Identifying Your Durable Value', reading: `
+<h2>What Makes Work Durable?</h2>
+<p>Automation tends to increase the value of complementary skills — the things humans do that make automated output more useful, appropriate, and trustworthy. Identifying your durable value means asking: "What do I provide that makes AI's output more valuable, rather than competing with it?"</p>
+<h2>The Three Sources of Durable Human Value</h2>
+<h3>1. Contextual Intelligence</h3>
+<p>You know this client's history, this organization's culture, this market's peculiarities. AI has general knowledge; you have specific context. That context shapes whether generic AI output is applicable, needs heavy editing, or is dangerously wrong for your situation.</p>
+<h3>2. Judgment Under Uncertainty</h3>
+<p>When there's no right answer — when you're weighing competing values, operating with incomplete information, or making a call that depends on unstated priorities — that's human territory. AI can model scenarios, but the judgment call is yours.</p>
+<h3>3. Accountability and Relationship Capital</h3>
+<p>Someone has to own the outcome. A client's trust is in you, not the AI tool you use. Your professional reputation, built over years of deliverables and relationships, is something AI cannot replicate or replace.</p>
+<div class="example-box"><div class="label">The Durability Diagnostic</div>
+<p>For each task, ask: "If an AI produced this output, what would still need human involvement to make it safe, appropriate, and effective?" The answer is your durable value.</p>
+</div>
+<h2>Investing in Your Durable Stack</h2>
+<p>Once you identify your durable value, invest in deepening it. This might mean:</p>
+<ul>
+<li>Building deeper client relationships</li>
+<li>Developing judgment in high-stakes, high-ambiguity domains</li>
+<li>Accumulating track record in areas where credibility matters</li>
+</ul>`, quiz: { q: 'A financial advisor who previously spent 60% of her time building standard portfolio reports now uses AI to generate those reports in minutes. What\'s the most strategically valuable thing she should do with the recovered time?', options: ['Automate more tasks to maximize efficiency gains', 'Use the time to deepen client relationships and handle more complex, advisory-level conversations that require trust and judgment', 'Manage a higher volume of clients with the same level of service', 'Spend time learning more AI tools to stay technically current'], correct: 1, explanation: 'The automation of report generation reveals her durable value: the advisory relationship that clients trust. The AI handles structure; she provides the judgment, context, and relationship that determines whether advice is actually followed. Investing in deeper relationships compounds her durable advantage.' } },
+      { title: 'Industry Disruption Patterns', reading: `
+<h2>AI Disruption Has a Pattern</h2>
+<p>Every technology wave disrupts industries in a recognizable pattern. Understanding the pattern helps you position ahead of it rather than react to it.</p>
+<h2>The Four-Phase Disruption Curve</h2>
+<div class="example-box"><div class="label">Disruption Phases</div>
+<p><strong>Phase 1 — Augmentation:</strong> AI makes practitioners faster. The best practitioners use AI and become dramatically more productive. Demand for the skill stays high or increases, but the same output requires fewer humans.<br><br>
+<strong>Phase 2 — Stratification:</strong> The gap between AI-augmented and non-augmented practitioners widens sharply. Organizations start requiring AI proficiency as a baseline skill.<br><br>
+<strong>Phase 3 — Role Compression:</strong> Teams accomplish what previously required more headcount. Junior roles bear the first wave of compression.<br><br>
+<strong>Phase 4 — Redefinition:</strong> The role itself transforms. New titles emerge for the humans who manage, direct, and quality-control AI outputs at scale.</p>
+</div>
+<h2>Reading Disruption Signals</h2>
+<p>Key signals that a skill is entering Phase 1-2 disruption:</p>
+<ul>
+<li>Job postings start requiring "AI experience" in adjacent roles</li>
+<li>Startups offer the same output with a fraction of the headcount</li>
+<li>Price pressure mounts on standardized deliverables</li>
+<li>Senior practitioners start using AI tools routinely</li>
+</ul>
+<div class="callout"><p>The professionals who thrive through disruption phases are those who adopt early in Phase 1. By Phase 3, the adjustment cost is much higher.</p></div>`, quiz: { q: 'A law firm associate notices that basic contract review, which used to take 8 hours, can now be done by AI in 20 minutes with reasonable accuracy. Which disruption phase is this skill most likely entering?', options: ['Phase 4 — Role Redefinition, with new AI management roles emerging', 'Phase 1 — Augmentation, where AI makes practitioners faster but human oversight is still essential', 'Phase 3 — Role Compression, where headcount requirements will immediately drop', 'This doesn\'t represent meaningful disruption yet'], correct: 1, explanation: 'The task is newly automated but still requires human oversight for accuracy, edge cases, and judgment calls. This is Phase 1: AI makes practitioners faster, the best practitioners adopt early and dramatically increase their throughput, but expertise and oversight remain essential. Phase 3 won\'t arrive until accuracy reaches institutional confidence thresholds.' } },
+      { title: 'Building Your Personal Career Moat', reading: `
+<h2>The Career Moat Concept</h2>
+<p>In investing, a "moat" is the sustainable competitive advantage that protects a business from competition. Professionals who navigate the AI era successfully are building personal career moats — combinations of skills, relationships, and track records that are hard to replicate or automate.</p>
+<h2>The Three Moat Types</h2>
+<h3>1. Expertise Moat</h3>
+<p>Deep, specific expertise in a domain where AI makes frequent errors or requires expert oversight. Example: a tax attorney who specializes in complex cross-border transactions — AI can draft, but signing off requires a professional with credentials and liability exposure.</p>
+<h3>2. Relationship Moat</h3>
+<p>A network of trusted relationships built over years that generates referrals, opportunities, and inside information that isn't available to AI. The deeper the trust, the more durable the moat.</p>
+<h3>3. Track Record Moat</h3>
+<p>A verifiable history of outcomes that justifies premium pricing. "I've managed 15 of these projects and here's what happened" is a form of authority AI cannot have. Credentials, case studies, and demonstrated expertise all compound this moat.</p>
+<div class="callout"><p>The most resilient career positions combine all three: deep expertise in a durable domain, strong professional relationships, and a track record that commands trust.</p></div>`, quiz: { q: 'A consultant has 15 years of experience in supply chain optimization. AI tools can now replicate the analytical work that took him weeks in days. What\'s his strongest career moat?', options: ['His ability to use AI tools more efficiently than younger colleagues', 'His 15 years of relationships with procurement leaders and his track record of specific outcomes in complex supply chain transformations', 'The fact that his credentials prevent AI from practicing in the regulated space', 'His deep understanding of supply chain software platforms'], correct: 1, explanation: 'Relationships and track record are the moats that AI cannot replicate. His network of procurement leaders who trust him, the case studies he can reference, and the credibility he\'s built around delivering specific outcomes in complex situations are durable advantages. AI can do the analysis; it cannot replicate his reputation or relationships.' } },
+      { title: 'The Upskilling Strategy Framework', reading: `
+<h2>Not All Upskilling Is Created Equal</h2>
+<p>The instinct when disruption looms is to upskill. But upskilling in the wrong direction wastes the limited time you have to adapt. The strategic question isn't "what should I learn?" — it's "what should I learn given where AI is heading?"</p>
+<h2>The Three-Horizon Framework</h2>
+<h3>Horizon 1: Defend (0-12 months)</h3>
+<p>Identify the AI tools that are augmenting your current role and adopt them. This isn't about transformation — it's about making sure you're not being left behind in your current position. Falling behind in Horizon 1 closes options in Horizons 2 and 3.</p>
+<h3>Horizon 2: Differentiate (1-3 years)</h3>
+<p>Invest in skills that are rising in value as AI automation takes hold. The meta-skills — judgment, communication, AI management, strategic thinking — are moving up the value chain as AI commoditizes execution. This is where most of your learning investment should go.</p>
+<h3>Horizon 3: Position (3-5 years)</h3>
+<p>Build toward roles that will exist in the AI-redefined landscape. These often combine deep domain expertise with AI orchestration skills. "AI-era lawyer," "AI-augmented product strategist," "human-AI workflow architect" are role shapes emerging now.</p>
+<div class="example-box"><div class="label">Portfolio Allocation Rule of Thumb</div>
+<p>Spend roughly: 20% on Horizon 1 (stay current), 60% on Horizon 2 (differentiate), 20% on Horizon 3 (position for transformation).</p>
+</div>`, quiz: { q: 'A marketing manager spends most of her upskilling time learning every new AI content generation tool. Using the three-horizon framework, what\'s the likely strategic flaw?', options: ['She should focus exclusively on traditional marketing skills to stay differentiated', 'She is over-investing in Horizon 1 (defending current position) while under-investing in Horizon 2 differentiation skills like strategic judgment, AI output curation, and campaign strategy', 'Learning AI tools is always the right investment for any marketing professional', 'She should only focus on Horizon 3 transformation skills'], correct: 1, explanation: 'AI content generation tools are Horizon 1 — they defend her current position. But over-allocating to tool proficiency doesn\'t differentiate her, since those tools will become commoditized. The higher-value investment is in strategic judgment, creative direction, and the ability to evaluate and direct AI outputs — skills that complement AI capability rather than replicate it.' } },
+      { title: 'Your AI Frontier Map', reading: `
+<h2>Putting It All Together</h2>
+<p>Over the last 6 lessons, you've built a comprehensive framework for assessing AI's impact on your specific role. Now it's time to synthesize that into an actionable map of your personal AI frontier.</p>
+<h2>The Frontier Map Template</h2>
+<div class="example-box"><div class="label">Your AI Frontier Map</div>
+<p><strong>High Automation Risk (40-60% of time):</strong><br>
+Tasks: [structured processing, standard reporting, routine research]<br>
+Strategy: Adopt AI tools immediately. Measure time saved. Redirect effort.<br><br>
+<strong>Augmentation Zone (20-30% of time):</strong><br>
+Tasks: [analysis, synthesis, first-draft creation]<br>
+Strategy: Use AI as co-pilot. Maintain oversight. Build AI collaboration skill.<br><br>
+<strong>Durable Zone (20-30% of time):</strong><br>
+Tasks: [judgment calls, client relationships, strategic decisions]<br>
+Strategy: Double down. This is your growing advantage. Invest more time here as AI frees it up.</p>
+</div>
+<h2>The Action Plan</h2>
+<ul>
+<li><strong>This week:</strong> Complete your task decomposition. Map every recurring task to a zone.</li>
+<li><strong>This month:</strong> Adopt AI tools for your top 3 high-automation tasks. Track time saved.</li>
+<li><strong>This quarter:</strong> Invest recovered time into your durable zone. Build track record.</li>
+<li><strong>This year:</strong> Execute your Horizon 2 upskilling plan. Position for emerging role shapes.</li>
+</ul>
+<div class="callout"><p>The professionals who map their frontier now, act on it, and keep updating it as AI capabilities evolve are the ones who will look back at this period as their best career move.</p></div>
+<h2>You're Ready</h2>
+<p>You've completed the AI Risk Assessment learning path. You understand task decomposition, automation probability scoring, durable value identification, disruption patterns, and strategic upskilling. Take the challenge to prove it.</p>`, quiz: { q: 'After completing your AI frontier map, you find that 55% of your current tasks are high-automation candidates. What\'s the most strategic interpretation of this finding?', options: ['Your role is at immediate risk and you should change careers', 'This represents significant opportunity — 55% of your time could be redirected to higher-value, more durable work if you adopt AI tools now', 'You should hide this finding from your employer', 'This level of automation risk is unusually high and suggests AI cannot handle your domain'], correct: 1, explanation: 'High automation risk in current tasks isn\'t a threat if you move first. If AI can handle 55% of your current work, that\'s 55% of your week that can be redirected to the durable, high-judgment work that actually builds your career moat. The risk is in not acting — continuing to spend most of your time on work that will eventually be automated regardless.' } }
+    ]
+  },
+  {
+    slug: 'ai-agents', title: 'AI Agents',
+    tagline: 'Design, deploy, and govern autonomous AI agents',
+    description: 'AI agents that plan, take actions, and complete multi-step tasks autonomously are reshaping every workflow. Professionals who understand how to design, deploy, and govern AI agents — knowing their failure modes, trust boundaries, and real capabilities — are becoming essential across product, ops, and engineering.',
+    category: 'AI-Era', trend: 'rising-hot', trendLabel: '🔥 Rising Fast +38%',
+    skills: ['Agent Architecture', 'Tool Use Design', 'Trust Boundaries', 'Failure Mode Analysis', 'Governance Frameworks'],
+    icon: '🤖', lessons: generateLessons('AI Agents', ['What AI Agents Are and How They Differ from Chatbots', 'The Agentic Loop: Plan, Act, Observe, Repeat', 'Tool Design for Agents', 'Trust Boundaries and Safety', 'Multi-Agent Systems', 'Common Failure Modes', 'Governance and Oversight Frameworks'])
+  },
+  {
+    slug: 'ai-collaboration-prompt-engineering', title: 'AI Collaboration & Prompt Engineering',
+    tagline: 'Work effectively with AI as a co-collaborator',
+    description: 'AI tools are becoming co-workers, not just tools. Professionals who can effectively collaborate with AI — crafting precise prompts, evaluating outputs, and building AI-augmented workflows — command a growing premium in every industry.',
+    category: 'AI-Era', trend: 'rising-hot', trendLabel: '🔥 Rising Fast +34%',
+    skills: ['Prompt Crafting', 'Output Evaluation', 'AI Workflow Design', 'Iterative Refinement', 'Context Management'],
+    icon: '💬', lessons: generateLessons('AI Collaboration', ['The Collaboration Mindset Shift', 'Anatomy of an Effective Prompt', 'Chain of Thought and Structured Reasoning', 'Iterative Prompting Patterns', 'Evaluating and Improving AI Output', 'Building AI-Augmented Workflows', 'Advanced Collaboration Techniques'])
+  },
+  {
+    slug: 'strategic-judgment', title: 'Strategic Judgment & Decision-Making',
+    tagline: 'Navigate ambiguity and make high-stakes calls',
+    description: 'As AI handles more analytical tasks, the premium shifts to uniquely human judgment — navigating ambiguity, weighing competing values, and making calls with incomplete information.',
+    category: 'Uniquely Human', trend: 'rising', trendLabel: '📈 Rising +15%',
+    skills: ['Ambiguity Navigation', 'Competing Values', 'Incomplete Information', 'Decision Frameworks', 'Bias Recognition'],
+    icon: '🧭', lessons: generateLessons('Strategic Judgment', ['The Nature of Hard Decisions', 'Mental Models for Complex Decisions', 'Bias and Debiasing Techniques', 'Deciding Under Uncertainty', 'Stakeholder Tradeoffs', 'Post-Decision Learning', 'Building Your Decision Practice'])
+  },
+  {
+    slug: 'data-storytelling', title: 'Data Storytelling',
+    tagline: 'Transform data into decisions through narrative',
+    description: 'Raw data is abundant. The ability to extract meaning, build narrative, and drive decisions through data presentation is what separates analysts from strategic advisors.',
+    category: 'Data & Systems', trend: 'rising-hot', trendLabel: '🔥 Rising Fast +18%',
+    skills: ['Narrative Structure', 'Visualization Design', 'Insight Extraction', 'Audience Calibration', 'Decision Framing'],
+    icon: '📊', lessons: generateLessons('Data Storytelling', ['Why Data Stories Work', 'The Structure of a Data Narrative', 'Choosing the Right Visualization', 'Designing for Your Audience', 'From Data to Insight to Action', 'Presenting to Executives', 'Building Your Storytelling Practice'])
+  }
+];
+
+const DECLINING_SKILLS = [
+  { slug: 'standard-bookkeeping', title: 'Standard Bookkeeping', category: 'Finance', trend: 'declining', trendLabel: '📉 Declining -19%', description: 'Automated accounting tools and AI-powered bookkeeping are making manual bookkeeping increasingly obsolete.', icon: '📒' },
+  { slug: 'template-based-design', title: 'Template-Based Design', category: 'Design', trend: 'declining', trendLabel: '📉 Declining -22%', description: 'AI design tools can generate layouts, variations, and brand-aligned designs from prompts.', icon: '🎨' },
+  { slug: 'routine-code-debugging', title: 'Routine Code Debugging', category: 'Engineering', trend: 'declining', trendLabel: '📉 Declining -27%', description: 'AI coding assistants are becoming remarkably effective at identifying and fixing common bugs.', icon: '🐛' },
+  { slug: 'basic-report-writing', title: 'Basic Report Writing', category: 'Professional', trend: 'declining', trendLabel: '📉 Declining -33%', description: 'AI can generate standard reports, summaries, and analyses faster than humans.', icon: '📝' },
+  { slug: 'manual-data-entry', title: 'Manual Data Entry', category: 'Operations', trend: 'at-risk', trendLabel: '🚨 At Risk -41%', description: 'OCR, AI-powered form processing, and automated data pipelines are eliminating manual data entry.', icon: '⌨️' },
+];
+
+// Additional rising skills (stub)
+const EXTRA_RISING = [
+  { slug: 'vibe-coding', title: 'Vibe Coding', category: 'AI-Era', trend: 'rising-hot', trendLabel: '🔥 Rising Fast +41%', description: 'Fully embracing AI to write, debug, and ship code — prioritizing velocity and iteration over deep language mastery.', icon: '⚡' },
+  { slug: 'human-ai-workflow-design', title: 'Human-AI Workflow Design', category: 'AI-Era', trend: 'rising-hot', trendLabel: '🔥 Rising Fast +28%', description: "The highest-value work isn't doing tasks OR delegating to AI — it's designing the workflow between humans and AI systems.", icon: '🔄' },
+  { slug: 'agentic-systems-thinking', title: 'Agentic Systems Thinking', category: 'AI-Era', trend: 'rising-hot', trendLabel: '🔥 Rising Fast +22%', description: 'Understanding how to architect, monitor, and govern agentic systems is critical for product, engineering, and operations leaders.', icon: '🕸️' },
+  { slug: 'ai-product-management', title: 'AI Product Management', category: 'AI-Era', trend: 'rising-hot', trendLabel: '🔥 Rising Fast +19%', description: 'Building products with AI requires understanding model capabilities, probabilistic outputs, and feedback loop design.', icon: '📱' },
+  { slug: 'ai-augmented-analysis', title: 'AI-Augmented Analysis', category: 'AI-Era', trend: 'rising-hot', trendLabel: '🔥 Rising Fast +20%', description: 'Using AI to accelerate research, analysis, and synthesis — doing in hours what used to take weeks.', icon: '🔬' },
+  { slug: 'ai-output-quality-control', title: 'AI Output Quality Control', category: 'AI-Era', trend: 'rising', trendLabel: '📈 Rising +16%', description: 'The ability to evaluate, verify, and correct AI-generated content for accuracy, bias, and domain-specific correctness.', icon: '✅' },
+  { slug: 'creative-problem-solving', title: 'Creative Problem Solving', category: 'Uniquely Human', trend: 'rising', trendLabel: '📈 Rising +14%', description: 'Humans who can reframe problems, connect disparate ideas, and imagine genuinely novel approaches are increasingly irreplaceable.', icon: '💡' },
+  { slug: 'systems-thinking', title: 'Systems Thinking', category: 'Data & Systems', trend: 'rising', trendLabel: '📈 Rising +12%', description: 'Understanding complex systems — feedback loops, second-order effects, emergent behavior — is essential in an AI-augmented world.', icon: '⚙️' },
+  { slug: 'stakeholder-influence', title: 'Stakeholder Influence & Persuasion', category: 'Uniquely Human', trend: 'rising', trendLabel: '📈 Rising +13%', description: 'Building consensus, navigating politics, and persuading across boundaries — skills that get things done in every organization.', icon: '🤝' },
+  { slug: 'change-leadership', title: 'Change Leadership', category: 'Uniquely Human', trend: 'rising', trendLabel: '📈 Rising +11%', description: 'Leading teams through technology transitions is the defining leadership challenge of this decade.', icon: '🚀' },
+  { slug: 'no-code-prototyping', title: 'Rapid Prototyping / No-Code', category: 'Builder', trend: 'rising', trendLabel: '📈 Rising +11%', description: 'No-code and low-code tools have democratized building. Quickly prototype and test ideas without engineering resources.', icon: '🛠️' },
+  { slug: 'ai-ethics-governance', title: 'AI Ethics & Governance', category: 'AI-Era', trend: 'rising', trendLabel: '📈 Rising +10%', description: 'As AI systems make more consequential decisions, organizations need people who can navigate bias, fairness, and compliance.', icon: '⚖️' },
+  { slug: 'product-strategy', title: 'Product Strategy', category: 'Builder', trend: 'stable', trendLabel: '➡️ Stable +3%', description: 'Understanding markets, defining positioning, and prioritizing roadmaps — stable but increasingly AI-augmented.', icon: '🗺️' },
+  { slug: 'leadership-fundamentals', title: 'Leadership Fundamentals', category: 'Uniquely Human', trend: 'stable', trendLabel: '➡️ Stable +2%', description: 'Core leadership skills remain essential but table-stakes. Differentiation comes from leading through AI transformation.', icon: '👥' },
+  { slug: 'sql-fundamentals', title: 'SQL Fundamentals', category: 'Data & Systems', trend: 'stable', trendLabel: '➡️ Stable +1%', description: 'SQL remains the lingua franca of data, but value is shifting from writing queries to knowing what questions to ask.', icon: '🗄️' },
+  { slug: 'strategic-storytelling', title: 'Strategic Storytelling', category: 'Uniquely Human', trend: 'rising', trendLabel: '📈 Rising +16%', description: 'Framing complex information as compelling narratives that drive decisions. AI can write; it cannot replace the judgment behind it.', icon: '📖' },
+];
+
+function generateLessons(skill, titles) {
+  return titles.map((title, i) => ({
+    title,
+    reading: `<h2>${title}</h2><p>This lesson covers the foundations of <strong>${title.toLowerCase()}</strong> in the context of ${skill}.</p><p>Understanding this concept gives you a competitive edge as AI reshapes professional work. The professionals who develop deep competency in this area will be best positioned for the next 3-5 years.</p><div class="callout"><p>Take time to reflect on how this applies to your specific role and industry. The most valuable learning happens when you connect concepts to concrete situations you actually face.</p></div><h2>Core Concepts</h2><ul><li>The foundational principles that define this area</li><li>How these concepts apply in real professional contexts</li><li>Common misconceptions that trip up practitioners</li><li>The leading-edge practice in this area as of 2026</li></ul><h2>Practical Application</h2><p>The gap between knowing about ${skill.toLowerCase()} and actually applying it is where most professionals get stuck. The next lesson goes deeper on practical application — start thinking about how today's concepts show up in your own work.</p>`,
+    quiz: { q: `Which of these best demonstrates ${title} competency in a professional context?`, options: ['Using generic frameworks without adapting them to the specific situation', 'Applying the core principles to your actual organizational context, identifying where standard approaches need modification', 'Following industry templates exactly as written', 'Delegating this entirely to AI tools'], correct: 1, explanation: `Competency in ${title} isn't demonstrated by knowing the theory — it's shown through applying the right frameworks in context, knowing when to adapt them, and making judgment calls that a template can't make for you.` }
+  }));
+}
+
+// ============================================================
+// STATE
+// ============================================================
+let currentPage = 'academy';
+let currentSkill = null;
+let currentLesson = 0;
+let lessonMode = 'reading'; // 'reading' | 'quiz'
+let quizAnswered = false;
+
+// ============================================================
+// ROUTER
+// ============================================================
+function nav(page, extra) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + page);
+  if (el) {
+    el.classList.add('active');
+    currentPage = page;
+    window.scrollTo(0, 0);
+  }
+  if (page === 'challenge' && extra) loadChallenge(extra);
+  if (page === 'lesson') renderLesson();
+}
+
+function openSkill(slug) {
+  const skill = [...SKILLS, ...EXTRA_RISING].find(s => s.slug === slug) || DECLINING_SKILLS.find(s => s.slug === slug);
+  if (!skill) return;
+  currentSkill = skill;
+  currentLesson = 0;
+  lessonMode = 'reading';
+  quizAnswered = false;
+  switchTab('prepare');
+  nav('challenge', slug);
+}
+
+function switchTab(tab) {
+  document.getElementById('tab-prove').classList.toggle('active', tab === 'prove');
+  document.getElementById('tab-prepare').classList.toggle('active', tab === 'prepare');
+  document.getElementById('content-prove').classList.toggle('hidden', tab !== 'prove');
+  document.getElementById('content-prepare').classList.toggle('hidden', tab !== 'prepare');
+}
+
+// ============================================================
+// CHALLENGE PAGE
+// ============================================================
+function loadChallenge(slug) {
+  const skill = currentSkill;
+  if (!skill) return;
+
+  document.getElementById('challenge-title').textContent = skill.title;
+  document.getElementById('challenge-tagline').textContent = skill.tagline;
+  document.getElementById('challenge-description').textContent = skill.description;
+  document.getElementById('challenge-icon').textContent = skill.icon || '';
+
+  const catEl = document.getElementById('challenge-category');
+  catEl.textContent = skill.category;
+  catEl.className = 'text-xs font-semibold px-2 py-0.5 rounded-full ' + getCategoryClass(skill.category);
+
+  const trendEl = document.getElementById('challenge-trend');
+  trendEl.textContent = skill.trendLabel;
+  trendEl.className = 'text-xs font-bold ' + getTrendClass(skill.trend);
+
+  const skillsEl = document.getElementById('challenge-skills');
+  skillsEl.innerHTML = (skill.skills || []).map(s =>
+    `<span class="text-xs bg-slate-900 border border-slate-800 text-slate-300 px-3 py-1 rounded-full">${s}</span>`
+  ).join('');
+
+  const lessonList = document.getElementById('lesson-list');
+  const lessons = skill.lessons || [];
+  lessonList.innerHTML = lessons.slice(0, 7).map((l, i) => `
+    <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-950/50 border border-slate-800/50">
+      <div class="w-7 h-7 rounded-lg ${i < 3 ? 'bg-indigo-500/20 border border-indigo-500/30 text-indigo-400' : 'bg-slate-800 border border-slate-700 text-slate-500'} flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">${i+1}</div>
+      <div>
+        <div class="text-slate-300 text-sm font-medium">${l.title}</div>
+        ${i < 3 ? '<div class="text-slate-500 text-xs mt-0.5">' + (i === 0 ? 'Build the knowledge base needed for foundational-level mastery' : i === 1 ? 'Apply concepts to real-world scenarios and case studies' : 'Develop the decision-making skills tested at higher levels') + '</div>' : ''}
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('start-learning-btn').textContent = 'Start Learning';
+}
+
+// ============================================================
+// LESSON ENGINE
+// ============================================================
+function startLearning() {
+  if (!currentSkill || !currentSkill.lessons) return;
+  currentLesson = 0;
+  lessonMode = 'reading';
+  quizAnswered = false;
+  nav('lesson');
+}
+
+function renderLesson() {
+  const skill = currentSkill;
+  if (!skill || !skill.lessons) return;
+  const lessons = skill.lessons;
+  const lesson = lessons[currentLesson];
+  const total = lessons.length;
+
+  document.getElementById('lesson-skill-name').textContent = skill.title;
+  document.getElementById('lesson-back-btn').setAttribute('onclick', `openSkill('${skill.slug}')`);
+
+  const pct = Math.round(((currentLesson) / total) * 100);
+  document.getElementById('lesson-progress-label').textContent = `Lesson ${currentLesson + 1} of ${total}`;
+  document.getElementById('lesson-progress-fill').style.width = pct + '%';
+  document.getElementById('lesson-progress-pct').textContent = pct + '%';
+
+  // Dots
+  const dotsEl = document.getElementById('lesson-dots');
+  dotsEl.innerHTML = lessons.map((_, i) => {
+    let cls = 'lesson-nav-dot ';
+    if (i < currentLesson) cls += 'bg-indigo-500';
+    else if (i === currentLesson) cls += 'bg-indigo-400 ring-2 ring-indigo-400/30';
+    else cls += 'bg-slate-700';
+    return `<div class="${cls}" onclick="jumpLesson(${i})" title="Lesson ${i+1}"></div>`;
+  }).join('');
+
+  document.getElementById('lesson-number-badge').textContent = currentLesson + 1;
+  document.getElementById('lesson-number-label').textContent = `Lesson ${currentLesson + 1} of ${total}`;
+  document.getElementById('lesson-title').textContent = lesson.title;
+
+  const prevBtn = document.getElementById('lesson-prev-btn');
+  prevBtn.disabled = currentLesson === 0 && lessonMode === 'reading';
+
+  document.getElementById('lesson-completion').classList.add('hidden');
+  document.getElementById('lesson-body').classList.remove('hidden');
+
+  if (lessonMode === 'reading') {
+    showReading(lesson);
+  } else {
+    showQuiz(lesson);
+  }
+}
+
+function showReading(lesson) {
+  document.getElementById('lesson-reading').innerHTML = lesson.reading;
+  document.getElementById('lesson-reading').classList.remove('hidden');
+  document.getElementById('lesson-quiz').classList.add('hidden');
+  document.getElementById('lesson-mode-label').textContent = 'Reading';
+  document.getElementById('lesson-next-btn').textContent = 'Continue to Practice →';
+  document.getElementById('lesson-next-btn').className = 'bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition cursor-pointer glow-btn';
+}
+
+function showQuiz(lesson) {
+  quizAnswered = false;
+  document.getElementById('lesson-reading').classList.add('hidden');
+  const q = lesson.quiz;
+  const quizEl = document.getElementById('lesson-quiz');
+  quizEl.innerHTML = `
+    <div class="mb-6">
+      <div class="text-xs text-indigo-400 font-bold uppercase tracking-wider mb-3">Practice Question</div>
+      <p class="text-white font-semibold text-base leading-relaxed mb-6">${q.q}</p>
+      <div class="space-y-3" id="quiz-options">
+        ${q.options.map((opt, i) => `
+          <div class="quiz-option rounded-xl p-4 flex items-start gap-3" onclick="selectOption(${i})">
+            <div class="w-6 h-6 rounded-full border-2 border-slate-600 flex items-center justify-center text-xs font-bold text-slate-400 flex-shrink-0 mt-0.5" id="opt-icon-${i}">${'ABCD'[i]}</div>
+            <span class="text-slate-300 text-sm leading-relaxed">${opt}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div id="quiz-feedback" class="hidden"></div>
+  `;
+  quizEl.classList.remove('hidden');
+  document.getElementById('lesson-mode-label').textContent = 'Practice';
+  document.getElementById('lesson-next-btn').textContent = 'Submit Answer';
+  document.getElementById('lesson-next-btn').className = 'bg-slate-700 text-slate-400 px-6 py-2.5 rounded-lg font-semibold text-sm cursor-not-allowed';
+  document.getElementById('lesson-next-btn').setAttribute('onclick', 'submitQuiz()');
+}
+
+let selectedOption = null;
+
+function selectOption(i) {
+  if (quizAnswered) return;
+  selectedOption = i;
+  document.querySelectorAll('.quiz-option').forEach((el, j) => {
+    el.classList.toggle('selected', j === i);
+  });
+  const nextBtn = document.getElementById('lesson-next-btn');
+  nextBtn.textContent = 'Submit Answer';
+  nextBtn.className = 'bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition cursor-pointer glow-btn';
+  nextBtn.setAttribute('onclick', 'submitQuiz()');
+}
+
+function submitQuiz() {
+  if (selectedOption === null || quizAnswered) return;
+  quizAnswered = true;
+  const lesson = currentSkill.lessons[currentLesson];
+  const q = lesson.quiz;
+  const correct = selectedOption === q.correct;
+
+  document.querySelectorAll('.quiz-option').forEach((el, i) => {
+    if (i === q.correct) el.classList.add('correct');
+    else if (i === selectedOption && !correct) el.classList.add('wrong');
+  });
+
+  const feedbackEl = document.getElementById('quiz-feedback');
+  feedbackEl.innerHTML = `
+    <div class="p-4 rounded-xl ${correct ? 'bg-green-500/10 border border-green-500/20' : 'bg-red-500/10 border border-red-500/20'}">
+      <div class="font-semibold ${correct ? 'text-green-400' : 'text-red-400'} mb-1">${correct ? '✓ Correct!' : '✗ Not quite'}</div>
+      <p class="text-slate-400 text-sm">${q.explanation}</p>
+    </div>
+  `;
+  feedbackEl.classList.remove('hidden');
+
+  const isLast = currentLesson === currentSkill.lessons.length - 1;
+  const nextBtn = document.getElementById('lesson-next-btn');
+  nextBtn.textContent = isLast ? 'Complete Learning Path 🎉' : 'Next Lesson →';
+  nextBtn.className = 'bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition cursor-pointer glow-btn';
+  nextBtn.setAttribute('onclick', 'advanceLesson()');
+}
+
+function lessonAction() {
+  if (lessonMode === 'reading') {
+    lessonMode = 'quiz';
+    selectedOption = null;
+    renderLesson();
+  } else if (quizAnswered) {
+    advanceLesson();
+  } else {
+    submitQuiz();
+  }
+}
+
+function advanceLesson() {
+  const total = currentSkill.lessons.length;
+  if (currentLesson < total - 1) {
+    currentLesson++;
+    lessonMode = 'reading';
+    quizAnswered = false;
+    selectedOption = null;
+    renderLesson();
+    window.scrollTo(0, 0);
+  } else {
+    // Completion
+    document.getElementById('lesson-progress-fill').style.width = '100%';
+    document.getElementById('lesson-progress-pct').textContent = '100%';
+    document.getElementById('lesson-body').classList.add('hidden');
+    document.getElementById('lesson-completion').classList.remove('hidden');
+    document.getElementById('lesson-completion').classList.add('fade-in');
+    // Update dots
+    const dotsEl = document.getElementById('lesson-dots');
+    dotsEl.querySelectorAll('.lesson-nav-dot').forEach(d => {
+      d.classList.remove('bg-slate-700', 'bg-indigo-400');
+      d.classList.add('bg-indigo-500');
+    });
+  }
+}
+
+function lessonNav(direction) {
+  if (lessonMode === 'quiz') {
+    lessonMode = 'reading';
+    renderLesson();
+    return;
+  }
+  if (direction === -1 && currentLesson > 0) {
+    currentLesson--;
+    lessonMode = 'reading';
+    quizAnswered = false;
+    selectedOption = null;
+    renderLesson();
+  }
+}
+
+function jumpLesson(i) {
+  currentLesson = i;
+  lessonMode = 'reading';
+  quizAnswered = false;
+  selectedOption = null;
+  renderLesson();
+}
+
+// ============================================================
+// ACADEMY GRID
+// ============================================================
+function getCategoryClass(cat) {
+  const map = { 'AI-Era': 'badge-ai', 'Uniquely Human': 'badge-human', 'Data & Systems': 'badge-data', 'Builder': 'badge-builder', 'Finance': 'badge-finance', 'Design': 'badge-design', 'Engineering': 'badge-eng' };
+  return map[cat] || 'badge-ai';
+}
+
+function getTrendClass(trend) {
+  return { 'rising-hot': 'trend-up-hot', 'rising': 'trend-up', 'stable': 'trend-stable', 'declining': 'trend-down', 'at-risk': 'trend-danger' }[trend] || 'trend-stable';
+}
+
+function getCtaLabel(trend) {
+  return (trend === 'declining' || trend === 'at-risk') ? 'Learn More' : 'Start Learning';
+}
+
+function buildCard(skill) {
+  const catClass = getCategoryClass(skill.category);
+  const trendClass = getTrendClass(skill.trend);
+  const cta = getCtaLabel(skill.trend);
+  return `
+    <div class="skill-card bg-slate-900/50 border border-slate-800 rounded-xl p-5 flex flex-col gap-3 fade-in" onclick="openSkill('${skill.slug}')">
+      <div class="flex items-start justify-between gap-2">
+        <span class="${trendClass} text-xs font-bold">${skill.trendLabel}</span>
+      </div>
+      <div>
+        <div class="text-white font-semibold text-sm leading-snug mb-1">${skill.title}</div>
+        <p class="text-slate-500 text-xs leading-relaxed line-clamp-3">${skill.description}</p>
+      </div>
+      <div class="flex items-center justify-between mt-auto pt-1">
+        <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${catClass}">${skill.category}</span>
+        <span class="text-xs text-indigo-400 font-medium">${cta} →</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderAcademy() {
+  const allRising = [...SKILLS, ...EXTRA_RISING];
+  document.getElementById('rising-grid').innerHTML = allRising.map(buildCard).join('');
+  document.getElementById('declining-grid').innerHTML = DECLINING_SKILLS.map(buildCard).join('');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+initAuth();
+renderAcademy();
+nav('academy');
+</script>
+</body>
+</html>

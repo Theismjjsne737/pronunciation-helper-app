@@ -1,0 +1,73 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--brand-gradient);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 24px rgba(79,70,229,.4);
+  transition: transform 0.15s, box-shadow 0.15s;
+  position: relative;
+  z-index: 1;
+}
+
+.btn:not(:disabled):hover {
+  transform: scale(1.06);
+  box-shadow: 0 8px 32px rgba(79,70,229,.5);
+}
+
+.btn:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.recording {
+  background: linear-gradient(135deg, #EF4444, #DC2626) !important;
+  box-shadow: 0 6px 24px rgba(239,68,68,.45) !important;
+}
+
+.recording:not(:disabled):hover {
+  box-shadow: 0 8px 32px rgba(239,68,68,.55) !important;
+}
+
+.pulseRing {
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(239,68,68,.3);
+  animation: pulse-ring 1.4s ease infinite;
+  z-index: 0;
+}
+
+.pulseRing2 {
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(239,68,68,.15);
+  animation: pulse-ring 1.4s ease 0.4s infinite;
+  z-index: 0;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}

@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "skills": {
+    "audit-library-health": {
+      "source": "skillcreatorai/ai-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/audit-library-health/SKILL.md",
+      "computedHash": "e3b14a7d9bf4dc9817a5c32cf0f1ce81416776447dc70553c8d2d9a494234439"
+    },
+    "backend-development": {
+      "source": "skillcreatorai/ai-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/backend-development/SKILL.md",
+      "computedHash": "d560e827fb8fadebf13b62ab2927de2331f13b047d5c271eab0471f318c2e1c0"
+    },
+    "best-practices": {
+      "source": "skillcreatorai/ai-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/best-practices/SKILL.md",
+      "computedHash": "9986d313c260ffb9ddc2b98b67bf9ce0ed1705e8707377c888714f47dfda032a"
+    },
+    "build-workspace-docs": {
+      "source": "skillcreatorai/ai-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/build-workspace-docs/SKILL.md",
+      "computedHash": "75046d8fe7192199e1c649e27031fdefa7905bf407a5724651207860fe41180f"
+    },
+    "changelog-generator": {
+      "source": "skillcreatorai/ai-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/changelog-generator/SKILL.md",
+      "computedHash": "4fc0135fc0ce17307e4672b790813801f9d63bccae0e72633ecad7b5bea7cb8b"
+    },
+    "code-documentation": {
+      "source": "skillcreatorai/ai-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/code-documentation/SKILL.md",
+      "computedHash": "bcc50e2460a3bf8f1298ac70f1420f4a47db8a23fa2c41330648f5135834438b"
+    },
+    "database-design": {
+      "source": "skillcreatorai/ai-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/database-design/SKILL.md",
+      "computedHash": "cd27a6d944304538d80693287d9902bcf843cc633a4fb5647e5676a7074da372"
+    },
+    "llm-application-dev": {
+      "source": "skillcreatorai/ai-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/llm-application-dev/SKILL.md",
+      "computedHash": "40d1e0994e1d9c79693b6970cfe9ea568e736cbbb7e51731cede9db210c2246c"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+Jane Smith
+jane.smith@email.com | github.com/janesmith | San Francisco, CA
+
+EXPERIENCE
+
+Software Engineer II — Acme Corp (2021–Present)
+- Built and maintained Python microservices handling 50M+ requests/day
+- Designed REST APIs consumed by 3 mobile and web clients
+- Migrated legacy monolith to Docker containers deployed on AWS EC2
+- Set up GitHub Actions CI/CD pipeline reducing deployment time by 40%
+- Wrote PostgreSQL queries and managed schema migrations with Alembic
+- Participated in on-call rotation and incident response
+
+Software Engineer — StartupXYZ (2019–2021)
+- Developed Flask REST APIs for a SaaS analytics platform
+- Integrated Redis caching layer, reducing API latency by 60%
+- Wrote unit and integration tests (pytest), maintained ~75% coverage
+- Collaborated with frontend team on API contracts
+
+SKILLS
+Languages: Python, JavaScript, SQL, Bash
+Frameworks: Flask, FastAPI, Django, SQLAlchemy
+Databases: PostgreSQL, Redis, MySQL
+Infrastructure: Docker, AWS (EC2, S3, RDS), GitHub Actions
+Tools: Git, Jira, Postman, VS Code
+
+EDUCATION
+B.S. Computer Science — UC Berkeley (2019)
+
+PROJECTS
+- Open source: contributed 3 PRs to a popular Python HTTP library
+- Built a personal project using Kafka for event streaming (side project)

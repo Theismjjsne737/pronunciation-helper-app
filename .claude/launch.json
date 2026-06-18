@@ -1,0 +1,47 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "portfolio",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "/Users/rhearao/portfolio", "run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "writing-assistant",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["/Users/rhearao/lingolab/writing-assistant/server.js"],
+      "port": 3001
+    },
+    {
+      "name": "memory-chatbot",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["/Users/rhearao/lingolab/memory-chatbot/server.js"],
+      "port": 3002
+    }
+    ,{
+      "name": "codecraft",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-p", "3003", "/Users/rhearao/lingolab/codecraft"],
+      "port": 3003
+    }
+    ,{
+      "name": "forgecoach-replica",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-p", "3004", "/Users/rhearao/lingolab/forgecoach-replica"],
+      "port": 3004
+    }
+    ,{
+      "name": "lingolab-server",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["/Users/rhearao/lingolab/pronunciation-helper/server/index.js"],
+      "port": 3005
+    }
+    ,{
+      "name": "lingolab-client",
+      "runtimeExecutable": "/bin/sh",
+      "runtimeArgs": ["/Users/rhearao/lingolab/pronunciation-helper/start-client.sh"],
+      "port": 5173
+    }
+  ]
+}

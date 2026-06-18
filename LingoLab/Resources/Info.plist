@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Bundle identifier -->
+    <key>CFBundleIdentifier</key>
+    <string>com.rhearao.LingoLab</string>
+
+    <!-- Bundle name -->
+    <key>CFBundleName</key>
+    <string>LingoLab</string>
+
+    <!-- Bundle version -->
+    <key>CFBundleVersion</key>
+    <string>1</string>
+
+    <!-- Bundle executable -->
+    <key>CFBundleExecutable</key>
+    <string>LingoLab</string>
+
+    <!-- Microphone — required for recording -->
+    <key>NSMicrophoneUsageDescription</key>
+    <string>LingoLab needs microphone access to record your pronunciation attempts.</string>
+
+    <!-- Speech recognition — required for analysis -->
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>LingoLab uses speech recognition to analyse and score your pronunciation.</string>
+
+    <!-- Notifications — for daily practice reminders (nice-to-have) -->
+    <key>NSUserNotificationsUsageDescription</key>
+    <string>LingoLab sends a daily reminder to help you build a practice habit.</string>
+
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>audio</string>
+    </array>
+
+    <key>UILaunchScreen</key>
+    <dict/>
+
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
+
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+
+    <!-- Anthropic API key for Claude API calls (dev only) -->
+    <key>ANTHROPIC_API_KEY</key>
+    <string>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</string>
+</dict>
+</plist>

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Writing Assistant</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f13;
+      --surface: #1a1a24;
+      --surface2: #22222f;
+      --border: #2e2e40;
+      --accent: #7c6aff;
+      --accent-soft: #7c6aff22;
+      --accent-hover: #9480ff;
+      --text: #e8e8f0;
+      --text-muted: #8888a8;
+      --success: #4ade80;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 24px 32px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    header h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
+    header p { font-size: 13px; color: var(--text-muted); margin-left: auto; }
+
+    .main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 0;
+      max-height: calc(100vh - 73px);
+      overflow: hidden;
+    }
+
+    /* ── Controls panel ── */
+    .controls {
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 12px;
+      font-family: inherit;
+      transition: border-color 0.15s;
+      outline: none;
+    }
+
+    textarea:focus { border-color: var(--accent); }
+    textarea::placeholder { color: var(--text-muted); }
+
+    .pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .pill:hover { border-color: var(--accent); color: var(--text); }
+
+    .pill.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .tone-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .tone-card {
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+
+    .tone-card:hover { border-color: var(--accent); }
+
+    .tone-card.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+    }
+
+    .tone-card .icon { font-size: 22px; margin-bottom: 4px; }
+    .tone-card .name { font-size: 12px; font-weight: 600; color: var(--text); }
+    .tone-card .desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .tone-card.active .name { color: var(--accent); }
+
+    .generate-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .generate-btn:hover:not(:disabled) { background: var(--accent-hover); }
+    .generate-btn:active:not(:disabled) { transform: scale(0.98); }
+    .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    .generate-btn.loading .spinner { display: block; }
+    .generate-btn.loading .btn-text::after { content: 'Generating…'; }
+    .generate-btn:not(.loading) .btn-text::after { content: 'Generate'; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Output panel ── */
+    .output-panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .output-toolbar {
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .output-toolbar span {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .copy-btn {
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .copy-btn.copied { border-color: var(--success); color: var(--success); }
+
+    .output-content {
+      flex: 1;
+      padding: 28px;
+      overflow-y: auto;
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .empty-state {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      gap: 12px;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .empty-state .empty-icon { font-size: 48px; opacity: 0.4; }
+    .empty-state p { font-size: 14px; max-width: 260px; line-height: 1.6; }
+
+    .word-count {
+      padding: 10px 24px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 16px;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--accent);
+      margin-left: 1px;
+      vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    .error-msg {
+      color: #f87171;
+      font-size: 13px;
+      padding: 10px 14px;
+      background: #f8717120;
+      border-radius: var(--radius-sm);
+      border: 1px solid #f8717140;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">✍️</div>
+  <h1>AI Writing Assistant</h1>
+  <p>Powered by Claude</p>
+</header>
+
+<div class="main">
+  <!-- Controls -->
+  <div class="controls">
+
+    <div class="field">
+      <label>What to write</label>
+      <textarea id="prompt" placeholder="e.g. Write a product launch announcement for a new noise-cancelling headphone…"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Tone</label>
+      <div class="tone-grid" id="toneGroup">
+        <div class="tone-card active" data-value="formal">
+          <div class="icon">🎩</div>
+          <div class="name">Formal</div>
+          <div class="desc">Professional & precise</div>
+        </div>
+        <div class="tone-card" data-value="casual">
+          <div class="icon">😊</div>
+          <div class="name">Casual</div>
+          <div class="desc">Friendly & natural</div>
+        </div>
+        <div class="tone-card" data-value="persuasive">
+          <div class="icon">🔥</div>
+          <div class="name">Persuasive</div>
+          <div class="desc">Compelling & bold</div>
+        </div>
+        <div class="tone-card" data-value="humorous">
+          <div class="icon">😄</div>
+          <div class="name">Humorous</div>
+          <div class="desc">Witty & fun</div>
+        </div>
+        <div class="tone-card" data-value="empathetic">
+          <div class="icon">💙</div>
+          <div class="name">Empathetic</div>
+          <div class="desc">Warm & supportive</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Length</label>
+      <div class="pill-group" id="lengthGroup">
+        <div class="pill" data-value="short">Short</div>
+        <div class="pill active" data-value="medium">Medium</div>
+        <div class="pill" data-value="long">Long</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Format</label>
+      <div class="pill-group" id="formatGroup">
+        <div class="pill active" data-value="paragraph">Paragraph</div>
+        <div class="pill" data-value="bullets">Bullets</div>
+        <div class="pill" data-value="email">Email</div>
+        <div class="pill" data-value="social-post">Social Post</div>
+        <div class="pill" data-value="outline">Outline</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Audience</label>
+      <div class="pill-group" id="audienceGroup">
+        <div class="pill active" data-value="general">General</div>
+        <div class="pill" data-value="professional">Professional</div>
+        <div class="pill" data-value="academic">Academic</div>
+        <div class="pill" data-value="beginner">Beginner</div>
+        <div class="pill" data-value="executive">Executive</div>
+      </div>
+    </div>
+
+    <div id="errorMsg" class="error-msg" style="display:none;"></div>
+
+    <button class="generate-btn" id="generateBtn" onclick="generate()">
+      <div class="spinner"></div>
+      <span class="btn-text"></span>
+    </button>
+
+  </div>
+
+  <!-- Output -->
+  <div class="output-panel">
+    <div class="output-toolbar">
+      <span id="outputLabel">Output will appear here</span>
+      <button class="copy-btn" id="copyBtn" onclick="copyOutput()" style="display:none;">
+        📋 Copy
+      </button>
+    </div>
+
+    <div class="output-content" id="outputContent">
+      <div class="empty-state">
+        <div class="empty-icon">✨</div>
+        <p>Set your tone, format, and audience, then describe what you want to write.</p>
+      </div>
+    </div>
+
+    <div class="word-count" id="wordCount" style="display:none;">
+      <span id="wordCountText"></span>
+      <span id="charCountText"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── State ──
+  const state = {
+    tone: 'formal',
+    length: 'medium',
+    format: 'paragraph',
+    audience: 'general',
+  };
+
+  // ── Pill / card selection ──
+  function setupGroup(containerId, stateKey, cardClass) {
+    const container = document.getElementById(containerId);
+    container.querySelectorAll(`.${cardClass}`).forEach(el => {
+      el.addEventListener('click', () => {
+        container.querySelectorAll(`.${cardClass}`).forEach(e => e.classList.remove('active'));
+        el.classList.add('active');
+        state[stateKey] = el.dataset.value;
+      });
+    });
+  }
+
+  setupGroup('toneGroup', 'tone', 'tone-card');
+  setupGroup('lengthGroup', 'length', 'pill');
+  setupGroup('formatGroup', 'format', 'pill');
+  setupGroup('audienceGroup', 'audience', 'pill');
+
+  // ── Generate ──
+  let controller = null;
+
+  async function generate() {
+    const prompt = document.getElementById('prompt').value.trim();
+    const btn = document.getElementById('generateBtn');
+    const outputContent = document.getElementById('outputContent');
+    const outputLabel = document.getElementById('outputLabel');
+    const errorMsg = document.getElementById('errorMsg');
+    const copyBtn = document.getElementById('copyBtn');
+    const wordCount = document.getElementById('wordCount');
+
+    errorMsg.style.display = 'none';
+
+    if (!prompt) {
+      errorMsg.textContent = 'Please enter what you want to write.';
+      errorMsg.style.display = 'block';
+      return;
+    }
+
+    if (controller) controller.abort();
+    controller = new AbortController();
+
+    btn.classList.add('loading');
+    btn.disabled = true;
+    copyBtn.style.display = 'none';
+    wordCount.style.display = 'none';
+    outputLabel.textContent = 'Generating…';
+    outputContent.innerHTML = '<span class="cursor"></span>';
+
+    let fullText = '';
+
+    try {
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, ...state }),
+        signal: controller.signal,
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Server error');
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') break;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.error) throw new Error(parsed.error);
+            if (parsed.text) {
+              fullText += parsed.text;
+              outputContent.innerHTML = escapeHtml(fullText) + '<span class="cursor"></span>';
+              outputContent.scrollTop = outputContent.scrollHeight;
+            }
+          } catch (e) {
+            if (e.message !== 'Unexpected end of JSON input') throw e;
+          }
+        }
+      }
+
+      // Final render — remove cursor
+      outputContent.textContent = fullText;
+      outputLabel.textContent = `${state.tone} · ${state.format} · ${state.audience}`;
+      copyBtn.style.display = 'flex';
+      updateWordCount(fullText);
+
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      errorMsg.textContent = err.message;
+      errorMsg.style.display = 'block';
+      outputContent.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Something went wrong. Check your API key and try again.</p></div>';
+      outputLabel.textContent = 'Error';
+    } finally {
+      btn.classList.remove('loading');
+      btn.disabled = false;
+      controller = null;
+    }
+  }
+
+  function updateWordCount(text) {
+    const words = text.trim().split(/\s+/).filter(Boolean).length;
+    const chars = text.length;
+    document.getElementById('wordCountText').textContent = `${words} words`;
+    document.getElementById('charCountText').textContent = `${chars} characters`;
+    document.getElementById('wordCount').style.display = 'flex';
+  }
+
+  async function copyOutput() {
+    const text = document.getElementById('outputContent').textContent;
+    const btn = document.getElementById('copyBtn');
+    try {
+      await navigator.clipboard.writeText(text);
+      btn.textContent = '✓ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.innerHTML = '📋 Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    } catch {}
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // Submit on Ctrl/Cmd+Enter
+  document.getElementById('prompt').addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') generate();
+  });
+</script>
+</body>
+</html>

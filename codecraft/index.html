@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeCraft Workshop Series — UIUC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:    #0b1120;
+      --blue-dk: #0f2040;
+      --blue:    #1a3a6e;
+      --cyan:    #06b6d4;
+      --cyan-lt: #22d3ee;
+      --purple:  #7c3aed;
+      --purple-lt:#a855f7;
+      --white:   #f8fafc;
+      --gray-100:#f1f5f9;
+      --gray-300:#cbd5e1;
+      --gray-500:#64748b;
+      --gray-700:#334155;
+      --text:    #0f172a;
+      --r:       12px;
+      --r-lg:    20px;
+      --shadow:  0 4px 24px rgba(0,0,0,.12);
+      --shadow-lg:0 12px 48px rgba(0,0,0,.18);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── Utility ── */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    .tag {
+      display: inline-block;
+      font-size: .72rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 12px; border-radius: 100px;
+      background: rgba(6,182,212,.15); color: var(--cyan);
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: 800; line-height: 1.15;
+      letter-spacing: -.02em; margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 1.1rem; color: var(--gray-500);
+      max-width: 580px; line-height: 1.7;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; border-radius: 10px;
+      font-weight: 700; font-size: .95rem; cursor: pointer;
+      border: none; text-decoration: none;
+      transition: transform .2s, box-shadow .2s, filter .2s;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      color: #fff; box-shadow: 0 4px 20px rgba(6,182,212,.4);
+    }
+    .btn-primary:hover { box-shadow: 0 8px 32px rgba(6,182,212,.5); }
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--cyan); color: var(--cyan);
+    }
+    .btn-outline:hover { background: rgba(6,182,212,.08); }
+    .btn-sm { padding: 10px 20px; font-size: .875rem; }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 16px 0;
+      backdrop-filter: blur(16px);
+      background: rgba(11,17,32,.85);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      transition: padding .3s;
+    }
+    nav .inner {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      font-size: 1.25rem; font-weight: 800;
+      background: linear-gradient(90deg, var(--cyan), var(--purple-lt));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-decoration: none; letter-spacing: -.02em;
+    }
+    .logo span { font-family: 'Fira Code', monospace; }
+    nav ul { display: flex; gap: 32px; list-style: none; }
+    nav ul a {
+      text-decoration: none; color: rgba(255,255,255,.7);
+      font-size: .9rem; font-weight: 500;
+      transition: color .2s;
+    }
+    nav ul a:hover { color: var(--cyan); }
+    .nav-cta { padding: 9px 20px !important; font-size: .85rem !important; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; flex-direction: column; gap: 5px; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: #fff; border-radius: 2px; transition: .3s; }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 100vh; display: flex; align-items: center;
+      background: var(--navy);
+      position: relative; overflow: hidden;
+      padding-top: 80px;
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 64px; align-items: center; padding: 80px 0;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(6,182,212,.12); border: 1px solid rgba(6,182,212,.3);
+      border-radius: 100px; padding: 6px 14px;
+      color: var(--cyan); font-size: .82rem; font-weight: 600;
+      margin-bottom: 24px;
+    }
+    .hero-badge .dot { width: 7px; height: 7px; background: var(--cyan); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+    .hero-title {
+      font-size: clamp(2.5rem, 5.5vw, 4rem);
+      font-weight: 900; line-height: 1.08;
+      letter-spacing: -.03em; color: #fff; margin-bottom: 20px;
+    }
+    .hero-title .accent {
+      background: linear-gradient(90deg, var(--cyan), var(--purple-lt));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: 1.15rem; color: rgba(255,255,255,.65);
+      line-height: 1.75; margin-bottom: 36px; max-width: 500px;
+    }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 52px; }
+    .hero-stats {
+      display: flex; gap: 36px;
+      border-top: 1px solid rgba(255,255,255,.1);
+      padding-top: 32px;
+    }
+    .hero-stat-num {
+      font-size: 1.75rem; font-weight: 800; color: #fff;
+      background: linear-gradient(90deg, var(--cyan), var(--purple-lt));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-stat-label { font-size: .8rem; color: rgba(255,255,255,.5); margin-top: 2px; text-transform: uppercase; letter-spacing: .06em; }
+
+    /* Hero illustration */
+    .hero-visual {
+      position: relative; display: flex; justify-content: center;
+    }
+    .code-window {
+      background: #141d2e; border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 24px 80px rgba(0,0,0,.5);
+      width: 100%; max-width: 480px;
+      overflow: hidden;
+    }
+    .cw-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 14px 18px;
+      background: #1a2538; border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .cw-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .cw-dot.red   { background: #ff5f57; }
+    .cw-dot.yellow{ background: #febc2e; }
+    .cw-dot.green { background: #28c840; }
+    .cw-filename { margin-left: 8px; font-family: 'Fira Code', monospace; font-size: .78rem; color: rgba(255,255,255,.4); }
+    .cw-body { padding: 24px; font-family: 'Fira Code', monospace; font-size: .82rem; line-height: 1.85; }
+    .cw-body .ln { color: rgba(255,255,255,.2); margin-right: 16px; user-select: none; }
+    .k { color: #c792ea; }
+    .fn { color: #82aaff; }
+    .str { color: #c3e88d; }
+    .tag-c { color: #f78c6c; }
+    .attr { color: #89ddff; }
+    .val { color: #a3be8c; }
+    .cmt { color: #546e7a; font-style: italic; }
+    .cursor { display: inline-block; width: 2px; height: 14px; background: var(--cyan); animation: blink 1s step-end infinite; vertical-align: middle; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .floating-cards {
+      position: absolute; pointer-events: none;
+    }
+    .fc { position: absolute; background: #1a2538; border: 1px solid rgba(255,255,255,.1); border-radius: 12px; padding: 12px 16px; }
+    .fc-1 { top: -20px; right: -30px; }
+    .fc-2 { bottom: 20px; left: -40px; }
+    .fc-emoji { font-size: 1.4rem; }
+    .fc-label { font-size: .72rem; color: rgba(255,255,255,.5); margin-top: 2px; }
+    .fc-val-green { color: #28c840; font-weight: 700; font-size: .9rem; }
+
+    /* Decorative blobs */
+    .blob {
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: .2; pointer-events: none;
+    }
+    .blob-1 { width: 500px; height: 500px; background: var(--purple); top: -100px; left: -100px; }
+    .blob-2 { width: 400px; height: 400px; background: var(--cyan); bottom: -60px; right: 100px; }
+
+    /* ── About ── */
+    #about {
+      padding: 100px 0;
+      background: var(--gray-100);
+    }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .about-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .about-card {
+      background: #fff; border-radius: var(--r); padding: 24px;
+      box-shadow: var(--shadow); transition: transform .25s, box-shadow .25s;
+      border: 1px solid rgba(0,0,0,.05);
+    }
+    .about-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .about-card .icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 14px;
+    }
+    .icon-cyan   { background: rgba(6,182,212,.12); }
+    .icon-purple { background: rgba(124,58,237,.12); }
+    .icon-blue   { background: rgba(59,130,246,.12); }
+    .icon-green  { background: rgba(16,185,129,.12); }
+    .about-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 6px; }
+    .about-card p  { font-size: .85rem; color: var(--gray-500); line-height: 1.6; }
+    .highlight-box {
+      margin-top: 28px; padding: 24px;
+      background: linear-gradient(135deg, rgba(6,182,212,.08), rgba(124,58,237,.08));
+      border: 1px solid rgba(6,182,212,.2); border-radius: var(--r);
+    }
+    .highlight-box p { font-size: 1rem; font-weight: 600; color: var(--text); line-height: 1.6; }
+    .highlight-box span { color: var(--cyan); }
+
+    /* ── Workshops ── */
+    #workshops { padding: 100px 0; }
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-header .section-sub { margin: 0 auto; }
+    .workshops-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; }
+    .workshop-card {
+      background: #fff; border-radius: var(--r-lg);
+      border: 1px solid rgba(0,0,0,.07);
+      box-shadow: var(--shadow); overflow: hidden;
+      transition: transform .25s, box-shadow .25s;
+      display: flex; flex-direction: column;
+    }
+    .workshop-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .wc-header {
+      padding: 28px 24px 20px;
+      position: relative; overflow: hidden;
+    }
+    .wc-header::before {
+      content: ''; position: absolute; inset: 0;
+      opacity: .1;
+    }
+    .wc-type-badge {
+      font-size: .7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; padding: 4px 10px; border-radius: 100px;
+      margin-bottom: 12px; display: inline-block;
+    }
+    .wc-title { font-size: 1.15rem; font-weight: 800; line-height: 1.3; margin-bottom: 6px; }
+    .wc-emoji { font-size: 2rem; margin-bottom: 12px; display: block; }
+    .wc-body { padding: 0 24px 24px; flex: 1; display: flex; flex-direction: column; }
+    .wc-meta { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .wc-meta-item {
+      display: flex; align-items: center; gap: 10px;
+      font-size: .83rem; color: var(--gray-500);
+    }
+    .wc-meta-icon { font-size: 1rem; flex-shrink: 0; }
+    .spots-bar { margin-bottom: 20px; }
+    .spots-label { display: flex; justify-content: space-between; font-size: .75rem; margin-bottom: 6px; }
+    .spots-label .left { color: var(--gray-500); }
+    .spots-label .right { font-weight: 700; }
+    .spots-track { height: 6px; background: var(--gray-100); border-radius: 100px; overflow: hidden; }
+    .spots-fill { height: 100%; border-radius: 100px; transition: width .8s ease; }
+    .spots-fill.green  { background: linear-gradient(90deg, #10b981, #34d399); }
+    .spots-fill.yellow { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .spots-fill.red    { background: linear-gradient(90deg, #ef4444, #f87171); }
+    .spots-num { font-weight: 700; }
+    .spots-num.green  { color: #059669; }
+    .spots-num.yellow { color: #d97706; }
+    .spots-num.red    { color: #dc2626; }
+    .wc-footer { margin-top: auto; }
+
+    /* Gradient variants */
+    .grad-cyan   { background: linear-gradient(135deg, #06b6d4, #0e7490); }
+    .grad-purple { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+    .grad-blue   { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+    .grad-green  { background: linear-gradient(135deg, #10b981, #059669); }
+    .badge-cyan   { background: rgba(6,182,212,.15);  color: #0891b2; }
+    .badge-purple { background: rgba(124,58,237,.15); color: #7c3aed; }
+    .badge-blue   { background: rgba(59,130,246,.15); color: #2563eb; }
+    .badge-green  { background: rgba(16,185,129,.15); color: #059669; }
+    .text-white   { color: #fff; }
+
+    /* ── Gallery ── */
+    #gallery { padding: 100px 0; background: var(--gray-100); }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: auto;
+      gap: 16px;
+    }
+    .gallery-item {
+      position: relative; border-radius: var(--r); overflow: hidden;
+      cursor: pointer;
+    }
+    .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+    .gallery-item:nth-child(4) { grid-column: span 2; }
+    .gallery-thumb {
+      width: 100%; aspect-ratio: 4/3;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; transition: transform .4s;
+    }
+    .gallery-item:nth-child(1) .gallery-thumb { aspect-ratio: 1/1; }
+    .gallery-item:nth-child(4) .gallery-thumb { aspect-ratio: 2/1; }
+    .gallery-item:hover .gallery-thumb { transform: scale(1.06); }
+    .gallery-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(11,17,32,.92) 0%, rgba(11,17,32,.2) 60%, transparent 100%);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 20px;
+      opacity: 0; transition: opacity .3s;
+    }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+    .gallery-info-always {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 16px;
+      background: linear-gradient(to top, rgba(11,17,32,.85), transparent);
+    }
+    .gallery-title { color: #fff; font-weight: 700; font-size: .9rem; line-height: 1.3; }
+    .gallery-desc  { color: rgba(255,255,255,.7); font-size: .78rem; margin-top: 4px; }
+    .gallery-author {
+      color: var(--cyan); font-size: .75rem; font-weight: 600;
+      margin-top: 8px; display: flex; align-items: center; gap: 6px;
+    }
+    .gallery-author::before { content: '👤'; font-size: .85rem; }
+
+    /* bg colors for gallery */
+    .bg-p1 { background: linear-gradient(135deg, #0b1120 60%, #1a3a6e); }
+    .bg-p2 { background: linear-gradient(135deg, #1a0533, #3b0764); }
+    .bg-p3 { background: linear-gradient(135deg, #052e16, #14532d); }
+    .bg-p4 { background: linear-gradient(135deg, #1c1917, #44403c); }
+    .bg-p5 { background: linear-gradient(135deg, #0c0a09, #1c1917); }
+    .bg-p6 { background: linear-gradient(135deg, #0f172a, #1e3a5f); }
+    .bg-p7 { background: linear-gradient(135deg, #1f1635, #4c1d95); }
+    .bg-p8 { background: linear-gradient(135deg, #042f2e, #134e4a); }
+
+    /* ── Resources ── */
+    #resources { padding: 100px 0; }
+    .resources-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+    .resource-cards { display: flex; flex-direction: column; gap: 14px; margin-bottom: 36px; }
+    .resource-card {
+      display: flex; align-items: center; gap: 16px;
+      padding: 18px 20px; background: #fff;
+      border: 1px solid rgba(0,0,0,.07); border-radius: var(--r);
+      text-decoration: none; color: inherit;
+      transition: border-color .2s, box-shadow .2s, transform .2s;
+    }
+    .resource-card:hover {
+      border-color: var(--cyan); box-shadow: 0 0 0 4px rgba(6,182,212,.1);
+      transform: translateX(4px);
+    }
+    .rc-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .rc-title { font-weight: 700; font-size: .95rem; margin-bottom: 2px; }
+    .rc-desc  { font-size: .8rem; color: var(--gray-500); }
+    .rc-arrow { margin-left: auto; color: var(--gray-300); font-size: 1.2rem; transition: color .2s, transform .2s; }
+    .resource-card:hover .rc-arrow { color: var(--cyan); transform: translateX(4px); }
+
+    /* FAQ */
+    .faq-list { display: flex; flex-direction: column; gap: 12px; }
+    .faq-item {
+      background: #fff; border: 1px solid rgba(0,0,0,.07);
+      border-radius: var(--r); overflow: hidden;
+    }
+    .faq-q {
+      width: 100%; text-align: left; padding: 18px 20px;
+      background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: .95rem; font-weight: 600; color: var(--text);
+      transition: color .2s;
+    }
+    .faq-q:hover { color: var(--cyan); }
+    .faq-chevron { transition: transform .3s; font-size: 1rem; color: var(--gray-500); }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); color: var(--cyan); }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height .35s ease, padding .3s;
+      padding: 0 20px; color: var(--gray-500); font-size: .9rem; line-height: 1.7;
+    }
+    .faq-item.open .faq-a { max-height: 200px; padding: 0 20px 18px; }
+
+    /* ── Footer / CTA ── */
+    #footer-cta {
+      background: var(--navy); padding: 80px 0 0;
+      position: relative; overflow: hidden;
+    }
+    #footer-cta .blob-1 { opacity: .12; width: 600px; height: 600px; bottom: -200px; left: -200px; }
+    #footer-cta .blob-2 { opacity: .08; width: 400px; height: 400px; top: -100px; right: 0; }
+    .cta-inner { text-align: center; position: relative; z-index: 1; padding-bottom: 80px; }
+    .cta-title {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 900; color: #fff; letter-spacing: -.02em; margin-bottom: 16px;
+    }
+    .cta-title .accent {
+      background: linear-gradient(90deg, var(--cyan), var(--purple-lt));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .cta-sub { color: rgba(255,255,255,.6); font-size: 1.05rem; margin-bottom: 40px; }
+    .signup-form {
+      display: flex; gap: 12px; max-width: 480px; margin: 0 auto 64px;
+      flex-wrap: wrap; justify-content: center;
+    }
+    .signup-form input {
+      flex: 1; min-width: 220px;
+      padding: 14px 18px; border-radius: 10px;
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+      color: #fff; font-size: .95rem; font-family: inherit;
+      outline: none; transition: border-color .2s, background .2s;
+    }
+    .signup-form input::placeholder { color: rgba(255,255,255,.35); }
+    .signup-form input:focus { border-color: var(--cyan); background: rgba(255,255,255,.12); }
+    .social-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 60px; }
+    .social-link {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none; font-size: 1.2rem;
+      transition: background .2s, border-color .2s, transform .2s;
+    }
+    .social-link:hover {
+      background: rgba(6,182,212,.2); border-color: var(--cyan);
+      transform: translateY(-3px);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.07);
+      padding: 24px 0;
+    }
+    .footer-bottom-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-bottom p { font-size: .82rem; color: rgba(255,255,255,.35); }
+    .footer-contact { font-size: .82rem; color: rgba(255,255,255,.4); }
+    .footer-contact a { color: var(--cyan); text-decoration: none; }
+
+    /* ── Animations ── */
+    .fade-up {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .fade-up-delay-1 { transition-delay: .1s; }
+    .fade-up-delay-2 { transition-delay: .2s; }
+    .fade-up-delay-3 { transition-delay: .3s; }
+    .fade-up-delay-4 { transition-delay: .4s; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .hero-grid   { grid-template-columns: 1fr; gap: 48px; text-align: center; padding: 60px 0; }
+      .hero-sub    { margin: 0 auto 36px; }
+      .hero-actions { justify-content: center; }
+      .hero-stats  { justify-content: center; }
+      .hero-visual { display: none; }
+      .about-grid  { grid-template-columns: 1fr; gap: 48px; }
+      .resources-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+      .gallery-item:nth-child(1) { grid-column: span 2; }
+      .gallery-item:nth-child(4) { grid-column: span 2; }
+    }
+    @media (max-width: 640px) {
+      nav ul { display: none; }
+      .hamburger { display: flex; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .about-cards  { grid-template-columns: 1fr; }
+      .workshops-grid { grid-template-columns: 1fr; }
+      .footer-bottom-inner { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 400px) {
+      .gallery-grid { grid-template-columns: 1fr; }
+      .gallery-item:nth-child(1),
+      .gallery-item:nth-child(4) { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="container inner">
+    <a class="logo" href="#"><span>&lt;</span>CodeCraft<span>/&gt;</span></a>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#workshops">Workshops</a></li>
+      <li><a href="#gallery">Projects</a></li>
+      <li><a href="#resources">Resources</a></li>
+    </ul>
+    <a href="#workshops" class="btn btn-primary nav-cta">Register Now</a>
+    <button class="hamburger" aria-label="Menu" onclick="document.querySelector('nav ul').classList.toggle('mobile-open')" style="">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="container">
+    <div class="hero-grid">
+      <!-- Left -->
+      <div>
+        <div class="hero-badge"><span class="dot"></span> UIUC Spring 2026 Series Now Open</div>
+        <h1 class="hero-title">
+          Build Real Websites.<br/>
+          <span class="accent">Learn Real Skills.</span>
+        </h1>
+        <p class="hero-sub">
+          Hands-on web development workshops for absolute beginners. No prior experience required — just show up and build something you're proud of.
+        </p>
+        <div class="hero-actions">
+          <a href="#workshops" class="btn btn-primary">Register for Next Workshop →</a>
+          <a href="#gallery" class="btn btn-outline">See Past Projects</a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-num">500+</div>
+            <div class="hero-stat-label">Students Taught</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">40+</div>
+            <div class="hero-stat-label">Workshops Held</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">Free</div>
+            <div class="hero-stat-label">Always &amp; Forever</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Code Window -->
+      <div class="hero-visual">
+        <div class="code-window">
+          <div class="cw-bar">
+            <div class="cw-dot red"></div>
+            <div class="cw-dot yellow"></div>
+            <div class="cw-dot green"></div>
+            <span class="cw-filename">portfolio.html</span>
+          </div>
+          <div class="cw-body" style="color:rgba(255,255,255,.85)">
+            <div><span class="ln">1</span><span class="tag-c">&lt;!DOCTYPE</span> <span class="attr">html</span><span class="tag-c">&gt;</span></div>
+            <div><span class="ln">2</span><span class="tag-c">&lt;html</span> <span class="attr">lang</span>=<span class="str">"en"</span><span class="tag-c">&gt;</span></div>
+            <div><span class="ln">3</span>&nbsp;&nbsp;<span class="tag-c">&lt;head&gt;</span></div>
+            <div><span class="ln">4</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag-c">&lt;title&gt;</span><span class="str">My Portfolio ✨</span><span class="tag-c">&lt;/title&gt;</span></div>
+            <div><span class="ln">5</span>&nbsp;&nbsp;<span class="tag-c">&lt;/head&gt;</span></div>
+            <div><span class="ln">6</span>&nbsp;&nbsp;<span class="tag-c">&lt;body&gt;</span></div>
+            <div><span class="ln">7</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag-c">&lt;h1&gt;</span></div>
+            <div><span class="ln">8</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">Hello</span>, <span class="str">World!</span> 👋</div>
+            <div><span class="ln">9</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag-c">&lt;/h1&gt;</span></div>
+            <div><span class="ln">10</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt">&lt;!-- Your code goes here --&gt;</span></div>
+            <div><span class="ln">11</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag-c">&lt;p&gt;</span>I built this in 3 hours!<span class="tag-c">&lt;/p&gt;</span></div>
+            <div><span class="ln">12</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cursor"></span></div>
+          </div>
+        </div>
+        <!-- Floating badges -->
+        <div class="fc fc-1" style="animation: float 4s ease-in-out infinite;">
+          <div class="fc-emoji">🎉</div>
+          <div class="fc-val-green">Build Complete!</div>
+          <div class="fc-label">in just 3 hours</div>
+        </div>
+        <div class="fc fc-2" style="animation: float 4s ease-in-out 1.5s infinite;">
+          <div class="fc-emoji">⚡</div>
+          <div class="fc-val-green">No Experience Needed</div>
+          <div class="fc-label">beginner friendly</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+@keyframes float {
+  0%,100%{ transform:translateY(0); }
+  50%    { transform:translateY(-10px); }
+}
+</style>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <!-- Left copy -->
+      <div>
+        <span class="tag">About CodeCraft</span>
+        <h2 class="section-title">Learn by building, not by watching.</h2>
+        <p class="section-sub">
+          CodeCraft is a monthly hands-on workshop series at UIUC where you skip the theory and go straight to making real things — websites, games, apps — from scratch.
+        </p>
+        <div class="highlight-box" style="margin-top:28px;">
+          <p>Every session is designed so that <span>complete beginners</span> leave with a <span>fully working project</span> they built themselves — no fluff, no filler.</p>
+        </div>
+        <div style="margin-top:28px; display:flex; gap:12px; flex-wrap:wrap;">
+          <a href="#workshops" class="btn btn-primary btn-sm">Browse Workshops</a>
+          <a href="#resources" class="btn btn-outline btn-sm">Free Resources</a>
+        </div>
+      </div>
+      <!-- Right cards -->
+      <div>
+        <div class="about-cards">
+          <div class="about-card fade-up">
+            <div class="icon icon-cyan">💻</div>
+            <h3>In-Person &amp; Virtual</h3>
+            <p>Attend on campus or join via Zoom — same experience, same community.</p>
+          </div>
+          <div class="about-card fade-up fade-up-delay-1">
+            <div class="icon icon-purple">🚀</div>
+            <h3>Project-Based</h3>
+            <p>You build a complete project every single session. No toy examples.</p>
+          </div>
+          <div class="about-card fade-up fade-up-delay-2">
+            <div class="icon icon-green">🌱</div>
+            <h3>Beginner-Friendly</h3>
+            <p>Zero experience required. If you can type, you can code with us.</p>
+          </div>
+          <div class="about-card fade-up fade-up-delay-3">
+            <div class="icon icon-blue">🤝</div>
+            <h3>Peer Community</h3>
+            <p>200+ active members across Discord, GitHub, and study groups.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WORKSHOPS ── -->
+<section id="workshops">
+  <div class="container">
+    <div class="section-header">
+      <span class="tag">Upcoming Workshops</span>
+      <h2 class="section-title">Pick your next project.</h2>
+      <p class="section-sub">Each workshop is self-contained — join any one, or join them all. Seats fill up fast.</p>
+    </div>
+    <div class="workshops-grid">
+
+      <!-- Card 1 -->
+      <div class="workshop-card fade-up">
+        <div class="wc-header grad-cyan text-white">
+          <span class="wc-emoji">🌐</span>
+          <div class="wc-type-badge badge-cyan" style="background:rgba(255,255,255,.2);color:#fff;">HTML &amp; CSS</div>
+          <div class="wc-title text-white">Build Your Portfolio Website</div>
+        </div>
+        <div class="wc-body">
+          <div class="wc-meta">
+            <div class="wc-meta-item"><span class="wc-meta-icon">📅</span> May 10, 2026 · 2:00–5:00 PM</div>
+            <div class="wc-meta-item"><span class="wc-meta-icon">📍</span> Siebel Center 1404 + Zoom</div>
+            <div class="wc-meta-item"><span class="wc-meta-icon">🎓</span> No experience needed</div>
+          </div>
+          <div class="spots-bar">
+            <div class="spots-label">
+              <span class="left">Spots remaining</span>
+              <span class="right spots-num green">12 left</span>
+            </div>
+            <div class="spots-track"><div class="spots-fill green" style="width:40%"></div></div>
+          </div>
+          <div class="wc-footer">
+            <a href="#" class="btn btn-primary" style="width:100%;justify-content:center;">Register Free →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="workshop-card fade-up fade-up-delay-1">
+        <div class="wc-header grad-purple text-white">
+          <span class="wc-emoji">🎮</span>
+          <div class="wc-type-badge" style="background:rgba(255,255,255,.2);color:#fff;">JavaScript</div>
+          <div class="wc-title text-white">Create an Interactive Browser Game</div>
+        </div>
+        <div class="wc-body">
+          <div class="wc-meta">
+            <div class="wc-meta-item"><span class="wc-meta-icon">📅</span> May 24, 2026 · 1:00–4:00 PM</div>
+            <div class="wc-meta-item"><span class="wc-meta-icon">📍</span> ECEB 3002 + Zoom</div>
+            <div class="wc-meta-item"><span class="wc-meta-icon">🎓</span> Basic HTML helpful</div>
+          </div>
+          <div class="spots-bar">
+            <div class="spots-label">
+              <span class="left">Spots remaining</span>
+              <span class="right spots-num yellow">6 left</span>
+            </div>
+            <div class="spots-track"><div class="spots-fill yellow" style="width:75%"></div></div>
+          </div>
+          <div class="wc-footer">
+            <a href="#" class="btn btn-primary" style="width:100%;justify-content:center;background:linear-gradient(135deg,#7c3aed,#a855f7);box-shadow:0 4px 20px rgba(124,58,237,.4);">Register Free →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="workshop-card fade-up fade-up-delay-2">
+        <div class="wc-header grad-blue text-white">
+          <span class="wc-emoji">📊</span>
+          <div class="wc-type-badge" style="background:rgba(255,255,255,.2);color:#fff;">Data + APIs</div>
+          <div class="wc-title text-white">Visualize Real Data with Charts</div>
+        </div>
+        <div class="wc-body">
+          <div class="wc-meta">
+            <div class="wc-meta-item"><span class="wc-meta-icon">📅</span> Jun 7, 2026 · 2:00–5:00 PM</div>
+            <div class="wc-meta-item"><span class="wc-meta-icon">📍</span> DCL 440 + Zoom</div>
+            <div class="wc-meta-item"><span class="wc-meta-icon">🎓</span> Some JS experience helpful</div>
+          </div>
+          <div class="spots-bar">
+            <div class="spots-label">
+              <span class="left">Spots remaining</span>
+              <span class="right spots-num green">20 left</span>
+            </div>
+            <div class="spots-track"><div class="spots-fill green" style="width:17%"></div></div>
+          </div>
+          <div class="wc-footer">
+            <a href="#" class="btn btn-primary" style="width:100%;justify-content:center;background:linear-gradient(135deg,#3b82f6,#1d4ed8);box-shadow:0 4px 20px rgba(59,130,246,.4);">Register Free →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="workshop-card fade-up fade-up-delay-3">
+        <div class="wc-header grad-green text-white">
+          <span class="wc-emoji">🤖</span>
+          <div class="wc-type-badge" style="background:rgba(255,255,255,.2);color:#fff;">AI / Python</div>
+          <div class="wc-title text-white">Build Your Own AI Chatbot</div>
+        </div>
+        <div class="wc-body">
+          <div class="wc-meta">
+            <div class="wc-meta-item"><span class="wc-meta-icon">📅</span> Jun 21, 2026 · 11:00 AM–2:00 PM</div>
+            <div class="wc-meta-item"><span class="wc-meta-icon">📍</span> Siebel 0216 + Zoom</div>
+            <div class="wc-meta-item"><span class="wc-meta-icon">🎓</span> No experience needed</div>
+          </div>
+          <div class="spots-bar">
+            <div class="spots-label">
+              <span class="left">Spots remaining</span>
+              <span class="right spots-num red">3 left!</span>
+            </div>
+            <div class="spots-track"><div class="spots-fill red" style="width:90%"></div></div>
+          </div>
+          <div class="wc-footer">
+            <a href="#" class="btn btn-primary" style="width:100%;justify-content:center;background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 4px 20px rgba(16,185,129,.4);">Register Free →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── GALLERY ── -->
+<section id="gallery">
+  <div class="container">
+    <div class="section-header">
+      <span class="tag">Past Projects</span>
+      <h2 class="section-title">Made by beginners. Just like you.</h2>
+      <p class="section-sub">Every one of these was built by someone who walked in with zero experience. Hover to see who made it.</p>
+    </div>
+    <div class="gallery-grid">
+
+      <div class="gallery-item bg-p1">
+        <div class="gallery-thumb" style="font-size:4rem;">🌐</div>
+        <div class="gallery-info-always">
+          <div class="gallery-title">Personal Portfolio — Alex K.</div>
+          <div class="gallery-desc">Full landing page with animations</div>
+        </div>
+        <div class="gallery-overlay">
+          <div class="gallery-title">Personal Portfolio</div>
+          <div class="gallery-desc">Built in 2.5 hrs · HTML, CSS, JS</div>
+          <div class="gallery-author">Alex K. — Workshop #38</div>
+        </div>
+      </div>
+
+      <div class="gallery-item bg-p2">
+        <div class="gallery-thumb">🎮</div>
+        <div class="gallery-info-always">
+          <div class="gallery-title">Space Invaders Clone</div>
+          <div class="gallery-desc">Canvas-based JS game</div>
+        </div>
+        <div class="gallery-overlay">
+          <div class="gallery-title">Space Invaders Clone</div>
+          <div class="gallery-desc">Built in 3 hrs · Vanilla JS + Canvas</div>
+          <div class="gallery-author">Priya M. — Workshop #34</div>
+        </div>
+      </div>
+
+      <div class="gallery-item bg-p3">
+        <div class="gallery-thumb">🌦️</div>
+        <div class="gallery-info-always">
+          <div class="gallery-title">Weather Dashboard</div>
+          <div class="gallery-desc">Live API data + charts</div>
+        </div>
+        <div class="gallery-overlay">
+          <div class="gallery-title">Live Weather Dashboard</div>
+          <div class="gallery-desc">Built in 3 hrs · JS + OpenWeather API</div>
+          <div class="gallery-author">Jordan L. — Workshop #36</div>
+        </div>
+      </div>
+
+      <div class="gallery-item bg-p4">
+        <div class="gallery-thumb" style="font-size:4rem;">🛒</div>
+        <div class="gallery-info-always">
+          <div class="gallery-title">Mini E-Commerce Store</div>
+          <div class="gallery-desc">Product listing + cart</div>
+        </div>
+        <div class="gallery-overlay">
+          <div class="gallery-title">Mini E-Commerce Store</div>
+          <div class="gallery-desc">Built in 3 hrs · HTML + CSS + JS</div>
+          <div class="gallery-author">Sam T. — Workshop #37</div>
+        </div>
+      </div>
+
+      <div class="gallery-item bg-p5">
+        <div class="gallery-thumb">🎵</div>
+        <div class="gallery-info-always">
+          <div class="gallery-title">Music Visualizer</div>
+          <div class="gallery-desc">Web Audio API + Canvas</div>
+        </div>
+        <div class="gallery-overlay">
+          <div class="gallery-title">Music Visualizer</div>
+          <div class="gallery-desc">Built in 3 hrs · Web Audio API</div>
+          <div class="gallery-author">Maria R. — Workshop #35</div>
+        </div>
+      </div>
+
+      <div class="gallery-item bg-p6">
+        <div class="gallery-thumb">📋</div>
+        <div class="gallery-info-always">
+          <div class="gallery-title">Study Habit Tracker</div>
+          <div class="gallery-desc">LocalStorage + charts</div>
+        </div>
+        <div class="gallery-overlay">
+          <div class="gallery-title">Study Habit Tracker</div>
+          <div class="gallery-desc">Built in 3 hrs · JS + Chart.js</div>
+          <div class="gallery-author">David C. — Workshop #33</div>
+        </div>
+      </div>
+
+      <div class="gallery-item bg-p7">
+        <div class="gallery-thumb">🤖</div>
+        <div class="gallery-info-always">
+          <div class="gallery-title">AI Recipe Generator</div>
+          <div class="gallery-desc">Claude API integration</div>
+        </div>
+        <div class="gallery-overlay">
+          <div class="gallery-title">AI Recipe Generator</div>
+          <div class="gallery-desc">Built in 3 hrs · Python + Claude API</div>
+          <div class="gallery-author">Aisha P. — Workshop #39</div>
+        </div>
+      </div>
+
+      <div class="gallery-item bg-p8">
+        <div class="gallery-thumb">🗺️</div>
+        <div class="gallery-info-always">
+          <div class="gallery-title">Campus Food Finder</div>
+          <div class="gallery-desc">Leaflet.js map app</div>
+        </div>
+        <div class="gallery-overlay">
+          <div class="gallery-title">Campus Food Finder</div>
+          <div class="gallery-desc">Built in 3 hrs · Leaflet.js + JSON</div>
+          <div class="gallery-author">Kevin W. — Workshop #40</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── RESOURCES ── -->
+<section id="resources">
+  <div class="container">
+    <div class="resources-grid">
+      <!-- Left -->
+      <div>
+        <span class="tag">Resources</span>
+        <h2 class="section-title">Everything you need to get started.</h2>
+        <p class="section-sub" style="margin-bottom:36px;">
+          Free starter templates, tutorials, and guides — no account required. Download and start building before your first workshop.
+        </p>
+
+        <div class="resource-cards">
+          <a class="resource-card" href="#">
+            <span class="rc-icon">📦</span>
+            <div>
+              <div class="rc-title">Starter Templates</div>
+              <div class="rc-desc">HTML/CSS/JS scaffolds for every workshop</div>
+            </div>
+            <span class="rc-arrow">→</span>
+          </a>
+          <a class="resource-card" href="#">
+            <span class="rc-icon">📖</span>
+            <div>
+              <div class="rc-title">Getting Started Guide</div>
+              <div class="rc-desc">Set up your laptop in 10 minutes flat</div>
+            </div>
+            <span class="rc-arrow">→</span>
+          </a>
+          <a class="resource-card" href="#">
+            <span class="rc-icon">🎨</span>
+            <div>
+              <div class="rc-title">Design Cheat Sheet</div>
+              <div class="rc-desc">Colors, fonts, and layouts that actually work</div>
+            </div>
+            <span class="rc-arrow">→</span>
+          </a>
+          <a class="resource-card" href="#">
+            <span class="rc-icon">💾</span>
+            <div>
+              <div class="rc-title">Past Workshop Code</div>
+              <div class="rc-desc">All finished projects on GitHub</div>
+            </div>
+            <span class="rc-arrow">→</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Right: FAQ -->
+      <div>
+        <h3 style="font-size:1.5rem;font-weight:800;margin-bottom:24px;">Frequently Asked Questions</h3>
+        <div class="faq-list">
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">
+              Do I need a laptop? <span class="faq-chevron">▾</span>
+            </button>
+            <div class="faq-a">Yes — bring your own laptop (Mac or Windows, both work great). If you don't have one, let us know in advance and we'll arrange a loaner.</div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">
+              Is it really free? <span class="faq-chevron">▾</span>
+            </button>
+            <div class="faq-a">100% free — always. CodeCraft is funded by UIUC student organization grants and volunteer instructors. There's no catch, no upsell, no paid tier.</div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">
+              What should I bring? <span class="faq-chevron">▾</span>
+            </button>
+            <div class="faq-a">Just your laptop and a charger. We provide everything else — snacks, a Zoom link if you go virtual, and a starter template so you're not staring at a blank file.</div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">
+              I've never coded before. Will I keep up? <span class="faq-chevron">▾</span>
+            </button>
+            <div class="faq-a">Yes — that's exactly who we design for. Instructors walk the room constantly, and there's a 3:1 student-to-mentor ratio. You will finish the project.</div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">
+              What will I learn? <span class="faq-chevron">▾</span>
+            </button>
+            <div class="faq-a">Each workshop focuses on one concrete skill: HTML/CSS fundamentals, JavaScript interactivity, working with APIs, or building with AI tools. You walk out with working code and a mental model you actually understand.</div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">
+              Can I attend if I'm not a CS major? <span class="faq-chevron">▾</span>
+            </button>
+            <div class="faq-a">Absolutely. About 60% of our attendees are non-CS majors. Engineers, business students, designers, artists — everyone's welcome.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER CTA ── -->
+<section id="footer-cta">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="container">
+    <div class="cta-inner">
+      <span class="tag">Stay in the Loop</span>
+      <h2 class="cta-title">Ready to build something <span class="accent">amazing?</span></h2>
+      <p class="cta-sub">Get workshop announcements straight to your inbox. No spam, ever — just dates, topics, and registration links.</p>
+
+      <form class="signup-form" onsubmit="handleSignup(event)">
+        <input type="email" id="emailInput" placeholder="your@email.com" required autocomplete="email" />
+        <button type="submit" class="btn btn-primary">Notify Me →</button>
+      </form>
+      <div id="signup-success" style="display:none; color:var(--cyan); font-weight:600; margin-top:-48px; margin-bottom:64px; font-size:.95rem;">
+        ✓ You're on the list! See you at the next workshop.
+      </div>
+
+      <div class="social-links">
+        <a class="social-link" href="#" title="Instagram">📸</a>
+        <a class="social-link" href="#" title="Discord">💬</a>
+        <a class="social-link" href="#" title="GitHub">🐙</a>
+        <a class="social-link" href="#" title="LinkedIn">💼</a>
+      </div>
+
+      <div style="display:flex; justify-content:center; gap:20px; margin-bottom:60px; flex-wrap:wrap;">
+        <a href="#workshops" class="btn btn-primary">Register for Next Workshop →</a>
+        <a href="#resources" class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.3);">Download Free Templates</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container footer-bottom-inner">
+      <p>© 2026 CodeCraft Workshop Series · UIUC Student Organization</p>
+      <p class="footer-contact">Questions? <a href="mailto:codecraft@illinois.edu">codecraft@illinois.edu</a></p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // FAQ accordion
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  }
+
+  // Email signup
+  function handleSignup(e) {
+    e.preventDefault();
+    const form = e.target;
+    const success = document.getElementById('signup-success');
+    form.style.display = 'none';
+    success.style.display = 'block';
+  }
+
+  // Scroll-triggered fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        en.target.classList.add('visible');
+        observer.unobserve(en.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Nav shrink on scroll
+  window.addEventListener('scroll', () => {
+    document.querySelector('nav').style.padding =
+      window.scrollY > 40 ? '10px 0' : '16px 0';
+  });
+
+  // Mobile nav
+  const mobileStyle = document.createElement('style');
+  mobileStyle.textContent = `
+    @media (max-width: 640px) {
+      nav ul.mobile-open {
+        display: flex !important;
+        flex-direction: column;
+        position: fixed;
+        top: 64px; left: 0; right: 0;
+        background: rgba(11,17,32,.97);
+        padding: 24px;
+        gap: 20px;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+      }
+    }
+  `;
+  document.head.appendChild(mobileStyle);
+
+  // Animate spot bars on scroll
+  const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        en.target.querySelectorAll('.spots-fill').forEach(fill => {
+          const w = fill.style.width;
+          fill.style.width = '0';
+          setTimeout(() => fill.style.width = w, 100);
+        });
+        barObserver.unobserve(en.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.workshop-card').forEach(c => barObserver.observe(c));
+</script>
+</body>
+</html>

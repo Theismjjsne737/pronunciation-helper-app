@@ -1,0 +1,23 @@
+{
+  "name": "lingolab-api",
+  "version": "1.0.0",
+  "description": "LingoLab backend — Claude API proxy for iOS app",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel deploy --prod"
+  },
+  "devDependencies": {
+    "vercel": "^50.41.0"
+  },
+  "overrides": {
+    "tar": "^7.5.11",
+    "minimatch": "^10.0.1",
+    "path-to-regexp": "^8.2.0",
+    "undici": "^7.0.0",
+    "smol-toml": "^1.6.1",
+    "srvx": "^0.11.13",
+    "ajv": "^8.17.1",
+    "@tootallnate/once": "^3.0.1"
+  }
+}

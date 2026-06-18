@@ -1,0 +1,13 @@
+.container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.piece {
+  position: absolute;
+  top: -20px;
+  animation: confetti-fall linear forwards;
+}
