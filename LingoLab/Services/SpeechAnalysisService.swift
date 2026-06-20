@@ -143,6 +143,7 @@ final class SpeechAnalysisService: ObservableObject {
             let rawScore = seg.map { Double($0.confidence) * 1.1 } ?? 0.5
             return PhonemeScore(
                 phoneme: syllable,
+                ipaSymbol: IPAMapper.fromSyllable(syllable),
                 score: max(0, min(1, rawScore)),
                 startTime: seg?.timestamp ?? 0,
                 endTime: (seg?.timestamp ?? 0) + (seg?.duration ?? 0)

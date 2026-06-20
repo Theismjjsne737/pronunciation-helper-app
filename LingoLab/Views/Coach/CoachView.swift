@@ -6,8 +6,9 @@ struct CoachView: View {
 
     @Environment(\.modelContext) private var modelContext
     @Query(filter: #Predicate<AccentProfile> { _ in true }) private var profiles: [AccentProfile]
-    @ObservedObject private var subs   = SubscriptionManager.shared
-    @ObservedObject private var streak = StreakService.shared
+    @ObservedObject private var subs    = SubscriptionManager.shared
+    @ObservedObject private var streak  = StreakService.shared
+    @ObservedObject private var network = NetworkMonitor.shared
 
     @State private var vm: CoachViewModel?
     @State private var showSettings   = false
@@ -31,6 +32,25 @@ struct CoachView: View {
                         ))
                 } else {
                     loadingState
+                }
+
+                if !network.isConnected {
+                    VStack {
+                        HStack(spacing: 8) {
+                            Image(systemName: "wifi.slash")
+                            Text("No internet — coach unavailable offline")
+                                .font(.caption.weight(.medium))
+                        }
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(Color.secondary.opacity(0.85))
+                        .clipShape(Capsule())
+                        .padding(.top, 8)
+                        Spacer()
+                    }
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .animation(.spring(duration: 0.3), value: network.isConnected)
                 }
             }
             .navigationTitle("Coach")

@@ -73,6 +73,12 @@ final class AccentProfileService {
         profile.lastUpdatedAt = Date()
     }
 
+    // MARK: - Pattern detection (public for ViewModel use)
+
+    func detectPatterns(target: String, heard: String) -> [(phoneme: String, sub: String?)] {
+        PhonemeDetector.detect(target: target, heard: heard)
+    }
+
     // MARK: - System prompt
 
     func buildSystemPrompt(for profile: AccentProfile) -> String {
@@ -88,7 +94,7 @@ final class AccentProfileService {
         let nativeRef = profile.nativeLanguage.map { "For \($0) speakers, " } ?? ""
 
         return """
-        You are LingoLab, a conversational pronunciation coach accessed via chat.
+        You are Mimiq, a conversational pronunciation coach accessed via chat.
         Users ask you about any word, name, or phrase they want to pronounce correctly.
 
         ## User Accent Profile
@@ -116,11 +122,13 @@ final class AccentProfileService {
         [RECORD: Nguyen]"
 
         ## After a Pronunciation Attempt
-        You'll receive: "User recorded 'X'. I heard: 'Y'. Score: Z%."
+        You'll receive: "User recorded 'X'. I heard: 'Y'. Score: Z%. [Detected pattern: ...]"
+        The "Detected pattern" line (when present) tells you EXACTLY which phoneme substitution just occurred.
+        Cross-reference it with Known Phoneme Challenges above and use the matching teaching hint.
         Respond with:
         1. What you noticed — specific, not generic ("I heard 'wor-chest-er' rather than [WUSS-ter]")
-        2. WHY it happened — connect to their accent if you can
-        3. ONE concrete technique (mouth position, bridge word, minimal pair)
+        2. WHY it happened — name the pattern explicitly if detected ("This is the th→d substitution we've been working on")
+        3. ONE concrete technique from the Known Phoneme Challenges hint for that pattern
         4. If score ≥ 85 %: celebrate, optionally suggest a harder variant
            If score < 85 %: encourage and end with [RECORD: word] to try again
 

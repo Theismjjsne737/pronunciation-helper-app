@@ -13,7 +13,7 @@ enum SpotlightService {
         attributeSet.title = word
         attributeSet.contentDescription = "Pronunciation score: \(Int(score * 100))%"
         if let heard = transcription {
-            attributeSet.keywords = [word, heard, "pronunciation", "practice", "LingoLab"]
+            attributeSet.keywords = [word, heard, "pronunciation", "practice", "Mimiq"]
         }
         // TODO: Fix UIImage encoding issue
         // attributeSet.thumbnailData = UIImage(systemName: "waveform.and.mic")?.pngData()

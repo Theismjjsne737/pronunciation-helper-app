@@ -56,13 +56,12 @@ final class TTSService: NSObject, ObservableObject {
     // MARK: - Private
 
     private func preferredVoice() -> AVSpeechSynthesisVoice? {
-        // Try enhanced / premium quality first
+        let lang = UserDefaults.standard.string(forKey: "practiceLanguage") ?? "en-US"
         let voices = AVSpeechSynthesisVoice.speechVoices()
         if let enhanced = voices.first(where: {
-            $0.language.hasPrefix("en-US") && $0.quality == .enhanced
+            $0.language.hasPrefix(lang) && $0.quality == .enhanced
         }) { return enhanced }
-        // Fall back to any en-US voice
-        return AVSpeechSynthesisVoice(language: "en-US")
+        return AVSpeechSynthesisVoice(language: lang)
     }
 }
 

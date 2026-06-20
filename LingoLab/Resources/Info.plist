@@ -9,7 +9,9 @@
 
     <!-- Bundle name -->
     <key>CFBundleName</key>
-    <string>LingoLab</string>
+    <string>[AppName]</string>
+    <key>CFBundleDisplayName</key>
+    <string>[AppName]</string>
 
     <!-- Bundle version -->
     <key>CFBundleVersion</key>
@@ -21,15 +23,15 @@
 
     <!-- Microphone — required for recording -->
     <key>NSMicrophoneUsageDescription</key>
-    <string>LingoLab needs microphone access to record your pronunciation attempts.</string>
+    <string>[AppName] needs microphone access to record your pronunciation attempts.</string>
 
     <!-- Speech recognition — required for analysis -->
     <key>NSSpeechRecognitionUsageDescription</key>
-    <string>LingoLab uses speech recognition to analyse and score your pronunciation.</string>
+    <string>[AppName] uses speech recognition to analyse and score your pronunciation.</string>
 
     <!-- Notifications — for daily practice reminders (nice-to-have) -->
     <key>NSUserNotificationsUsageDescription</key>
-    <string>LingoLab sends a daily reminder to help you build a practice habit.</string>
+    <string>[AppName] sends a daily reminder to help you build a practice habit.</string>
 
     <key>UIBackgroundModes</key>
     <array>

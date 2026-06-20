@@ -5,6 +5,7 @@ import Foundation
 struct PhonemeScore: Identifiable {
     let id = UUID()
     let phoneme: String
+    let ipaSymbol: String?         // e.g. "/θ/" — nil for unmapped chunks
     let score: Double              // 0.0 – 1.0 accuracy
     let startTime: Double          // seconds
     let endTime: Double            // seconds

@@ -151,8 +151,10 @@ final class CoachViewModel: ObservableObject {
             // Index in Spotlight
             SpotlightService.index(word: word, score: result.score, transcription: result.transcription)
 
-            // Feed analysis to Claude
-            let ctx = "User recorded '\(word)'. I heard: '\(result.transcription)'. Score: \(result.scorePercentage)%."
+            // Feed analysis to Claude with detected pattern context
+            let detected = profileService.detectPatterns(target: word, heard: result.transcription)
+            let patternNote = detected.isEmpty ? "" : "\nDetected pattern: \(detected.map { p in p.sub.map { "\(p.phoneme)→\($0)" } ?? "\(p.phoneme) dropped" }.joined(separator: ", "))"
+            let ctx = "User recorded '\(word)'. I heard: '\(result.transcription)'. Score: \(result.scorePercentage)%.\(patternNote)"
             await streamCoachResponse(userMessage: ctx)
 
         } catch {

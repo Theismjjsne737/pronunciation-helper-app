@@ -27,6 +27,19 @@ struct AccentProfileView: View {
         attemptMessages.compactMap(\.pronunciationScore).max() ?? 0
     }
 
+    private var wordsCount: Int {
+        Set(attemptMessages.compactMap(\.targetWord)).count
+    }
+
+    private var recentTrend: Double? {
+        let scores = attemptMessages.compactMap(\.pronunciationScore)
+        guard scores.count >= 4 else { return nil }
+        let recentAvg = scores.prefix(5).reduce(0, +) / Double(min(5, scores.count))
+        let older = Array(scores.dropFirst(5).prefix(5))
+        guard !older.isEmpty else { return nil }
+        return recentAvg - older.reduce(0, +) / Double(older.count)
+    }
+
     private var chartData: [ScorePoint] {
         attemptMessages
             .prefix(20)
@@ -143,11 +156,11 @@ struct AccentProfileView: View {
     // MARK: - Stats grid
 
     private var statsGrid: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-            StatTile(value: "\(attemptMessages.count)", label: "Attempts", icon: "mic.fill",         color: .indigo)
-            StatTile(value: "\(Int(averageScore * 100))%", label: "Average",  icon: "chart.bar.fill",  color: .blue)
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+            StatTile(value: "\(attemptMessages.count)", label: "Attempts",   icon: "mic.fill",        color: .indigo)
+            StatTile(value: "\(Int(averageScore * 100))%", label: "Avg Score", icon: "chart.bar.fill", color: .blue)
+            StatTile(value: "\(wordsCount)",               label: "Words",     icon: "textformat.abc",  color: .purple)
             StatTile(value: "\(Int(bestScore * 100))%",    label: "Best",      icon: "star.fill",       color: .yellow)
-            StatTile(value: "\(profile?.totalSessions ?? 0)", label: "Sessions", icon: "bubble.left.fill", color: .purple)
         }
     }
 
@@ -155,9 +168,23 @@ struct AccentProfileView: View {
 
     private var progressChart: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label("Accuracy Over Time", systemImage: "chart.line.uptrend.xyaxis")
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.secondary)
+            HStack {
+                Label("Accuracy Over Time", systemImage: "chart.line.uptrend.xyaxis")
+                    .font(.subheadline.weight(.semibold))
+                Spacer()
+                if let trend = recentTrend {
+                    let trendColor: Color = trend >= 0.02 ? .green : trend <= -0.02 ? .red : .secondary
+                    let trendIcon = trend >= 0.02 ? "arrow.up" : trend <= -0.02 ? "arrow.down" : "minus"
+                    HStack(spacing: 3) {
+                        Image(systemName: trendIcon).font(.caption2.weight(.bold))
+                        Text("\(abs(Int(trend * 100)))%").font(.caption.weight(.semibold))
+                    }
+                    .foregroundStyle(trendColor)
+                    .padding(.horizontal, 8).padding(.vertical, 3)
+                    .background(trendColor.opacity(0.12))
+                    .clipShape(Capsule())
+                }
+            }
 
             Chart(chartData) { point in
                 LineMark(
@@ -213,7 +240,6 @@ struct AccentProfileView: View {
         VStack(alignment: .leading, spacing: 14) {
             Label("Phoneme Challenges", systemImage: "waveform.badge.exclamationmark")
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.secondary)
 
             ForEach(profile.topChallenges) { pattern in
                 PhonemeRow(pattern: pattern)
@@ -233,7 +259,6 @@ struct AccentProfileView: View {
             VStack(alignment: .leading, spacing: 12) {
                 Label("Recent Attempts", systemImage: "clock")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.secondary)
 
                 ForEach(Array(attemptMessages.prefix(10).enumerated()), id: \.element.id) { i, msg in
                     if i > 0 { Divider() }
@@ -252,7 +277,7 @@ struct AccentProfileView: View {
                     .foregroundStyle(.indigo.opacity(0.4))
                 Text("No attempts yet")
                     .font(.headline)
-                Text("Ask the coach about a word and record your pronunciation!")
+                Text("Head to the Practice tab to try your first word, or ask your coach to help!")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)

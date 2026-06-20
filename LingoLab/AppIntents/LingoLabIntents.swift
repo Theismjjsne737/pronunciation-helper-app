@@ -5,7 +5,7 @@ import Foundation
 
 struct StartPracticeIntent: AppIntent {
     static var title: LocalizedStringResource = "Start Pronunciation Practice"
-    static var description = IntentDescription("Open LingoLab and start a coaching session with your AI pronunciation coach.")
+    static var description = IntentDescription("Open Mimiq and start a coaching session with your AI pronunciation coach.")
     static var openAppWhenRun: Bool = true
 
     func perform() async throws -> some IntentResult {
@@ -17,15 +17,15 @@ struct StartPracticeIntent: AppIntent {
 
 struct CheckStreakIntent: AppIntent {
     static var title: LocalizedStringResource = "Check My Practice Streak"
-    static var description = IntentDescription("See your current pronunciation practice streak in LingoLab.")
+    static var description = IntentDescription("See your current pronunciation practice streak in Mimiq.")
     static var openAppWhenRun: Bool = false
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
         let streak = StreakService.shared.currentStreak
         let dialog: IntentDialog = streak > 0
-            ? "Your current LingoLab streak is \(streak) day\(streak == 1 ? "" : "s"). Keep it going!"
-            : "You don't have an active streak yet. Open LingoLab to start practising!"
+            ? "Your current Mimiq streak is \(streak) day\(streak == 1 ? "" : "s"). Keep it going!"
+            : "You don't have an active streak yet. Open Mimiq to start practising!"
         return .result(dialog: dialog)
     }
 }

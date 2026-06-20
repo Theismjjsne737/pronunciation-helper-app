@@ -8,7 +8,7 @@ struct LingoLabApp: App {
     let container: ModelContainer
 
     init() {
-        let schema = Schema([ChatMessage.self, AccentProfile.self])
+        let schema = Schema([ChatMessage.self, AccentProfile.self, SavedWord.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         do {
             container = try ModelContainer(for: schema, configurations: config)

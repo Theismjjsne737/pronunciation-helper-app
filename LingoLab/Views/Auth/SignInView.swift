@@ -30,7 +30,7 @@ struct SignInView: View {
             }
 
             VStack(spacing: 12) {
-                Text("LingoLab")
+                Text("Mimiq")
                     .font(.largeTitle.weight(.bold))
 
                 Text("Your personal pronunciation coach.")

@@ -8,6 +8,7 @@ struct SettingsView: View {
     @Query(filter: #Predicate<AccentProfile> { _ in true }) private var profiles: [AccentProfile]
     @ObservedObject private var subs = SubscriptionManager.shared
     @ObservedObject private var notifs = NotificationService.shared
+    @AppStorage("practiceLanguage") private var practiceLanguage = SupportedLanguage.default.rawValue
 
     @State private var showResetAlert = false
     @State private var showPaywall = false
@@ -19,6 +20,7 @@ struct SettingsView: View {
             List {
                 subscriptionSection
                 notificationSection
+                languageSection
                 accentSection
                 aboutSection
             }
@@ -183,6 +185,29 @@ struct SettingsView: View {
         return date.formatted(date: .omitted, time: .shortened)
     }
 
+    // MARK: - Language
+
+    private var languageSection: some View {
+        Section {
+            Picker(selection: $practiceLanguage) {
+                ForEach(SupportedLanguage.allCases) { lang in
+                    HStack(spacing: 8) {
+                        Text(lang.flag)
+                        Text(lang.displayName)
+                    }
+                    .tag(lang.rawValue)
+                }
+            } label: {
+                Label("Practice language", systemImage: "globe")
+                    .font(.subheadline)
+            }
+        } header: {
+            Text("Language")
+        } footer: {
+            Text("Sets the language used for pronunciation scoring and native audio reference.")
+        }
+    }
+
     // MARK: - Accent Profile
 
     private var accentSection: some View {
@@ -212,7 +237,7 @@ struct SettingsView: View {
 
     private var aboutSection: some View {
         Section("About") {
-            LabeledContent("LingoLab", value: "1.0.0")
+            LabeledContent("Mimiq", value: "1.0.0")
                 .font(.subheadline)
             LabeledContent("Speech", value: "Apple Speech Framework")
                 .font(.subheadline)
