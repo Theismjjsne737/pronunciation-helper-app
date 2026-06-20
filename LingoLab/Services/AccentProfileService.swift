@@ -123,6 +123,108 @@ final class AccentProfileService {
         PhonemeDetector.detect(target: target, heard: heard)
     }
 
+    // MARK: - Technique + progression data
+
+    private static let phonemeTechniques: [String: [String]] = [
+        "th": [
+            "Mouth: tongue tip between front teeth, push air past — like blowing steam with your tongue peeking out",
+            "Bridge: start from /d/ or /t/, then slide the tongue forward until it just touches the teeth tips",
+            "Minimal pair drill: say 'den/then', 'dare/there', 'day/they' — feel the tongue shift",
+            "Analogy: a sleepy snake poking its head through a fence — tongue out, air flowing past",
+        ],
+        "r": [
+            "Mouth: curl tongue back slightly, float it — no contact with roof, sides, or teeth",
+            "Bridge: start from /l/ position then retract without touching — the tongue hovers",
+            "Minimal pair drill: 'led/red', 'glass/grass', 'collect/correct' — 5x each",
+            "Analogy: tongue is a hawk gliding — wings slightly up, never landing",
+        ],
+        "v": [
+            "Mouth: upper teeth lightly on lower lip edge, voice it — feel the buzz in your lip",
+            "Bridge: find /f/ (same position) then switch your voice on — throat should vibrate",
+            "Minimal pair drill: 'ban/van', 'best/vest', 'beer/veer'",
+            "Analogy: /f/ is the car engine off, /v/ is the same car with engine running",
+        ],
+        "w": [
+            "Mouth: tightly round lips as if about to whistle, then open into the vowel",
+            "Bridge: start with 'oo' as in 'moon', then glide forward into the word",
+            "Minimal pair drill: 'vine/wine', 'vent/went', 'vest/west'",
+            "Analogy: your lips squeeze through a tiny hole first, then release",
+        ],
+        "l": [
+            "Mouth: tongue tip taps the ridge just behind upper front teeth, air flows around sides",
+            "Bridge: find /d/ — same tongue position, but let air flow past instead of stopping it",
+            "Minimal pair drill: 'led/red', 'lice/rice', 'collect/correct'",
+            "Analogy: tongue 'checks in' at the upper ridge for every /l/",
+        ],
+        "f": [
+            "Mouth: upper teeth rest lightly on lower lip, push air — no voice, just friction",
+            "Bridge: blow on hot soup but bite your lower lip slightly",
+            "Minimal pair drill: 'pan/fan', 'pit/fit', 'past/fast'",
+            "Analogy: a quiet cat-hiss escaping through the teeth-lip gap",
+        ],
+        "consonant-cluster": [
+            "Slow drill: say each consonant alone first — 'S … T … R … eet', then compress",
+            "Bridge: resist adding any vowel between — squeeze the consonants together like stacked bricks",
+            "Speed ramp: 's-treet' → 'strEEt' → 'street', faster each pass",
+            "Analogy: consonant clusters are a zipper — pull both sides together, no gap",
+        ],
+        "final-consonants": [
+            "Hold: extend the final consonant a full beat — 'ca-T', 'sto-P', 'bi-G'",
+            "Bridge: tap a finger on the table for every final consonant as you say it",
+            "Drill: say the word, then say it again holding the ending 2 seconds",
+            "Analogy: the final consonant is a door — you must close it fully, not leave it ajar",
+        ],
+        "p": [
+            "Mouth: lips together, build pressure, release with a small puff — no voice before the release",
+            "Bridge: /b/ is the voiced version — find /b/, then turn the voice off",
+            "Minimal pair drill: 'ban/pan', 'bat/pat', 'bin/pin'",
+            "Analogy: a tiny balloon pop — pressure builds, then bursts",
+        ],
+    ]
+
+    private static let progressionWords: [String: [[String]]] = [
+        "th": [["this", "that", "the"], ["threshold", "through", "weather"], ["thirteenth", "throughout", "otherwise"]],
+        "r":  [["red", "run", "right"], ["rural", "rarely", "mirror"], ["particularly", "extraordinary", "entrepreneur"]],
+        "v":  [["very", "van", "voice"], ["vivid", "involve", "evolve"], ["provocative", "innovative", "overwhelming"]],
+        "l":  [["led", "let", "lip"], ["really", "already", "carefully"], ["relatively", "particularly", "syllable"]],
+        "w":  [["win", "wet", "way"], ["whether", "always", "reward"], ["overwhelm", "worthwhile", "worldwide"]],
+        "f":  [["fan", "fit", "fast"], ["affect", "effort", "different"], ["effectively", "furthermore", "sufficiently"]],
+        "consonant-cluster": [["stop", "play", "free"], ["street", "strong", "splash"], ["extraordinary", "strengths", "scripts"]],
+    ]
+
+    private func adaptiveTechniqueSection(for profile: AccentProfile) -> String {
+        let challenges = profile.topChallenges.prefix(3)
+        guard !challenges.isEmpty else { return "" }
+
+        var lines = ["## Adaptive Teaching Techniques", ""]
+        for pattern in challenges {
+            guard let techniques = Self.phonemeTechniques[pattern.phoneme] else { continue }
+            let idx = min(pattern.errorCount % 4, techniques.count - 1)
+            lines.append("'\(pattern.phoneme)' — \(pattern.errorCount) errors, \(Int(pattern.accuracy * 100))% accuracy")
+            lines.append("  → CURRENT TECHNIQUE (#\(idx + 1) of 4): \(techniques[idx])")
+            lines.append("  (All 4 techniques available if you need to reference them:)")
+            techniques.enumerated().forEach { i, t in
+                lines.append("    \(i + 1). \(t)")
+            }
+            lines.append("")
+        }
+        return lines.joined(separator: "\n")
+    }
+
+    private func progressionSection(for profile: AccentProfile) -> String {
+        let mastered = profile.phonemePatterns.filter { $0.accuracy >= 0.80 && $0.attemptCount >= 4 }
+        guard !mastered.isEmpty else { return "" }
+
+        var lines = ["## Difficulty Progression (phonemes the user is mastering)", ""]
+        for pattern in mastered {
+            guard let levels = Self.progressionWords[pattern.phoneme] else { continue }
+            let currentLevel = min(Int(pattern.accuracy * 100) / 33, levels.count - 1)
+            let next = currentLevel + 1 < levels.count ? levels[currentLevel + 1] : levels.last!
+            lines.append("'\(pattern.phoneme)' at \(Int(pattern.accuracy * 100))% — suggest next-level words: \(next.joined(separator: ", "))")
+        }
+        return lines.joined(separator: "\n")
+    }
+
     // MARK: - System prompt
 
     func buildSystemPrompt(for profile: AccentProfile) -> String {
@@ -134,8 +236,14 @@ final class AccentProfileService {
         }
 
         let challengesText = profile.challengeSummary
+        let techniqueSection = adaptiveTechniqueSection(for: profile)
+        let progressionSection = progressionSection(for: profile)
 
         let nativeRef = profile.nativeLanguage.map { "For \($0) speakers, " } ?? ""
+
+        let adaptiveSections = [techniqueSection, progressionSection]
+            .filter { !$0.isEmpty }
+            .joined(separator: "\n\n")
 
         return """
         You are Mimiq, a conversational pronunciation coach accessed via chat.
@@ -147,6 +255,8 @@ final class AccentProfileService {
 
         ## Known Phoneme Challenges
         \(challengesText)
+
+        \(adaptiveSections)
 
         ## Your Personality
         - Like a patient, knowledgeable friend — warm, encouraging, never condescending
