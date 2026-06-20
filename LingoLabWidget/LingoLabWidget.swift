@@ -138,8 +138,8 @@ struct StreakWidgetView: View {
 
 // MARK: - Widget configuration
 
-struct LingoLabStreakWidget: Widget {
-    let kind = "LingoLabStreakWidget"
+struct MimiqStreakWidget: Widget {
+    let kind = "MimiqStreakWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: StreakProvider()) { entry in
@@ -154,8 +154,8 @@ struct LingoLabStreakWidget: Widget {
 // MARK: - Widget bundle (supports multiple widgets)
 
 @main
-struct LingoLabWidgetBundle: WidgetBundle {
+struct MimiqWidgetBundle: WidgetBundle {
     var body: some Widget {
-        LingoLabStreakWidget()
+        MimiqStreakWidget()
     }
 }

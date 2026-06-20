@@ -86,7 +86,7 @@ struct RecordingLiveActivityView: View {
 
 // MARK: - Live Activity widget (add to Widget Extension target)
 
-struct LingoLabLiveActivity: Widget {
+struct MimiqLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: RecordingActivityAttributes.self) { context in
             // Lock screen / banner view

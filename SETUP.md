@@ -1,4 +1,4 @@
-# LingoLab — Xcode Project Setup
+# Mimiq — Xcode Project Setup
 
 ## Requirements
 - Xcode 15+
@@ -15,7 +15,7 @@
 
    | Field | Value |
    |---|---|
-   | Product Name | `LingoLab` |
+   | Product Name | `Mimiq` |
    | Bundle Identifier | `com.yourname.lingolab` |
    | Interface | SwiftUI |
    | Language | Swift |
@@ -27,16 +27,16 @@
 
 ## 2. Add source files
 
-Delete the default stub files, then drag the **entire `LingoLab/` folder** into the Xcode Project Navigator:
+Delete the default stub files, then drag the **entire `Mimiq/` folder** into the Xcode Project Navigator:
 - Check *Create groups* (not folder references)
-- Check *Add to target: LingoLab*
+- Check *Add to target: Mimiq*
 
 Final Xcode file tree:
 
 ```
-LingoLab/
+Mimiq/
 ├── App/
-│   ├── LingoLabApp.swift
+│   ├── MimiqApp.swift
 │   └── ContentView.swift
 ├── Models/
 │   ├── AccentProfile.swift
@@ -78,9 +78,9 @@ In **Target › Info tab**, add:
 
 | Key | Value |
 |---|---|
-| `NSMicrophoneUsageDescription` | `LingoLab needs microphone access to record your pronunciation.` |
-| `NSSpeechRecognitionUsageDescription` | `LingoLab uses speech recognition to analyse your pronunciation.` |
-| `NSUserNotificationsUsageDescription` | `LingoLab sends a daily reminder to help you build a practice habit.` |
+| `NSMicrophoneUsageDescription` | `Mimiq needs microphone access to record your pronunciation.` |
+| `NSSpeechRecognitionUsageDescription` | `Mimiq uses speech recognition to analyse your pronunciation.` |
+| `NSUserNotificationsUsageDescription` | `Mimiq sends a daily reminder to help you build a practice habit.` |
 
 ---
 

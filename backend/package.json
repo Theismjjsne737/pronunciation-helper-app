@@ -1,7 +1,7 @@
 {
   "name": "lingolab-api",
   "version": "1.0.0",
-  "description": "LingoLab backend — Claude API proxy for iOS app",
+  "description": "Mimiq backend — Claude API proxy for iOS app",
   "private": true,
   "scripts": {
     "dev": "vercel dev",

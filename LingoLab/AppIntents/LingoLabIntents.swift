@@ -32,7 +32,7 @@ struct CheckStreakIntent: AppIntent {
 
 // MARK: - App Shortcuts (appear in Spotlight + Siri suggestions)
 
-struct LingoLabShortcuts: AppShortcutsProvider {
+struct MimiqShortcuts: AppShortcutsProvider {
     @AppShortcutsBuilder
     static var appShortcuts: [AppShortcut] {
         AppShortcut(

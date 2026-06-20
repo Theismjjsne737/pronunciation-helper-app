@@ -17,7 +17,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6727086524D744E182895399"
                BuildableName = "Mimiq.app"
-               BlueprintName = "LingoLab"
+               BlueprintName = "Mimiq"
                ReferencedContainer = "container:LingoLab.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -46,7 +46,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6727086524D744E182895399"
             BuildableName = "Mimiq.app"
-            BlueprintName = "LingoLab"
+            BlueprintName = "Mimiq"
             ReferencedContainer = "container:LingoLab.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -66,7 +66,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6727086524D744E182895399"
             BuildableName = "Mimiq.app"
-            BlueprintName = "LingoLab"
+            BlueprintName = "Mimiq"
             ReferencedContainer = "container:LingoLab.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

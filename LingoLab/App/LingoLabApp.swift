@@ -3,7 +3,7 @@ import SwiftData
 import UserNotifications
 
 @main
-struct LingoLabApp: App {
+struct MimiqApp: App {
 
     let container: ModelContainer
 
@@ -17,7 +17,7 @@ struct LingoLabApp: App {
         }
 
         // Register Siri shortcuts on every launch
-        LingoLabShortcuts.updateAppShortcutParameters()
+        MimiqShortcuts.updateAppShortcutParameters()
     }
 
     @StateObject private var authViewModel = AuthViewModel()

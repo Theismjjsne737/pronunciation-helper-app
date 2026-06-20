@@ -5,7 +5,7 @@
 <dict>
     <!-- Bundle identifier -->
     <key>CFBundleIdentifier</key>
-    <string>com.rhearao.LingoLab</string>
+    <string>com.rhearao.Mimiq</string>
 
     <!-- Bundle name -->
     <key>CFBundleName</key>
@@ -19,7 +19,7 @@
 
     <!-- Bundle executable -->
     <key>CFBundleExecutable</key>
-    <string>LingoLab</string>
+    <string>Mimiq</string>
 
     <!-- Microphone — required for recording -->
     <key>NSMicrophoneUsageDescription</key>
