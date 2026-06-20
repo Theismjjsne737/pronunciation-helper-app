@@ -128,10 +128,19 @@ struct CoachView: View {
                 RecordingWidget(vm: vm)
             }
 
+            // ── Suggested words (empty state only) ───────────
+            if vm.messages.count <= 1 && vm.coachState == .idle {
+                SuggestedWordsBar { word in
+                    Task { await vm.sendSuggestion(word) }
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+
             // ── Text input bar ────────────────────────────────
             InputBar(vm: vm)
         }
         .animation(.spring(duration: 0.3), value: isRecordingBarVisible(vm))
+        .animation(.spring(duration: 0.3), value: vm.messages.count)
     }
 
     // MARK: - Loading placeholder
@@ -312,5 +321,60 @@ private struct FreeWordsBadge: View {
         case 1...2: return .orange
         default: return .red
         }
+    }
+}
+
+// MARK: - Suggested words bar
+
+private struct SuggestedWordsBar: View {
+    let onSelect: (String) -> Void
+
+    private let suggestions: [(word: String, hint: String)] = [
+        ("Worcester", "WUSS-ter"),
+        ("Nguyen", "WIN"),
+        ("quinoa", "KEEN-wah"),
+        ("colonel", "KER-nel"),
+        ("Joaquin", "wah-KEEN"),
+        ("Siobhan", "shih-VAWN"),
+        ("chipotle", "chi-POHT-lay"),
+        ("Worcestershire", "WOOS-ter-sheer"),
+        ("Maeve", "mayv"),
+        ("GIF", "JIF or GIF"),
+    ]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Try a tricky word:")
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 16)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(suggestions, id: \.word) { item in
+                        Button {
+                            onSelect(item.word)
+                        } label: {
+                            VStack(spacing: 2) {
+                                Text(item.word)
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(.primary)
+                                Text("[\(item.hint)]")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(Color(.secondarySystemGroupedBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 16)
+            }
+        }
+        .padding(.vertical, 8)
+        .background(Color(.systemGroupedBackground))
     }
 }

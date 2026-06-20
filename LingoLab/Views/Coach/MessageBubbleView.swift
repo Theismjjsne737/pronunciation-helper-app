@@ -122,6 +122,21 @@ private struct AttemptResultBubble: View {
                     }
                 }
             }
+
+            if let patterns = message.detectedPatternsRaw {
+                HStack(spacing: 6) {
+                    Image(systemName: "waveform.badge.exclamationmark")
+                        .font(.caption2)
+                        .foregroundStyle(.white.opacity(0.8))
+                    Text(patterns)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.9))
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(.black.opacity(0.18))
+                .clipShape(Capsule())
+            }
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)

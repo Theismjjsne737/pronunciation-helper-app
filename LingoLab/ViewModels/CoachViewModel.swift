@@ -130,11 +130,16 @@ final class CoachViewModel: ObservableObject {
             else if result.score >= 0.6 { HapticsService.medium() }
             else { HapticsService.warning() }
 
+            // Detect patterns early so the result card can display them inline
+            let detected = profileService.detectPatterns(target: word, heard: result.transcription)
+            let detectedLabels = detected.map { p in p.sub.map { "\(p.phoneme)→\($0)" } ?? "\(p.phoneme) dropped" }
+
             // Show result card in chat (user side)
             appendAttemptResult(
                 word: word,
                 transcription: result.transcription,
-                score: result.score
+                score: result.score,
+                detectedPatterns: detectedLabels
             )
 
             // Confetti on excellent score
@@ -175,9 +180,8 @@ final class CoachViewModel: ObservableObject {
                 milestoneNote = "\nMILESTONE: User's '\(before.phoneme)' accuracy just jumped from \(Int(before.accuracy * 100))% to \(Int(after.accuracy * 100))% — celebrate this progress!"
             }
 
-            // Detected phoneme substitution
-            let detected = profileService.detectPatterns(target: word, heard: result.transcription)
-            let patternNote = detected.isEmpty ? "" : "\nDetected pattern: \(detected.map { p in p.sub.map { "\(p.phoneme)→\($0)" } ?? "\(p.phoneme) dropped" }.joined(separator: ", "))"
+            // Phoneme pattern note for Claude context
+            let patternNote = detectedLabels.isEmpty ? "" : "\nDetected pattern: \(detectedLabels.joined(separator: ", "))"
 
             let ctx = "User recorded '\(word)'. I heard: '\(result.transcription)'. Score: \(result.scorePercentage)%.\(patternNote)\(sessionLine)\(milestoneNote)"
             await streamCoachResponse(userMessage: ctx)
@@ -277,7 +281,7 @@ final class CoachViewModel: ObservableObject {
         persist(msg)
     }
 
-    private func appendAttemptResult(word: String, transcription: String, score: Double) {
+    private func appendAttemptResult(word: String, transcription: String, score: Double, detectedPatterns: [String] = []) {
         let msg = ChatMessage(
             role: .user,
             kind: .pronunciationResult,
@@ -285,9 +289,17 @@ final class CoachViewModel: ObservableObject {
             targetWord: word,
             pronunciationScore: score,
             transcription: transcription,
+            detectedPatterns: detectedPatterns,
             sessionID: sessionID
         )
         persist(msg)
+    }
+
+    func sendSuggestion(_ word: String) async {
+        guard coachState == .idle else { return }
+        let text = "How do I say \"\(word)\"?"
+        appendUser(text)
+        await streamCoachResponse(userMessage: text)
     }
 
     private func appendCoach(_ content: String, targetWord: String? = nil) {
