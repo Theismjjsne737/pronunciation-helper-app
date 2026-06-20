@@ -48,6 +48,10 @@ final class CoachViewModel: ObservableObject {
     private let sessionID = UUID()
     private var streamTask: Task<Void, Never>?
 
+    // Session-level progress tracking
+    private var sessionAttempts = 0
+    private var sessionScoreTotal: Double = 0
+
     // MARK: - Init
 
     init(accentProfile: AccentProfile, modelContext: ModelContext) {
@@ -138,6 +142,9 @@ final class CoachViewModel: ObservableObject {
                 showConfetti = true
             }
 
+            // Snapshot top challenge BEFORE updating profile (enables improvement detection)
+            let topChallengeBefore = accentProfile.topChallenges.first
+
             // Update accent profile + streak
             profileService.record(
                 targetWord: word,
@@ -151,10 +158,28 @@ final class CoachViewModel: ObservableObject {
             // Index in Spotlight
             SpotlightService.index(word: word, score: result.score, transcription: result.transcription)
 
-            // Feed analysis to Claude with detected pattern context
+            // Session stats
+            sessionAttempts += 1
+            sessionScoreTotal += result.score
+            let sessionAvg = Int(sessionScoreTotal / Double(sessionAttempts) * 100)
+            let sessionLine = sessionAttempts > 1
+                ? "\nSession so far: \(sessionAttempts) words, \(sessionAvg)% average."
+                : ""
+
+            // Milestone: top challenge improved significantly this attempt
+            var milestoneNote = ""
+            if let before = topChallengeBefore,
+               let after = accentProfile.phonemePatterns.first(where: { $0.phoneme == before.phoneme }),
+               after.accuracy - before.accuracy >= 0.15,
+               after.accuracy >= 0.75 {
+                milestoneNote = "\nMILESTONE: User's '\(before.phoneme)' accuracy just jumped from \(Int(before.accuracy * 100))% to \(Int(after.accuracy * 100))% — celebrate this progress!"
+            }
+
+            // Detected phoneme substitution
             let detected = profileService.detectPatterns(target: word, heard: result.transcription)
             let patternNote = detected.isEmpty ? "" : "\nDetected pattern: \(detected.map { p in p.sub.map { "\(p.phoneme)→\($0)" } ?? "\(p.phoneme) dropped" }.joined(separator: ", "))"
-            let ctx = "User recorded '\(word)'. I heard: '\(result.transcription)'. Score: \(result.scorePercentage)%.\(patternNote)"
+
+            let ctx = "User recorded '\(word)'. I heard: '\(result.transcription)'. Score: \(result.scorePercentage)%.\(patternNote)\(sessionLine)\(milestoneNote)"
             await streamCoachResponse(userMessage: ctx)
 
         } catch {
