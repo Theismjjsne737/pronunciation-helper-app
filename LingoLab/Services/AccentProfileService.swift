@@ -32,6 +32,20 @@ private enum PhonemeDetector {
             return finalConsonants.contains(t.last!) && !finalConsonants.contains(h.last!)
                 ? ("final-consonants", nil) : nil
         },
+        // f → p  (Korean, Japanese, Arabic)
+        { t, h in t.contains("f") && !h.contains("f") && h.contains("p") ? ("f", "p") : nil },
+        // z → s  (many L2 speakers)
+        { t, h in t.contains("z") && !h.contains("z") && h.contains("s") ? ("z", "s") : nil },
+        // sh → s  (Spanish, Italian, Portuguese)
+        { t, h in t.contains("sh") && !h.contains("sh") ? ("sh", "s") : nil },
+        // consonant cluster simplification  (str→s, bl→b, etc.)
+        { t, h in
+            let clusters = ["str", "spl", "spr", "bl", "br", "cl", "cr", "dr", "fl", "fr", "gl", "gr", "pl", "pr", "tr"]
+            return clusters.contains(where: { t.contains($0) && !h.contains($0) })
+                ? ("consonant-cluster", nil) : nil
+        },
+        // final -ng → -n  (Mandarin, Cantonese, Korean)
+        { t, h in t.hasSuffix("ng") && h.hasSuffix("n") && !h.hasSuffix("ng") ? ("final-ng", "n") : nil },
     ]
 
     static func detect(target: String, heard: String) -> [(phoneme: String, sub: String?)] {
@@ -71,6 +85,36 @@ final class AccentProfileService {
 
         profile.totalPracticeWords += 1
         profile.lastUpdatedAt = Date()
+    }
+
+    // MARK: - Seed profile from onboarding self-assessment
+
+    func seedProfile(challenges: [String], nativeLanguage: String?, into profile: AccentProfile) {
+        for phoneme in challenges {
+            guard !profile.phonemePatterns.contains(where: { $0.phoneme == phoneme }) else { continue }
+            var p = PhonemePattern(phoneme: phoneme, substitution: typicalSubstitution(phoneme: phoneme, language: nativeLanguage))
+            p.attemptCount = 3
+            p.errorCount = 2   // seeds at 33% accuracy — real practice quickly overrides
+            profile.phonemePatterns.append(p)
+        }
+    }
+
+    private func typicalSubstitution(phoneme: String, language: String?) -> String? {
+        guard let lang = language else { return nil }
+        switch (lang, phoneme) {
+        case ("Spanish", "th"), ("Mandarin", "th"), ("Korean", "th"), ("Arabic", "th"): return "d"
+        case ("French", "th"):  return "s"
+        case ("German", "th"):  return "t"
+        case ("Hindi", "th"):   return "t"
+        case ("Mandarin", "r"), ("Japanese", "r"): return "l"
+        case ("Japanese", "l"): return "r"
+        case ("Spanish", "v"), ("Portuguese", "v"): return "b"
+        case ("German", "w"):   return "v"
+        case ("Hindi", "w"):    return "v"
+        case ("Arabic", "p"):   return "b"
+        case ("Korean", "f"), ("Japanese", "f"), ("Arabic", "f"): return "p"
+        default: return nil
+        }
     }
 
     // MARK: - Pattern detection (public for ViewModel use)

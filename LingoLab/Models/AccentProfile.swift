@@ -15,6 +15,14 @@ struct PhonemePattern: Codable, Identifiable, Hashable {
     }
 }
 
+// MARK: - Phoneme tier classification
+
+enum PhonemeTier: String {
+    case mastered   = "Mastered"
+    case developing = "Developing"
+    case challenge  = "Needs Work"
+}
+
 // MARK: - Accent group fingerprint
 
 /// Known challenge patterns per native-language group.
@@ -154,6 +162,16 @@ final class AccentProfile {
             parts.append("Known \(nativeLanguage ?? "accent") patterns:\n" + hints.joined(separator: "\n"))
         }
         return parts.isEmpty ? "No accent data yet — learning organically." : parts.joined(separator: "\n\n")
+    }
+
+    /// Phoneme patterns grouped into mastered / developing / challenge tiers
+    var phonemeTiers: [(tier: PhonemeTier, patterns: [PhonemePattern])] {
+        let tracked = phonemePatterns.filter { $0.attemptCount >= 1 }
+        let mastered    = tracked.filter { $0.accuracy >= 0.80 }.sorted { $0.accuracy > $1.accuracy }
+        let developing  = tracked.filter { $0.accuracy >= 0.55 && $0.accuracy < 0.80 }.sorted { $0.accuracy < $1.accuracy }
+        let challenge   = tracked.filter { $0.accuracy < 0.55 }.sorted { $0.accuracy < $1.accuracy }
+        return [(.mastered, mastered), (.developing, developing), (.challenge, challenge)]
+            .filter { !$0.patterns.isEmpty }
     }
 
     /// Language label shown in UI

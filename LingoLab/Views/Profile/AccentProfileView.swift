@@ -58,7 +58,7 @@ struct AccentProfileView: View {
                     streakSection
                     statsGrid
                     if chartData.count >= 2 { progressChart }
-                    if let p = profile, !p.topChallenges.isEmpty { challengesCard(p) }
+                    if let p = profile, !p.phonemeTiers.isEmpty { fingerprintCard(p) }
                     recentAttemptsCard
                 }
                 .padding(16)
@@ -234,21 +234,58 @@ struct AccentProfileView: View {
         .shadow(color: .black.opacity(0.05), radius: 8, y: 4)
     }
 
-    // MARK: - Phoneme challenges
+    // MARK: - Accent fingerprint
 
-    private func challengesCard(_ profile: AccentProfile) -> some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Label("Phoneme Challenges", systemImage: "waveform.badge.exclamationmark")
+    private func fingerprintCard(_ profile: AccentProfile) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Label("Accent Fingerprint", systemImage: "waveform.badge.magnifyingglass")
                 .font(.subheadline.weight(.semibold))
 
-            ForEach(profile.topChallenges) { pattern in
-                PhonemeRow(pattern: pattern)
+            ForEach(profile.phonemeTiers, id: \.tier.rawValue) { tier, patterns in
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 6) {
+                        Image(systemName: tierIcon(tier))
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(tierColor(tier))
+                        Text(tier.rawValue.uppercased())
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(tierColor(tier))
+                            .tracking(0.8)
+                        Spacer()
+                        Text("\(patterns.count)")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    ForEach(patterns) { pattern in
+                        PhonemeRow(pattern: pattern)
+                    }
+                }
+                .padding(12)
+                .background(tierColor(tier).opacity(0.06))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
             }
         }
         .padding(16)
         .background(Color(.systemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .shadow(color: .black.opacity(0.05), radius: 8, y: 4)
+    }
+
+    private func tierColor(_ tier: PhonemeTier) -> Color {
+        switch tier {
+        case .mastered:   return .green
+        case .developing: return .orange
+        case .challenge:  return .red
+        }
+    }
+
+    private func tierIcon(_ tier: PhonemeTier) -> String {
+        switch tier {
+        case .mastered:   return "checkmark.circle.fill"
+        case .developing: return "arrow.up.circle.fill"
+        case .challenge:  return "exclamationmark.circle.fill"
+        }
     }
 
     // MARK: - Recent attempts

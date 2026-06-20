@@ -10,11 +10,13 @@ struct OnboardingView: View {
     @Environment(\.modelContext) private var modelContext
 
     @State private var selectedLanguage: String? = nil
+    @State private var selectedChallenges: Set<String> = []
     @State private var page = 0
 
-    // Notification state (driven by NotificationService)
     @StateObject private var notifs = NotificationService.shared
     @State private var notifRequested = false
+
+    private let profileService = AccentProfileService()
 
     private let languages = [
         "Arabic", "French", "German", "Hindi", "Japanese",
@@ -22,16 +24,17 @@ struct OnboardingView: View {
         "Other",
     ]
 
-    // Total pages: 0 Welcome, 1 Language, 2 Notifications, 3 Complete
-    private let totalPages = 4
+    // Pages: 0 Welcome, 1 Language, 2 Assessment, 3 Notifications, 4 Complete
+    private let totalPages = 5
 
     var body: some View {
         NavigationStack {
             TabView(selection: $page) {
                 welcomePage.tag(0)
                 languagePage.tag(1)
-                notificationPage.tag(2)
-                completePage.tag(3)
+                assessmentPage.tag(2)
+                notificationPage.tag(3)
+                completePage.tag(4)
             }
             .tabViewStyle(.page(indexDisplayMode: .always))
             .indexViewStyle(.page(backgroundDisplayMode: .always))
@@ -141,13 +144,128 @@ struct OnboardingView: View {
 
             primaryButton(selectedLanguage != nil ? "Continue" : "Skip for now") {
                 withAnimation { page = 2 }
+                // Pre-select language-specific challenges for the assessment page
+                if let lang = selectedLanguage, lang != "Other",
+                   let group = AccentGroupProfile.groups[lang] {
+                    selectedChallenges = Set(group.commonChallenges)
+                }
             }
             .opacity(1.0)
         }
         .padding(.top)
     }
 
-    // MARK: - Page 2: Notifications
+    // MARK: - Page 2: Accent Assessment
+
+    private var assessmentChallenges: [String] {
+        let universal = ["th", "r", "v", "w", "h", "consonant-cluster", "final-consonants"]
+        if let lang = selectedLanguage, lang != "Other",
+           let group = AccentGroupProfile.groups[lang] {
+            let langSpecific = group.commonChallenges
+            return Array((langSpecific + universal.filter { !langSpecific.contains($0) }).prefix(12))
+        }
+        return universal
+    }
+
+    private var assessmentPage: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            VStack(spacing: 8) {
+                Text("Which sounds feel\ntricky?")
+                    .font(.title2.weight(.bold))
+                    .multilineTextAlignment(.center)
+                Text("Select all that apply — your coach will focus on these first. You can always change this later.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 20)
+            }
+
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 110), spacing: 10)], spacing: 10) {
+                ForEach(assessmentChallenges, id: \.self) { phoneme in
+                    let selected = selectedChallenges.contains(phoneme)
+                    Button {
+                        withAnimation(.spring(duration: 0.2)) {
+                            if selected { selectedChallenges.remove(phoneme) }
+                            else { selectedChallenges.insert(phoneme) }
+                        }
+                    } label: {
+                        VStack(spacing: 4) {
+                            Text(phonemeEmoji(phoneme))
+                                .font(.title3)
+                            Text(phonemeLabel(phoneme))
+                                .font(.caption.weight(.semibold))
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(selected ? Color.indigo : Color(.secondarySystemGroupedBackground))
+                        .foregroundStyle(selected ? .white : .primary)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(selected ? Color.indigo : Color.clear, lineWidth: 1.5)
+                        )
+                    }
+                }
+            }
+            .padding(.horizontal, 20)
+
+            Spacer()
+
+            VStack(spacing: 10) {
+                primaryButton(selectedChallenges.isEmpty ? "Skip" : "Continue (\(selectedChallenges.count) selected)") {
+                    withAnimation { page = 3 }
+                }
+            }
+        }
+        .padding(.top)
+    }
+
+    private func phonemeLabel(_ phoneme: String) -> String {
+        switch phoneme {
+        case "th":               return "\"th\" sound"
+        case "r":                return "English R"
+        case "l":                return "L vs R"
+        case "v":                return "V sound"
+        case "w":                return "W sound"
+        case "h":                return "H sound"
+        case "f":                return "F sound"
+        case "p":                return "P vs B"
+        case "z":                return "Z sound"
+        case "sh":               return "SH sound"
+        case "consonant-cluster": return "Consonant clusters"
+        case "final-consonants": return "Final consonants"
+        case "final-ng":         return "Final -NG"
+        case "nasal-vowels":     return "Nasal vowels"
+        case "schwa":            return "Schwa (ə)"
+        case "tones":            return "Word stress"
+        case "retroflex":        return "Retroflex sounds"
+        default:                 return phoneme
+        }
+    }
+
+    private func phonemeEmoji(_ phoneme: String) -> String {
+        switch phoneme {
+        case "th":               return "👅"
+        case "r":                return "🌀"
+        case "l", "r-l":        return "↔️"
+        case "v":                return "🫦"
+        case "w":                return "💋"
+        case "h":                return "💨"
+        case "f":                return "🦷"
+        case "p":                return "💥"
+        case "consonant-cluster": return "🔗"
+        case "final-consonants", "final-ng": return "🔚"
+        case "schwa":            return "🔈"
+        case "tones":            return "📊"
+        default:                 return "🔤"
+        }
+    }
+
+    // MARK: - Page 3: Notifications
 
     private var notificationPage: some View {
         VStack(spacing: 28) {
@@ -199,16 +317,15 @@ struct OnboardingView: View {
                     }
                     .padding(.vertical, 14)
 
-                    primaryButton("Let's go!") { withAnimation { page = 3 } }
+                    primaryButton("Let's go!") { withAnimation { page = 4 } }
 
                 } else if notifRequested && !notifs.isAuthorized {
-                    // Denied — move on gracefully
                     Text("No worries — you can turn them on in Settings later.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
 
-                    primaryButton("Continue") { withAnimation { page = 3 } }
+                    primaryButton("Continue") { withAnimation { page = 4 } }
 
                 } else {
                     // Not yet requested
@@ -223,8 +340,8 @@ struct OnboardingView: View {
                     }
 
                     Button("Not now") {
-                        notifRequested = true // skip to next page state
-                        withAnimation { page = 3 }
+                        notifRequested = true
+                        withAnimation { page = 4 }
                     }
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -335,6 +452,13 @@ struct OnboardingView: View {
     private func finish() {
         if let lang = selectedLanguage, lang != "Other" {
             profile.nativeLanguage = lang
+        }
+        if !selectedChallenges.isEmpty {
+            profileService.seedProfile(
+                challenges: Array(selectedChallenges),
+                nativeLanguage: selectedLanguage,
+                into: profile
+            )
         }
         profile.onboardingCompleted = true
         try? modelContext.save()
