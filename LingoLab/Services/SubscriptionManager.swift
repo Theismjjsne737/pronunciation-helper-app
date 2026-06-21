@@ -25,6 +25,14 @@ enum SubscriptionTier: String, CaseIterable, Identifiable {
 
     var isBestValue: Bool { self == .yearly }
 
+    /// Shown as a coloured pill on the plan card. nil = no badge.
+    var savingsBadge: String? {
+        switch self {
+        case .yearly:  return "SAVE 44%"
+        case .monthly: return nil
+        }
+    }
+
     init?(productID: String) { self.init(rawValue: productID) }
 }
 

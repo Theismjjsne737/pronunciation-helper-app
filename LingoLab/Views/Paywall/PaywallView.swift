@@ -270,18 +270,24 @@ private struct PlanCard: View {
                 }
 
                 // Plan info
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 8) {
                         if isFeatured { Text("💎").font(.subheadline) }
-                        Text(tier.displayName)
-                            .font(.headline)
+                        Text(tier.displayName).font(.headline)
                         if isFeatured {
                             Text("BEST VALUE")
                                 .font(.caption2.weight(.heavy))
                                 .foregroundStyle(.white)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
+                                .padding(.horizontal, 6).padding(.vertical, 2)
                                 .background(Color.indigo)
+                                .clipShape(Capsule())
+                        }
+                        if let badge = tier.savingsBadge {
+                            Text(badge)
+                                .font(.caption2.weight(.heavy))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 6).padding(.vertical, 2)
+                                .background(Color.green)
                                 .clipShape(Capsule())
                         }
                     }
@@ -294,13 +300,14 @@ private struct PlanCard: View {
 
                 // Price
                 if let p = product {
-                    VStack(alignment: .trailing, spacing: 1) {
-                        Text(p.displayPrice)
-                            .font(.headline.weight(.bold))
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(p.displayPrice).font(.headline.weight(.bold))
                         if tier == .yearly {
                             Text("/ year")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
+                                .font(.caption2).foregroundStyle(.secondary)
+                            Text("vs $179.88")
+                                .font(.caption2).foregroundStyle(.secondary)
+                                .strikethrough(true, color: .secondary)
                         }
                     }
                 } else {
