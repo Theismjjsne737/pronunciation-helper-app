@@ -26,4 +26,18 @@ enum Config {
            !key.isEmpty, key != "$(ANTHROPIC_API_KEY)" { return key }
         return ""
     }()
+
+    // MARK: - Supabase
+
+    /// Supabase project URL, e.g. "https://abcdefgh.supabase.co"
+    /// Set SUPABASE_URL in your .xcconfig / build settings.
+    static let supabaseURL: String = {
+        Bundle.main.object(forInfoDictionaryKey: "SUPABASE_URL") as? String ?? ""
+    }()
+
+    /// Supabase anon (public) key — safe to ship; RLS enforces row-level access.
+    /// Set SUPABASE_ANON_KEY in your .xcconfig / build settings.
+    static let supabaseAnonKey: String = {
+        Bundle.main.object(forInfoDictionaryKey: "SUPABASE_ANON_KEY") as? String ?? ""
+    }()
 }

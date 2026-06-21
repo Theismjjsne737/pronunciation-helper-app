@@ -40,6 +40,37 @@ struct AccentProfileView: View {
         return recentAvg - older.reduce(0, +) / Double(older.count)
     }
 
+    private var masteredWordsCount: Int {
+        let pairs = attemptMessages.compactMap { msg -> (String, Double)? in
+            guard let w = msg.targetWord, let s = msg.pronunciationScore else { return nil }
+            return (w, s)
+        }
+        return Dictionary(grouping: pairs, by: \.0)
+            .values
+            .filter { $0.contains { $0.1 >= 0.85 } }
+            .count
+    }
+
+    private var weeklyPhonemeInsights: [(phoneme: String, delta: Double, current: Double)] {
+        guard let p = profile else { return [] }
+        let now = Date()
+        let cal = Calendar.current
+        let oneWeekAgo  = cal.date(byAdding: .day, value: -7,  to: now)!
+        let twoWeeksAgo = cal.date(byAdding: .day, value: -14, to: now)!
+        let phonemes = Set(p.progressHistory.map(\.phoneme))
+        return phonemes.compactMap { ph -> (String, Double, Double)? in
+            let thisWeek = p.progressHistory.filter { $0.phoneme == ph && $0.date >= oneWeekAgo }
+            let lastWeek = p.progressHistory.filter { $0.phoneme == ph && $0.date >= twoWeeksAgo && $0.date < oneWeekAgo }
+            guard !thisWeek.isEmpty, !lastWeek.isEmpty else { return nil }
+            let cur  = thisWeek.map(\.accuracy).reduce(0, +) / Double(thisWeek.count)
+            let prev = lastWeek.map(\.accuracy).reduce(0, +) / Double(lastWeek.count)
+            let delta = cur - prev
+            guard delta >= 0.05 else { return nil }
+            return (ph, delta, cur)
+        }
+        .sorted { $0.1 > $1.1 }
+    }
+
     private var chartData: [ScorePoint] {
         attemptMessages
             .prefix(20)
@@ -56,7 +87,11 @@ struct AccentProfileView: View {
             ScrollView {
                 LazyVStack(spacing: 16) {
                     streakSection
+                    weeklyInsightBanner
                     statsGrid
+                    if let p = profile, p.phonemePatterns.filter({ $0.attemptCount >= 2 }).count >= 2 {
+                        phonemeAccuracyChart(p)
+                    }
                     if chartData.count >= 2 { progressChart }
                     if let p = profile, !p.phonemeTiers.isEmpty { fingerprintCard(p) }
                     recentAttemptsCard
@@ -153,13 +188,98 @@ struct AccentProfileView: View {
         return fmt.string(from: date)
     }
 
+    // MARK: - Weekly insight banner
+
+    @ViewBuilder
+    private var weeklyInsightBanner: some View {
+        if let top = weeklyPhonemeInsights.first {
+            HStack(spacing: 14) {
+                Text("🎉")
+                    .font(.system(size: 32))
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Weekly Win")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(.white.opacity(0.75))
+                    Text("Your '\(top.phoneme)' sounds improved \(Int(top.delta * 100))% this week!")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("\(Int(top.current * 100))%")
+                        .font(.title2.weight(.black))
+                        .foregroundStyle(.white)
+                    Text("accuracy")
+                        .font(.caption2)
+                        .foregroundStyle(.white.opacity(0.7))
+                }
+            }
+            .padding(16)
+            .background(
+                LinearGradient(colors: [.indigo, Color(hue: 0.78, saturation: 0.7, brightness: 0.75)],
+                               startPoint: .leading, endPoint: .trailing)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .shadow(color: .indigo.opacity(0.35), radius: 12, y: 6)
+        }
+    }
+
+    // MARK: - Phoneme accuracy chart
+
+    private func phonemeAccuracyChart(_ profile: AccentProfile) -> some View {
+        let patterns = profile.phonemePatterns
+            .filter { $0.attemptCount >= 2 }
+            .sorted { $0.accuracy > $1.accuracy }
+
+        return VStack(alignment: .leading, spacing: 12) {
+            Label("Phoneme Accuracy", systemImage: "chart.bar.xaxis")
+                .font(.subheadline.weight(.semibold))
+
+            Chart(patterns) { pattern in
+                BarMark(
+                    x: .value("Accuracy", pattern.accuracy * 100),
+                    y: .value("Phoneme", "'\(pattern.phoneme)'")
+                )
+                .foregroundStyle(phonemeBarColor(pattern.accuracy).gradient)
+                .cornerRadius(5)
+                .annotation(position: .trailing, alignment: .leading) {
+                    Text("\(Int(pattern.accuracy * 100))%")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .padding(.leading, 4)
+                }
+            }
+            .chartXScale(domain: 0...100)
+            .chartXAxis {
+                AxisMarks(values: [0, 25, 50, 75, 100]) { val in
+                    AxisGridLine().foregroundStyle(Color(.systemGray5))
+                    AxisValueLabel("\(val.as(Int.self) ?? 0)%")
+                        .font(.caption2)
+                }
+            }
+            .frame(height: CGFloat(patterns.count) * 38 + 24)
+        }
+        .padding(16)
+        .background(Color(.systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .shadow(color: .black.opacity(0.05), radius: 8, y: 4)
+    }
+
+    private func phonemeBarColor(_ accuracy: Double) -> Color {
+        accuracy >= 0.75 ? .green : accuracy >= 0.5 ? .orange : .red
+    }
+
     // MARK: - Stats grid
 
     private var statsGrid: some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
             StatTile(value: "\(attemptMessages.count)", label: "Attempts",   icon: "mic.fill",        color: .indigo)
             StatTile(value: "\(Int(averageScore * 100))%", label: "Avg Score", icon: "chart.bar.fill", color: .blue)
-            StatTile(value: "\(wordsCount)",               label: "Words",     icon: "textformat.abc",  color: .purple)
+            StatTile(value: "\(masteredWordsCount)/\(wordsCount)", label: "Mastered", icon: "checkmark.seal.fill", color: .green)
             StatTile(value: "\(Int(bestScore * 100))%",    label: "Best",      icon: "star.fill",       color: .yellow)
         }
     }

@@ -21,6 +21,7 @@ struct MimiqApp: App {
     }
 
     @StateObject private var authViewModel = AuthViewModel()
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
@@ -28,13 +29,27 @@ struct MimiqApp: App {
                 .modelContainer(container)
                 .environmentObject(authViewModel)
                 .task {
-                    // Initialise services in parallel
                     async let auth: ()   = authViewModel.restoreSession()
                     async let subs: ()   = SubscriptionManager.shared.initialise()
                     async let notifs: () = NotificationService.shared.refreshStatus()
-                    async let streak: () = StreakService.shared.recordPractice() // no-op if already done today
+                    async let streak: () = StreakService.shared.recordPractice()
                     _ = await (auth, subs, notifs, streak)
+
+                    if let userID = authViewModel.currentUser?.appleUserID {
+                        await SupabaseSyncService.shared.pull(userID: userID, into: container.mainContext)
+                    }
                 }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            guard newPhase == .background,
+                  let userID = authViewModel.currentUser?.appleUserID
+            else { return }
+            Task {
+                let profiles = (try? container.mainContext.fetch(FetchDescriptor<AccentProfile>())) ?? []
+                if let profile = profiles.first {
+                    await SupabaseSyncService.shared.push(userID: userID, profile: profile)
+                }
+            }
         }
     }
 }

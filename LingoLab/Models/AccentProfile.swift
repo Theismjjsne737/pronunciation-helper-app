@@ -37,9 +37,10 @@ struct AccentGroupProfile {
             name: "Spanish",
             commonChallenges: ["v", "b", "th", "h", "schwa"],
             teachingHints: [
-                "v":  "Spanish merges /v/ and /b/ — try touching your top teeth to your lower lip",
-                "th": "Spanish lacks the /θ/ sound — place your tongue between your teeth",
-                "h":  "Spanish 'h' is silent — English 'h' needs a puff of air from the throat"
+                "v":     "Spanish merges /v/ and /b/ — try touching your top teeth to your lower lip",
+                "th":    "Spanish lacks the /θ/ sound — place your tongue between your teeth",
+                "h":     "Spanish 'h' is silent — English 'h' needs a puff of air from the throat",
+                "schwa": "Spanish vowels are always full — English unstressed syllables collapse to /ə/ ('uh'), like 'banana' = buh-NA-nuh; let those weak syllables go completely flat"
             ]
         ),
         "Mandarin": AccentGroupProfile(
@@ -48,24 +49,27 @@ struct AccentGroupProfile {
             teachingHints: [
                 "r":               "Mandarin /r/ is very different — curl your tongue up without touching the roof",
                 "th":              "Replace with /d/ or /s/ and then gradually add tongue-tip placement",
-                "final-consonants":"Mandarin syllables rarely end in consonants — hold the final sound a beat longer"
+                "final-consonants":"Mandarin syllables rarely end in consonants — hold the final sound a beat longer",
+                "tones":           "Mandarin uses tones for meaning; English uses pitch for emphasis — 'yes?' rises as a question, 'yes.' falls as a statement, and stressed words get louder not a different tone"
             ]
         ),
         "French": AccentGroupProfile(
             name: "French",
             commonChallenges: ["h", "w", "th", "nasal-vowels"],
             teachingHints: [
-                "h":  "French 'h' is always silent — English 'h' needs a breathy /h/ sound",
-                "w":  "French /w/ exists only in loanwords — practice with 'win', 'wet', 'west'",
-                "th": "French lacks /θ/ — try /s/ first then move tongue to teeth"
+                "h":            "French 'h' is always silent — English 'h' needs a breathy /h/ sound",
+                "w":            "French /w/ exists only in loanwords — practice with 'win', 'wet', 'west'",
+                "th":           "French lacks /θ/ — try /s/ first then move tongue to teeth",
+                "nasal-vowels": "French nasal vowels resonate in the nose — in English the vowel stays fully in the mouth and the following n/m is its own separate consonant"
             ]
         ),
         "German": AccentGroupProfile(
             name: "German",
             commonChallenges: ["w", "v", "th", "schwa"],
             teachingHints: [
-                "w":  "German 'w' sounds like English 'v' — round your lips for the English /w/",
-                "th": "German lacks /θ/ — tongue tip touches the back of upper teeth"
+                "w":     "German 'w' sounds like English 'v' — round your lips for the English /w/",
+                "th":    "German lacks /θ/ — tongue tip touches the back of upper teeth",
+                "schwa": "German vowels are clear and precise; English unstressed syllables collapse to /ə/ ('uh') — 'the' is 'thuh', not 'thee', in normal conversational speed"
             ]
         ),
         "Japanese": AccentGroupProfile(
@@ -81,25 +85,29 @@ struct AccentGroupProfile {
             name: "Korean",
             commonChallenges: ["f", "v", "th", "r-l", "consonant-clusters"],
             teachingHints: [
-                "f":  "Korean lacks /f/ — upper teeth to lower lip, feel the air friction",
-                "v":  "Korean lacks /v/ — same position as /f/ but add voice",
-                "th": "Not in Korean — tongue between teeth, soft push of air"
+                "f":   "Korean lacks /f/ — upper teeth to lower lip, feel the air friction",
+                "v":   "Korean lacks /v/ — same position as /f/ but add voice",
+                "th":  "Not in Korean — tongue between teeth, soft push of air",
+                "r-l": "Korean /ɾ/ flips between /r/ and /l/ — for English /r/ curl tongue back without touching anything; for /l/ press tongue tip firmly at the ridge behind upper front teeth"
             ]
         ),
         "Arabic": AccentGroupProfile(
             name: "Arabic",
             commonChallenges: ["p", "v", "schwa", "w-v"],
             teachingHints: [
-                "p":  "Arabic has no /p/ — it's like /b/ but unvoiced, no throat vibration",
-                "v":  "Arabic lacks /v/ — upper teeth to lower lip with voiced air"
+                "p":     "Arabic has no /p/ — it's like /b/ but unvoiced, no throat vibration",
+                "v":     "Arabic lacks /v/ — upper teeth to lower lip with voiced air",
+                "schwa": "Arabic vowels are short or long but always defined — English unstressed syllables collapse to /ə/ ('uh'); 'about' starts with a schwa: uh-BOUT",
+                "w-v":   "Arabic /w/ is lip-to-lip; English /v/ is teeth-to-lip — your upper teeth must lightly touch the inner edge of your lower lip for /v/"
             ]
         ),
         "Hindi": AccentGroupProfile(
             name: "Hindi",
             commonChallenges: ["w", "v", "th", "retroflex"],
             teachingHints: [
-                "w":  "Hindi /v/ is used where English uses /w/ — round your lips more",
-                "th": "Hindi 'th' is aspirated /tʰ/, not the dental /θ/ — touch tongue to teeth"
+                "w":         "Hindi /v/ is used where English uses /w/ — round your lips more",
+                "th":        "Hindi 'th' is aspirated /tʰ/, not the dental /θ/ — touch tongue to teeth",
+                "retroflex": "Hindi retroflex sounds (ट ड) curl the tongue back to the roof — English /t/ and /d/ use the tongue tip right behind the front teeth, no curling"
             ]
         ),
     ]

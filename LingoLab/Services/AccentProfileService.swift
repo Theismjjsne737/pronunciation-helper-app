@@ -227,6 +227,18 @@ final class AccentProfileService {
             "Minimal pair drill: 'ban/pan', 'bat/pat', 'bin/pin'",
             "Analogy: a tiny balloon pop — pressure builds, then bursts",
         ],
+        "tones": [
+            "English uses stress, not tones — 'content words' (nouns, verbs) get louder and slightly higher; try spotlighting one word: 'I WANT coffee' vs 'I want COFFEE' — completely different emphasis",
+            "Question vs statement pitch: say 'You're coming?' — voice rises on 'coming'. Then 'You're coming.' — voice falls. Same words, opposite pitch shape",
+            "Bridge: Mandarin tone 2 (rising) maps to English question intonation — 'Really?' ends like Tone 2. Use that natural rise at the end of yes/no questions only",
+            "Analogy: Mandarin tones are traffic lights (fixed rule per syllable); English stress is a spotlight — you choose which word to illuminate each sentence",
+        ],
+        "schwa": [
+            "Find 'uh' — open your mouth slightly, relax everything, make the laziest vowel possible. That's the schwa /ə/. Every unstressed English syllable wants this sound",
+            "Bridge: say 'banana' — stress on the middle: buh-NA-nuh. First and last syllables collapse to schwa. Find the stressed syllable first, then let the others go flat",
+            "Drill: 'the cat' = 'thuh cat', 'a dog' = 'uh dog', 'about' = 'uh-BOUT', 'sofa' = 'SO-fuh' — schwa always hides in the syllable that gets the least attention",
+            "Analogy: schwa is the mumbled pause between thoughts — English speech is intentionally lazy with unstressed syllables; it's not sloppy, it's correct",
+        ],
     ]
 
     private static let progressionWords: [String: [[String]]] = [
