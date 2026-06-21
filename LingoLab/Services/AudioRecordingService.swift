@@ -17,6 +17,15 @@ final class AudioRecordingService: NSObject, ObservableObject {
     private var levelTimer: Timer?
     private var durationTimer: Timer?
 
+    // MARK: - Init
+
+    override init() {
+        super.init()
+        AudioSessionManager.shared.onInterruptionBegan = { [weak self] in
+            self?.stopRecording()
+        }
+    }
+
     // MARK: - Permissions
 
     func requestPermission() async -> Bool {
@@ -30,9 +39,11 @@ final class AudioRecordingService: NSObject, ObservableObject {
         let url = makeRecordingURL()
         try ensureRecordingsDirectoryExists(for: url)
 
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playAndRecord, mode: .measurement, options: [.defaultToSpeaker, .allowBluetooth])
-        try session.setActive(true, options: .notifyOthersOnDeactivation)
+        try AudioSessionManager.shared.activate(
+            category: .playAndRecord,
+            mode: .measurement,
+            options: [.defaultToSpeaker, .allowBluetooth]
+        )
 
         let settings: [String: Any] = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
@@ -57,7 +68,7 @@ final class AudioRecordingService: NSObject, ObservableObject {
         audioRecorder?.stop()
         stopMetering()
         isRecording = false
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        AudioSessionManager.shared.deactivate()
     }
 
     // MARK: - Helpers

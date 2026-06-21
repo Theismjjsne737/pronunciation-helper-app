@@ -43,9 +43,7 @@ final class VoiceInputService: ObservableObject {
             isListening = true
             HapticsService.light()
 
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.record, mode: .measurement, options: .duckOthers)
-            try session.setActive(true, options: .notifyOthersOnDeactivation)
+            try AudioSessionManager.shared.activate(category: .record, mode: .measurement, options: .duckOthers)
 
             recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
             guard let request = recognitionRequest else { stop(); return }
@@ -89,7 +87,7 @@ final class VoiceInputService: ObservableObject {
         recognitionRequest = nil
         recognitionTask = nil
         isListening = false
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        AudioSessionManager.shared.deactivate()
         HapticsService.light()
     }
 

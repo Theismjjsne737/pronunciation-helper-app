@@ -21,9 +21,7 @@ final class AudioPlaybackService: NSObject, ObservableObject {
     func play(url: URL) throws {
         stop()
 
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playback, mode: .default)
-        try session.setActive(true)
+        try AudioSessionManager.shared.activate(category: .playback)
 
         player = try AVAudioPlayer(contentsOf: url)
         player?.delegate = self
@@ -54,6 +52,7 @@ final class AudioPlaybackService: NSObject, ObservableObject {
         duration = 0
         progressTimer?.invalidate()
         progressTimer = nil
+        AudioSessionManager.shared.deactivate()
     }
 
     func seek(to fraction: Double) {
