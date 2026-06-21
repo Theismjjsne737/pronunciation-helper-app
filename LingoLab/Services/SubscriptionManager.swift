@@ -57,8 +57,38 @@ final class SubscriptionManager: ObservableObject {
     // MARK: - Constants
 
     static let productIDs: [String] = SubscriptionTier.allCases.map(\.rawValue)
-    static let trialDays = 7
-    private static let trialStartKey = "mimiq_trial_start_v1"
+    static let freeWordLimit = 5
+    private static let wordsKey = "mimiq_free_words_v1"
+
+    // MARK: - Free-tier word counter
+
+    @Published private(set) var uniqueWordCount: Int = 0
+
+    var wordsRemaining: Int { max(0, Self.freeWordLimit - uniqueWordCount) }
+    var hasUsedAllFreeWords: Bool { uniqueWordCount >= Self.freeWordLimit }
+
+    func hasSeenWord(_ word: String) -> Bool { storedWords().contains(canonical(word)) }
+
+    func markWordSeen(_ word: String) {
+        var words = storedWords()
+        let key = canonical(word)
+        guard !words.contains(key) else { return }
+        words.insert(key)
+        saveWords(words)
+        uniqueWordCount = words.count
+    }
+
+    private func storedWords() -> Set<String> {
+        Set(UserDefaults.standard.stringArray(forKey: Self.wordsKey) ?? [])
+    }
+
+    private func saveWords(_ words: Set<String>) {
+        UserDefaults.standard.set(Array(words), forKey: Self.wordsKey)
+    }
+
+    private func canonical(_ word: String) -> String {
+        word.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 
     // MARK: - Private
 
@@ -67,10 +97,7 @@ final class SubscriptionManager: ObservableObject {
     // MARK: - Init / deinit
 
     private init() {
-        // Record first-launch date as trial start (written once, never overwritten)
-        if UserDefaults.standard.object(forKey: Self.trialStartKey) == nil {
-            UserDefaults.standard.set(Date(), forKey: Self.trialStartKey)
-        }
+        uniqueWordCount = storedWords().count
         transactionListener = startTransactionListener()
     }
 
@@ -192,33 +219,12 @@ final class SubscriptionManager: ObservableObject {
         }
     }
 
-    // MARK: - Trial
-
-    var trialStartDate: Date? {
-        UserDefaults.standard.object(forKey: Self.trialStartKey) as? Date
-    }
-
-    var trialEndsAt: Date? {
-        trialStartDate?.addingTimeInterval(TimeInterval(Self.trialDays * 86_400))
-    }
-
-    var isTrialActive: Bool {
-        guard let end = trialEndsAt else { return false }
-        return Date() < end
-    }
-
-    var trialDaysRemaining: Int {
-        guard let end = trialEndsAt else { return 0 }
-        return max(0, Int(ceil(end.timeIntervalSince(Date()) / 86_400)))
-    }
-
-    var canAccessPro: Bool { hasActiveSubscription || isTrialActive }
+    var canAccessPro: Bool { hasActiveSubscription || !hasUsedAllFreeWords }
 
     // MARK: - Computed helpers
 
     var subscriptionStatusLabel: String {
         if hasActiveSubscription { return currentTier?.displayName.appending(" Plan") ?? "Active" }
-        if isTrialActive { return "Free Trial — \(trialDaysRemaining) day\(trialDaysRemaining == 1 ? "" : "s") left" }
-        return "Trial Ended"
+        return "\(wordsRemaining) free word\(wordsRemaining == 1 ? "" : "s") remaining"
     }
 }

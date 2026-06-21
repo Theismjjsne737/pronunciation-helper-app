@@ -264,11 +264,14 @@ final class CoachViewModel: ObservableObject {
         appendCoach(display, targetWord: targetWord)
 
         if let word = targetWord {
-            guard SubscriptionManager.shared.canAccessPro else {
+            let subs = SubscriptionManager.shared
+            let isNewWord = !subs.hasSeenWord(word)
+            if isNewWord && !subs.hasActiveSubscription && subs.hasUsedAllFreeWords {
                 paywallTriggerWord = word
                 coachState = .idle
                 return
             }
+            if isNewWord { subs.markWordSeen(word) }
             coachState = .awaitingAttempt(word: word)
         } else {
             coachState = .idle

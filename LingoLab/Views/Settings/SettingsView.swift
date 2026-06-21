@@ -77,18 +77,16 @@ struct SettingsView: View {
                     }
                 }
             } else {
-                // Trial countdown bar
+                // Free word counter bar
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
-                        Text(subs.isTrialActive ? "Free trial" : "Trial ended")
+                        Text("Free words used")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         Spacer()
-                        Text(subs.isTrialActive
-                             ? "\(subs.trialDaysRemaining) day\(subs.trialDaysRemaining == 1 ? "" : "s") left"
-                             : "Expired")
+                        Text("\(subs.uniqueWordCount) / \(SubscriptionManager.freeWordLimit)")
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(subs.trialDaysRemaining <= 1 ? .red : .primary)
+                            .foregroundStyle(subs.hasUsedAllFreeWords ? .red : .primary)
                     }
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
@@ -96,14 +94,12 @@ struct SettingsView: View {
                                 .fill(Color(.systemFill))
                                 .frame(height: 6)
                             RoundedRectangle(cornerRadius: 3)
-                                .fill(subs.isTrialActive ? Color.indigo : Color.red)
+                                .fill(subs.hasUsedAllFreeWords ? Color.red : Color.indigo)
                                 .frame(
-                                    width: geo.size.width * (subs.isTrialActive
-                                        ? Double(subs.trialDaysRemaining) / Double(SubscriptionManager.trialDays)
-                                        : 1.0),
+                                    width: geo.size.width * min(1, Double(subs.uniqueWordCount) / Double(SubscriptionManager.freeWordLimit)),
                                     height: 6
                                 )
-                                .animation(.easeOut, value: subs.trialDaysRemaining)
+                                .animation(.easeOut, value: subs.uniqueWordCount)
                         }
                     }
                     .frame(height: 6)
