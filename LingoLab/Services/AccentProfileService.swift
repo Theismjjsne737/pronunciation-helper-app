@@ -132,6 +132,23 @@ final class AccentProfileService {
         PhonemeDetector.detect(target: target, heard: heard)
     }
 
+    /// Runs phoneme detection across sentence pairs (expected vs transcribed).
+    /// Used by the onboarding sentence assessment to prime the accent profile without a Claude call.
+    func detectSentenceChallenges(expected: [String], transcriptions: [String]) -> [String] {
+        let wordSeparators = CharacterSet.letters.inverted
+        var detected: Set<String> = []
+        for (exp, heard) in zip(expected, transcriptions) {
+            let expWords   = exp.components(separatedBy: wordSeparators).filter { !$0.isEmpty }
+            let heardWords = heard.components(separatedBy: wordSeparators).filter { !$0.isEmpty }
+            for (t, h) in zip(expWords, heardWords) {
+                PhonemeDetector.detect(target: t, heard: h).forEach { detected.insert($0.phoneme) }
+            }
+            // Full-sentence pass catches multi-word patterns (final consonants, clusters)
+            PhonemeDetector.detect(target: exp, heard: heard).forEach { detected.insert($0.phoneme) }
+        }
+        return Array(detected)
+    }
+
     // MARK: - Exercise data (public for ViewModel use)
 
     /// WHY explanation from native-language group + current technique based on error count.
