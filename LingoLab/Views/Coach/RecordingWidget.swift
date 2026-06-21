@@ -70,11 +70,8 @@ struct RecordingWidget: View {
 
                 Spacer()
 
-                // Record button
-                Button {
-                    HapticsService.medium()
-                    vm.startRecording()
-                } label: {
+                // Record button — tap OR hold & release to record + auto-analyze
+                VStack(spacing: 4) {
                     HStack(spacing: 8) {
                         Image(systemName: "mic.fill")
                             .symbolEffect(.bounce, value: true)
@@ -85,13 +82,30 @@ struct RecordingWidget: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 22)
                     .padding(.vertical, 13)
-                    .background(
-                        LinearGradient(colors: [.red, .pink], startPoint: .leading, endPoint: .trailing)
-                    )
+                    .background(LinearGradient(colors: [.red, .pink], startPoint: .leading, endPoint: .trailing))
                     .clipShape(Capsule())
                     .shadow(color: .red.opacity(0.4), radius: 8, y: 4)
+                    .simultaneousGesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { _ in
+                                if case .awaitingAttempt = vm.coachState {
+                                    HapticsService.medium()
+                                    vm.startRecording()
+                                }
+                            }
+                            .onEnded { _ in
+                                if case .recording = vm.coachState {
+                                    HapticsService.light()
+                                    Task { await vm.stopAndAnalyze() }
+                                }
+                            }
+                    )
+
+                    Text("Hold to record")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
                 }
-                .accessibilityLabel("Start recording \(word)")
+                .accessibilityLabel("Hold to record \(word)")
             }
         }
     }

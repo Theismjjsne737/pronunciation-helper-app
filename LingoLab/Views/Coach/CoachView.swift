@@ -84,7 +84,7 @@ struct CoachView: View {
                 ScrollView {
                     LazyVStack(spacing: 10) {
                         ForEach(vm.messages) { msg in
-                            MessageBubbleView(message: msg) { word in
+                            MessageBubbleView(message: msg, tts: vm.tts) { word in
                                 vm.speakWord(word)
                             }
                             .id(msg.id)

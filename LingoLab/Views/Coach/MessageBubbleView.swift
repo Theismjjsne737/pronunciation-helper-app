@@ -4,7 +4,8 @@ import SwiftUI
 
 struct MessageBubbleView: View {
     let message: ChatMessage
-    let onSpeak: (String) -> Void     // called when user taps the speaker button
+    @ObservedObject var tts: TTSService
+    let onSpeak: (String) -> Void
 
     var body: some View {
         HStack(alignment: .bottom, spacing: 8) {
@@ -16,14 +17,14 @@ struct MessageBubbleView: View {
                 case .pronunciationResult:
                     AttemptResultBubble(message: message)
                 case .recordingRequest:
-                    CoachBubble(message: message, onSpeak: onSpeak, showSpeaker: true)
+                    CoachBubble(message: message, tts: tts, onSpeak: onSpeak, showSpeaker: true)
                 case .exerciseCard:
                     ExerciseCardBubble(message: message)
                 default:
                     if message.isUser {
                         UserTextBubble(text: message.content)
                     } else {
-                        CoachBubble(message: message, onSpeak: onSpeak, showSpeaker: false)
+                        CoachBubble(message: message, tts: tts, onSpeak: onSpeak, showSpeaker: false)
                     }
                 }
             }
@@ -52,6 +53,7 @@ private struct UserTextBubble: View {
 
 private struct CoachBubble: View {
     let message: ChatMessage
+    @ObservedObject var tts: TTSService
     let onSpeak: (String) -> Void
     let showSpeaker: Bool
 
@@ -62,18 +64,24 @@ private struct CoachBubble: View {
                 .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
 
-            // Speaker button shown when message contains a recording request
             if showSpeaker, let word = message.targetWord {
-                Button {
-                    onSpeak(word)
-                } label: {
-                    Label("Hear \"\(word)\"", systemImage: "speaker.wave.2.fill")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.indigo)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 7)
-                        .background(Color.indigo.opacity(0.1))
-                        .clipShape(Capsule())
+                Button { onSpeak(word) } label: {
+                    HStack(spacing: 8) {
+                        if tts.isSpeaking {
+                            MiniWaveformView()
+                        } else {
+                            Image(systemName: "speaker.wave.2.fill")
+                                .font(.subheadline)
+                        }
+                        Text(tts.isSpeaking ? "Playing…" : "Hear \"\(word)\"")
+                            .font(.subheadline.weight(.medium))
+                    }
+                    .foregroundStyle(.indigo)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 7)
+                    .background(Color.indigo.opacity(tts.isSpeaking ? 0.15 : 0.1))
+                    .clipShape(Capsule())
+                    .animation(.easeInOut(duration: 0.2), value: tts.isSpeaking)
                 }
                 .buttonStyle(.plain)
             }
@@ -83,6 +91,28 @@ private struct CoachBubble: View {
         .background(Color(.secondarySystemGroupedBackground))
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
+    }
+}
+
+// MARK: - Mini animated waveform for inline audio player
+
+private struct MiniWaveformView: View {
+    @State private var phase: [CGFloat] = [0.4, 0.7, 1.0, 0.6, 0.3]
+    private let timer = Timer.publish(every: 0.15, on: .main, in: .common).autoconnect()
+
+    var body: some View {
+        HStack(spacing: 2) {
+            ForEach(0..<5, id: \.self) { i in
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color.indigo)
+                    .frame(width: 3, height: 14 * phase[i])
+                    .animation(.easeInOut(duration: 0.25), value: phase[i])
+            }
+        }
+        .frame(height: 14)
+        .onReceive(timer) { _ in
+            phase = phase.map { _ in CGFloat.random(in: 0.25...1.0) }
+        }
     }
 }
 
