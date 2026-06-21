@@ -264,18 +264,12 @@ final class CoachViewModel: ObservableObject {
         appendCoach(display, targetWord: targetWord)
 
         if let word = targetWord {
-            let subs = SubscriptionManager.shared
-            let isNewWord = !subs.hasSeenWord(word)
-
-            if isNewWord && !subs.hasActiveSubscription && subs.hasUsedAllFreeWords {
-                // Hit the paywall — show it but don't activate the recording widget
+            guard SubscriptionManager.shared.canAccessPro else {
                 paywallTriggerWord = word
                 coachState = .idle
-            } else {
-                // Mark word seen if new, then let the user record
-                if isNewWord { subs.markWordSeen(word) }
-                coachState = .awaitingAttempt(word: word)
+                return
             }
+            coachState = .awaitingAttempt(word: word)
         } else {
             coachState = .idle
         }

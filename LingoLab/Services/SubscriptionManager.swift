@@ -50,7 +50,6 @@ final class SubscriptionManager: ObservableObject {
     @Published private(set) var hasActiveSubscription = false
     @Published private(set) var currentTier: SubscriptionTier?
     @Published private(set) var products: [Product] = []
-    @Published private(set) var uniqueWordCount: Int = 0
     @Published var isPurchasing = false
     @Published var purchaseError: String?
     @Published var restoreSuccess = false
@@ -58,17 +57,20 @@ final class SubscriptionManager: ObservableObject {
     // MARK: - Constants
 
     static let productIDs: [String] = SubscriptionTier.allCases.map(\.rawValue)
-    static let freeWordLimit = 5
+    static let trialDays = 7
+    private static let trialStartKey = "mimiq_trial_start_v1"
 
     // MARK: - Private
 
     private var transactionListener: Task<Void, Never>?
-    private static let wordsKey = "lingolab_practiced_words_v2"
 
     // MARK: - Init / deinit
 
     private init() {
-        uniqueWordCount = storedWords().count
+        // Record first-launch date as trial start (written once, never overwritten)
+        if UserDefaults.standard.object(forKey: Self.trialStartKey) == nil {
+            UserDefaults.standard.set(Date(), forKey: Self.trialStartKey)
+        }
         transactionListener = startTransactionListener()
     }
 
@@ -190,50 +192,33 @@ final class SubscriptionManager: ObservableObject {
         }
     }
 
-    // MARK: - Word counter
+    // MARK: - Trial
 
-    var wordsRemaining: Int { max(0, Self.freeWordLimit - uniqueWordCount) }
-    var hasUsedAllFreeWords: Bool { uniqueWordCount >= Self.freeWordLimit }
-
-    func hasSeenWord(_ word: String) -> Bool {
-        storedWords().contains(canonical(word))
+    var trialStartDate: Date? {
+        UserDefaults.standard.object(forKey: Self.trialStartKey) as? Date
     }
 
-    func markWordSeen(_ word: String) {
-        var words = storedWords()
-        words.insert(canonical(word))
-        saveWords(words)
-        uniqueWordCount = words.count
+    var trialEndsAt: Date? {
+        trialStartDate?.addingTimeInterval(TimeInterval(Self.trialDays * 86_400))
     }
 
-    /// Resets the free-word counter (e.g. after a refund or for debug purposes).
-    func resetWordCounter() {
-        saveWords([])
-        uniqueWordCount = 0
+    var isTrialActive: Bool {
+        guard let end = trialEndsAt else { return false }
+        return Date() < end
     }
+
+    var trialDaysRemaining: Int {
+        guard let end = trialEndsAt else { return 0 }
+        return max(0, Int(ceil(end.timeIntervalSince(Date()) / 86_400)))
+    }
+
+    var canAccessPro: Bool { hasActiveSubscription || isTrialActive }
 
     // MARK: - Computed helpers
 
     var subscriptionStatusLabel: String {
-        guard hasActiveSubscription else { return "Free (\(wordsRemaining) word\(wordsRemaining == 1 ? "" : "s") left)" }
-        return currentTier?.displayName.appending(" Plan") ?? "Active"
-    }
-
-    // MARK: - Private storage
-
-    private func storedWords() -> Set<String> {
-        guard let data = UserDefaults.standard.data(forKey: Self.wordsKey),
-              let array = try? JSONDecoder().decode([String].self, from: data) else { return [] }
-        return Set(array)
-    }
-
-    private func saveWords(_ words: Set<String>) {
-        if let data = try? JSONEncoder().encode(Array(words)) {
-            UserDefaults.standard.set(data, forKey: Self.wordsKey)
-        }
-    }
-
-    private func canonical(_ word: String) -> String {
-        word.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        if hasActiveSubscription { return currentTier?.displayName.appending(" Plan") ?? "Active" }
+        if isTrialActive { return "Free Trial — \(trialDaysRemaining) day\(trialDaysRemaining == 1 ? "" : "s") left" }
+        return "Trial Ended"
     }
 }
