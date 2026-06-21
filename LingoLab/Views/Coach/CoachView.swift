@@ -204,16 +204,12 @@ struct CoachView: View {
     private func bootstrap() async {
         if profiles.isEmpty {
             let p = AccentProfile()
+            p.onboardingCompleted = true
             modelContext.insert(p)
             try? modelContext.save()
         }
 
         guard let p = profiles.first else { return }
-
-        guard p.onboardingCompleted else {
-            showOnboarding = true
-            return
-        }
 
         let newVM = CoachViewModel(accentProfile: p, modelContext: modelContext)
         vm = newVM

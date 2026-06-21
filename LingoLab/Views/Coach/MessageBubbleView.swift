@@ -5,6 +5,7 @@ import SwiftUI
 struct MessageBubbleView: View {
     let message: ChatMessage
     @ObservedObject var tts: TTSService
+    @ObservedObject private var subs = SubscriptionManager.shared
     let onSpeak: (String) -> Void
 
     var body: some View {
@@ -15,7 +16,18 @@ struct MessageBubbleView: View {
             Group {
                 switch message.kind {
                 case .pronunciationResult:
-                    AttemptResultBubble(message: message)
+                    VStack(alignment: .trailing, spacing: 4) {
+                        AttemptResultBubble(message: message)
+                        if !subs.hasActiveSubscription {
+                            let remaining = subs.wordsRemaining
+                            Text(remaining > 0
+                                 ? "\(remaining) free word\(remaining == 1 ? "" : "s") remaining"
+                                 : "Upgrade to keep practising")
+                                .font(.caption2)
+                                .foregroundStyle(remaining <= 1 ? .orange : .secondary)
+                                .padding(.trailing, 4)
+                        }
+                    }
                 case .recordingRequest:
                     CoachBubble(message: message, tts: tts, onSpeak: onSpeak, showSpeaker: true)
                 case .exerciseCard:
