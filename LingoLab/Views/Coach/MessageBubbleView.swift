@@ -17,6 +17,8 @@ struct MessageBubbleView: View {
                     AttemptResultBubble(message: message)
                 case .recordingRequest:
                     CoachBubble(message: message, onSpeak: onSpeak, showSpeaker: true)
+                case .exerciseCard:
+                    ExerciseCardBubble(message: message)
                 default:
                     if message.isUser {
                         UserTextBubble(text: message.content)
@@ -213,6 +215,102 @@ struct TypingIndicatorView: View {
             }
         }
         .onReceive(timer) { _ in phase = (phase + 1) % 3 }
+    }
+}
+
+// MARK: - Exercise card bubble
+
+private struct ExerciseCardBubble: View {
+    let message: ChatMessage
+    @State private var expanded = false
+
+    private struct CardData: Decodable {
+        let phoneme: String
+        let why: String?
+        let technique: String?
+        let drillWords: [String]
+    }
+
+    private var card: CardData? {
+        guard let data = message.content.data(using: .utf8) else { return nil }
+        return try? JSONDecoder().decode(CardData.self, from: data)
+    }
+
+    var body: some View {
+        if let c = card {
+            VStack(alignment: .leading, spacing: 0) {
+                // Header
+                Button { withAnimation(.spring(duration: 0.3)) { expanded.toggle() } } label: {
+                    HStack(spacing: 10) {
+                        ZStack {
+                            Circle().fill(Color.indigo.opacity(0.15)).frame(width: 32, height: 32)
+                            Text("💪").font(.system(size: 15))
+                        }
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("Exercise: /\(c.phoneme)/")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(.primary)
+                            Text("Tap to \(expanded ? "collapse" : "see drill")")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: expanded ? "chevron.up" : "chevron.down")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(14)
+                }
+                .buttonStyle(.plain)
+
+                if expanded {
+                    Divider().padding(.horizontal, 14)
+
+                    VStack(alignment: .leading, spacing: 12) {
+                        if let why = c.why {
+                            exerciseRow(icon: "lightbulb.fill", color: .orange, label: "Why this happens", body: why)
+                        }
+                        if let technique = c.technique {
+                            exerciseRow(icon: "graduationcap.fill", color: .indigo, label: "Try this", body: technique)
+                        }
+                        if !c.drillWords.isEmpty {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Label("Drill words", systemImage: "speaker.wave.2.fill")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(.secondary)
+                                HStack(spacing: 8) {
+                                    ForEach(c.drillWords, id: \.self) { word in
+                                        Text(word)
+                                            .font(.subheadline.weight(.medium))
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 5)
+                                            .background(Color.indigo.opacity(0.1))
+                                            .clipShape(Capsule())
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .padding(14)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+            }
+            .background(Color(.secondarySystemGroupedBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
+        }
+    }
+
+    private func exerciseRow(icon: String, color: Color, label: String, body: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Label(label, systemImage: icon)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(color)
+            Text(body)
+                .font(.subheadline)
+                .foregroundStyle(.primary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 }
 

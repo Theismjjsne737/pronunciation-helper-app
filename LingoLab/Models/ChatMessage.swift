@@ -14,6 +14,7 @@ enum MessageKind: String, Codable {
     case text                   // Normal chat text
     case recordingRequest       // Bot asked user to record; shows inline recording widget
     case pronunciationResult    // User's attempt result (shown as a result card)
+    case exerciseCard           // Structured drill card: why + technique + words (content = JSON)
     case typing                 // Ephemeral: "..." while streaming
 }
 

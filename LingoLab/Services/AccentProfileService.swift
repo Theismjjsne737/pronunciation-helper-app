@@ -123,6 +123,27 @@ final class AccentProfileService {
         PhonemeDetector.detect(target: target, heard: heard)
     }
 
+    // MARK: - Exercise data (public for ViewModel use)
+
+    /// WHY explanation from native-language group + current technique based on error count.
+    func exerciseTip(for phoneme: String, profile: AccentProfile) -> (why: String?, technique: String?) {
+        let why: String? = profile.nativeLanguage.flatMap { lang in
+            AccentGroupProfile.groups[lang]?.teachingHints[phoneme]
+        }
+        let technique: String? = {
+            guard let techniques = Self.phonemeTechniques[phoneme] else { return nil }
+            let pattern = profile.phonemePatterns.first { $0.phoneme == phoneme }
+            let idx = min((pattern?.errorCount ?? 0) % 4, techniques.count - 1)
+            return techniques[idx]
+        }()
+        return (why, technique)
+    }
+
+    /// Easiest-level drill words for a phoneme, or empty if none defined.
+    func drillWords(for phoneme: String) -> [String] {
+        Self.progressionWords[phoneme]?.first ?? []
+    }
+
     // MARK: - Technique + progression data
 
     private static let phonemeTechniques: [String: [String]] = [

@@ -147,6 +147,13 @@ final class CoachViewModel: ObservableObject {
                 showConfetti = true
             }
 
+            // Exercise card for low scores with detected patterns
+            if result.score < 0.75, let firstPattern = detected.first {
+                let tip = profileService.exerciseTip(for: firstPattern.phoneme, profile: accentProfile)
+                let drill = profileService.drillWords(for: firstPattern.phoneme)
+                appendExerciseCard(phoneme: firstPattern.phoneme, why: tip.why, technique: tip.technique, drillWords: drill)
+            }
+
             // Snapshot top challenge BEFORE updating profile (enables improvement detection)
             let topChallengeBefore = accentProfile.topChallenges.first
 
@@ -314,6 +321,19 @@ final class CoachViewModel: ObservableObject {
         persist(msg)
     }
 
+    private func appendExerciseCard(phoneme: String, why: String?, technique: String?, drillWords: [String]) {
+        struct CardData: Encodable {
+            let phoneme: String
+            let why: String?
+            let technique: String?
+            let drillWords: [String]
+        }
+        let data = CardData(phoneme: phoneme, why: why, technique: technique, drillWords: drillWords)
+        let json = (try? JSONEncoder().encode(data)).flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
+        let msg = ChatMessage(role: .assistant, kind: .exerciseCard, content: json, sessionID: sessionID)
+        persist(msg)
+    }
+
     private func persist(_ msg: ChatMessage) {
         modelContext.insert(msg)
         try? modelContext.save()
@@ -327,6 +347,7 @@ final class CoachViewModel: ObservableObject {
     private func buildAPIHistory(appendingUser newMsg: String) -> [(role: String, content: String)] {
         var history: [(role: String, content: String)] = messages
             .suffix(20)
+            .filter { $0.kind != .exerciseCard }   // exercise cards are UI-only, not part of Claude's context
             .map { msg in
                 let role = msg.isUser ? "user" : "assistant"
                 let content: String = {
