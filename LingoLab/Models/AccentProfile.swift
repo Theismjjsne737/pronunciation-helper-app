@@ -105,6 +105,15 @@ struct AccentGroupProfile {
     ]
 }
 
+// MARK: - Phoneme progress snapshot (for progress tracking over time)
+
+struct PhonemeProgressEntry: Codable, Identifiable {
+    var id = UUID()
+    var phoneme: String
+    var accuracy: Double
+    var date: Date
+}
+
 // MARK: - Accent Profile model
 
 @Model
@@ -112,6 +121,7 @@ final class AccentProfile {
     @Attribute(.unique) var id: UUID
     var nativeLanguage: String?                 // User-selected or inferred
     var phonemePatterns: [PhonemePattern]       // Learned over time
+    var progressHistory: [PhonemeProgressEntry] // Accuracy snapshots every 5 attempts
     var totalPracticeWords: Int
     var totalSessions: Int
     var onboardingCompleted: Bool
@@ -121,6 +131,7 @@ final class AccentProfile {
     init() {
         self.id = UUID()
         self.phonemePatterns = []
+        self.progressHistory = []
         self.totalPracticeWords = 0
         self.totalSessions = 0
         self.onboardingCompleted = false

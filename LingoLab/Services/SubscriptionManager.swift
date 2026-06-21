@@ -19,7 +19,7 @@ enum SubscriptionTier: String, CaseIterable, Identifiable {
     var billingDescription: String {
         switch self {
         case .monthly: return "Billed monthly, cancel anytime"
-        case .yearly:  return "$4.17/month • Save 17%"
+        case .yearly:  return "$8.33/month • Save 44%"
         }
     }
 
@@ -184,7 +184,7 @@ final class SubscriptionManager: ObservableObject {
         Task.detached(priority: .background) { [weak self] in
             for await result in Transaction.updates {
                 guard case .verified(let tx) = result else { continue }
-                await MainActor.run { Task { await self?.refreshStatus() } }
+                if let self { await self.refreshStatus() }
                 await tx.finish()
             }
         }

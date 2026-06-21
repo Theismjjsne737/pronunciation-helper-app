@@ -85,6 +85,15 @@ final class AccentProfileService {
 
         profile.totalPracticeWords += 1
         profile.lastUpdatedAt = Date()
+
+        // Snapshot accuracy every 5 attempts for progress tracking
+        for (phoneme, _) in detected {
+            if let p = profile.phonemePatterns.first(where: { $0.phoneme == phoneme }),
+               p.attemptCount % 5 == 0 {
+                let entry = PhonemeProgressEntry(phoneme: phoneme, accuracy: p.accuracy, date: Date())
+                profile.progressHistory.append(entry)
+            }
+        }
     }
 
     // MARK: - Seed profile from onboarding self-assessment

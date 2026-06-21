@@ -73,7 +73,7 @@ struct PaywallView: View {
                     .font(.title2.weight(.bold))
                     .multilineTextAlignment(.center)
 
-                Text("Unlock unlimited AI coaching for just $4.99/month and keep improving.")
+                Text("Unlock unlimited AI coaching for just $14.99/month and keep improving.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
