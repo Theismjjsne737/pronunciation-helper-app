@@ -84,12 +84,29 @@ final class SpeechAnalysisService: ObservableObject {
         isAnalyzing = true
         defer { isAnalyzing = false }
 
-        let sfResult = try await transcribe(url: recordingURL, recognizer: recognizer)
-        let transcription = sfResult.bestTranscription.formattedString
-        let segments = sfResult.bestTranscription.segments
+        let sfResult = try await transcribe(url: recordingURL, recognizer: recognizer, target: targetWord)
+
+        // Pick the N-best hypothesis closest to the target word — accented speech often
+        // produces the correct pronunciation as hypothesis 2-5, not hypothesis 1.
+        let target = targetWord.lowercased().trimmingCharacters(in: .whitespaces)
+        let bestTranscription = sfResult.transcriptions
+            .min(by: { a, b in
+                let da = levenshteinDistance(
+                    Array(a.formattedString.lowercased().trimmingCharacters(in: .whitespaces)),
+                    Array(target)
+                )
+                let db = levenshteinDistance(
+                    Array(b.formattedString.lowercased().trimmingCharacters(in: .whitespaces)),
+                    Array(target)
+                )
+                return da < db
+            }) ?? sfResult.bestTranscription
+
+        let transcription = bestTranscription.formattedString
+        let segments = bestTranscription.segments
 
         let score = computeScore(transcription: transcription, target: targetWord, segments: segments)
-        let phonemes = buildPhonemeScores(targetWord: targetWord, segments: segments)
+        let phonemes = buildPhonemeScores(targetWord: targetWord, heard: transcription, segments: segments)
 
         return AnalysisResult(
             transcription: transcription,
@@ -101,11 +118,14 @@ final class SpeechAnalysisService: ObservableObject {
 
     // MARK: - Transcription
 
-    private func transcribe(url: URL, recognizer: SFSpeechRecognizer) async throws -> SFSpeechRecognitionResult {
+    private func transcribe(url: URL, recognizer: SFSpeechRecognizer, target: String) async throws -> SFSpeechRecognitionResult {
         let request = SFSpeechURLRecognitionRequest(url: url)
         request.shouldReportPartialResults = false
-        request.taskHint = .dictation
+        // .search is tuned for short isolated-word utterances; .dictation is for continuous speech
+        request.taskHint = .search
         if #available(iOS 16, *) { request.addsPunctuation = false }
+        // Prime the acoustic model to heavily favour the target word in the N-best list
+        request.contextualStrings = [target, target.lowercased(), target.uppercased()]
 
         return try await withCheckedThrowingContinuation { continuation in
             var resolved = false
@@ -121,7 +141,7 @@ final class SpeechAnalysisService: ObservableObject {
 
     // MARK: - Scoring
 
-    /// 70% string similarity + 30% Speech framework confidence.
+    /// 65% string similarity + 35% Speech framework confidence, with bonuses/penalties.
     private func computeScore(
         transcription: String,
         target: String,
@@ -133,17 +153,26 @@ final class SpeechAnalysisService: ObservableObject {
         let confidence = segments.isEmpty
             ? 0.0
             : Double(segments.map(\.confidence).reduce(0, +)) / Double(segments.count)
-        let bonus: Double = t == s ? 0.05 : 0
-        return max(0, min(1, similarity * 0.7 + confidence * 0.3 + bonus))
+        let exactBonus: Double = t == s ? 0.08 : 0
+        // Penalise when the first phoneme is wrong — it's the strongest perceptual cue
+        let firstCharPenalty: Double = (!t.isEmpty && !s.isEmpty && t.first != s.first) ? 0.08 : 0
+        return max(0, min(1, similarity * 0.65 + confidence * 0.35 + exactBonus - firstCharPenalty))
     }
 
-    private func buildPhonemeScores(targetWord: String, segments: [SFTranscriptionSegment]) -> [PhonemeScore] {
-        syllabify(targetWord).enumerated().map { i, syllable in
+    private func buildPhonemeScores(targetWord: String, heard: String, segments: [SFTranscriptionSegment]) -> [PhonemeScore] {
+        let heardLower = heard.lowercased()
+        return phonemeGroups(targetWord).enumerated().map { i, group in
             let seg = segments.indices.contains(i) ? segments[i] : nil
-            let rawScore = seg.map { Double($0.confidence) * 1.1 } ?? 0.5
+            let rawScore: Double
+            if let seg {
+                rawScore = Double(seg.confidence) * 1.05
+            } else {
+                // Fall back to presence check: was this phoneme group audible in what was heard?
+                rawScore = heardLower.contains(group.lowercased()) ? 0.75 : 0.35
+            }
             return PhonemeScore(
-                phoneme: syllable,
-                ipaSymbol: IPAMapper.fromSyllable(syllable),
+                phoneme: group,
+                ipaSymbol: IPAMapper.fromSyllable(group),
                 score: max(0, min(1, rawScore)),
                 startTime: seg?.timestamp ?? 0,
                 endTime: (seg?.timestamp ?? 0) + (seg?.duration ?? 0)
@@ -171,21 +200,43 @@ final class SpeechAnalysisService: ObservableObject {
         return dp[m][n]
     }
 
-    // MARK: - Syllabification
+    // MARK: - Digraph-aware phoneme tokenizer
 
-    private func syllabify(_ word: String) -> [String] {
-        let vowels = Set("aeiouAEIOU")
-        var syllables: [String] = []
-        var current = ""
-        var inVowelRun = false
-        for (i, ch) in word.enumerated() {
-            let isVowel = vowels.contains(ch)
-            if !current.isEmpty && !isVowel && inVowelRun && i < word.count - 1 {
-                syllables.append(current); current = String(ch)
-            } else { current.append(ch) }
-            inVowelRun = isVowel
+    /// Splits a word into phoneme groups, treating common digraphs as single units.
+    /// Example: "think" → ["th", "ink"] rather than ["t", "h", "ink"]
+    private func phonemeGroups(_ word: String) -> [String] {
+        let digraphs = ["tch", "dge", "sch", "th", "sh", "ch", "wh", "ng", "ph", "ck", "qu", "gh"]
+        var groups: [String] = []
+        var i = word.startIndex
+
+        while i < word.endIndex {
+            var matched = false
+            for digraph in digraphs {
+                if word[i...].lowercased().hasPrefix(digraph) {
+                    let end = word.index(i, offsetBy: digraph.count, limitedBy: word.endIndex) ?? word.endIndex
+                    groups.append(String(word[i..<end]))
+                    i = end
+                    matched = true
+                    break
+                }
+            }
+            if !matched {
+                groups.append(String(word[i]))
+                i = word.index(after: i)
+            }
         }
-        if !current.isEmpty { syllables.append(current) }
-        return syllables.isEmpty ? [word] : syllables
+
+        // Merge lone vowels into the preceding group so each group has phonetic weight
+        let vowels = Set("aeiouAEIOU")
+        var merged: [String] = []
+        for group in groups {
+            if group.count == 1 && vowels.contains(group.first!), let last = merged.last {
+                merged[merged.count - 1] = last + group
+            } else {
+                merged.append(group)
+            }
+        }
+
+        return merged.isEmpty ? [word] : merged
     }
 }
