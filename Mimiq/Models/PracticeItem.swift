@@ -39,6 +39,8 @@ enum PracticeCategory: String, CaseIterable, Identifiable {
     case businessTerms   = "Business Terms"
     case borrowedWords   = "Borrowed Words"
     case tongueTwisters  = "Tongue Twisters"
+    case minimalPairs    = "Minimal Pairs"
+    case phrases         = "Phrases"
 
     var id: String { rawValue }
 
@@ -50,6 +52,8 @@ enum PracticeCategory: String, CaseIterable, Identifiable {
         case .businessTerms:   "briefcase"
         case .borrowedWords:   "globe"
         case .tongueTwisters:  "tornado"
+        case .minimalPairs:    "arrow.left.arrow.right"
+        case .phrases:         "quote.bubble"
         }
     }
 
@@ -61,6 +65,8 @@ enum PracticeCategory: String, CaseIterable, Identifiable {
         case .businessTerms:   .blue
         case .borrowedWords:   .orange
         case .tongueTwisters:  .pink
+        case .minimalPairs:    .cyan
+        case .phrases:         .mint
         }
     }
 }
@@ -79,7 +85,7 @@ struct PracticeItem: Identifiable, Hashable {
 // MARK: - Library
 
 extension PracticeItem {
-    static let library: [PracticeItem] = commonWords + difficultSounds + namesAndPlaces + businessTerms + borrowedWords + tongueTwisters
+    static let library: [PracticeItem] = commonWords + difficultSounds + namesAndPlaces + businessTerms + borrowedWords + tongueTwisters + minimalPairs + phrases
 
     private static let commonWords: [PracticeItem] = [
         PracticeItem(word: "particularly",   phonetic: "pər-TIK-yə-lər-lee",  category: .commonWords, difficulty: .beginner,     tip: "Stress the second syllable"),
@@ -155,5 +161,39 @@ extension PracticeItem {
         PracticeItem(word: "truly rural",             phonetic: "TROO-lee ROO-rəl",           category: .tongueTwisters, difficulty: .advanced,     tip: "Four R sounds — the ultimate R challenge"),
         PracticeItem(word: "which witch is which",    phonetic: "WICH WICH IZ WICH",          category: .tongueTwisters, difficulty: .beginner,     tip: "All three words sound identical — focus on clarity"),
         PracticeItem(word: "pre-shrunk silk shirts",  phonetic: "PREE-shrungk SILK SHURTS",   category: .tongueTwisters, difficulty: .advanced,     tip: "Three consonant clusters back to back"),
+    ]
+
+    // MARK: - Minimal Pairs
+    // Practice words that differ by a single sound — the classic accent-training method.
+
+    private static let minimalPairs: [PracticeItem] = [
+        PracticeItem(word: "ship",    phonetic: "SHIP",   category: .minimalPairs, difficulty: .beginner,     tip: "Short I (ɪ) — contrast with: 'sheep' (SHEEP, long E)"),
+        PracticeItem(word: "sheep",   phonetic: "SHEEP",  category: .minimalPairs, difficulty: .beginner,     tip: "Long E (iː) — contrast with: 'ship' (SHIP, short I)"),
+        PracticeItem(word: "bit",     phonetic: "BIT",    category: .minimalPairs, difficulty: .beginner,     tip: "Short I (ɪ) — contrast with: 'beat' (BEET)"),
+        PracticeItem(word: "beat",    phonetic: "BEET",   category: .minimalPairs, difficulty: .beginner,     tip: "Long E (iː) — contrast with: 'bit' (BIT)"),
+        PracticeItem(word: "berry",   phonetic: "BEHR-ee", category: .minimalPairs, difficulty: .intermediate, tip: "B sound — contrast with: 'very' (VEHR-ee, upper teeth on lip)"),
+        PracticeItem(word: "very",    phonetic: "VEHR-ee", category: .minimalPairs, difficulty: .intermediate, tip: "V sound — contrast with: 'berry' (BEHR-ee, pure lip closure)"),
+        PracticeItem(word: "thin",    phonetic: "THIN",   category: .minimalPairs, difficulty: .intermediate, tip: "Voiceless TH (θ) — tongue between teeth; contrast with: 'tin'"),
+        PracticeItem(word: "tin",     phonetic: "TIN",    category: .minimalPairs, difficulty: .intermediate, tip: "T sound — contrast with: 'thin' (tongue-between-teeth TH)"),
+        PracticeItem(word: "right",   phonetic: "RYTE",   category: .minimalPairs, difficulty: .advanced,     tip: "English R — lip rounding, no tongue tip contact; contrast with: 'light'"),
+        PracticeItem(word: "light",   phonetic: "LYTE",   category: .minimalPairs, difficulty: .advanced,     tip: "L — tongue tip touches ridge behind upper teeth; contrast with: 'right'"),
+        PracticeItem(word: "cat",     phonetic: "KAT",    category: .minimalPairs, difficulty: .beginner,     tip: "Short A (æ) — mouth wide, jaw low; contrast with: 'cut'"),
+        PracticeItem(word: "cut",     phonetic: "KUT",    category: .minimalPairs, difficulty: .beginner,     tip: "Schwa-like U (ʌ) — more central; contrast with: 'cat'"),
+    ]
+
+    // MARK: - Phrases
+    // Connected speech is where accents really show — practice full phrases.
+
+    private static let phrases: [PracticeItem] = [
+        PracticeItem(word: "I need to go to the library",        phonetic: "ay NEED tə goh tə thə LY-brer-ee",      category: .phrases, difficulty: .beginner,     tip: "Reduce unstressed 'to the' to 'tə thə'"),
+        PracticeItem(word: "particularly comfortable",           phonetic: "pər-TIK-yə-lər-lee KUMF-tər-bəl",       category: .phrases, difficulty: .intermediate, tip: "Two notoriously hard words back to back"),
+        PracticeItem(word: "I would like a glass of water",      phonetic: "ay wud lyk ə glas əv WAW-tər",          category: .phrases, difficulty: .beginner,     tip: "'Would' reduces to 'wud' — flap T in 'water'"),
+        PracticeItem(word: "she should have told me sooner",     phonetic: "shee SHUD əv tohld mee SOO-nər",        category: .phrases, difficulty: .intermediate, tip: "'Should have' contracts to 'shoulda' in natural speech"),
+        PracticeItem(word: "what are you going to do about it",  phonetic: "wət ər yoo GOH-nə doo ə-BOWT it",      category: .phrases, difficulty: .intermediate, tip: "'Going to' reduces to 'gonna' — very common in spoken English"),
+        PracticeItem(word: "February is the shortest month",     phonetic: "FEB-roo-er-ee iz thə SHOR-təst munth",  category: .phrases, difficulty: .advanced,     tip: "Don't skip the first R in February"),
+        PracticeItem(word: "the temperature is comfortable",     phonetic: "thə TEM-prə-chər iz KUMF-tər-bəl",      category: .phrases, difficulty: .advanced,     tip: "Temperature = 3 syllables (TEM-prə-chər), not 4"),
+        PracticeItem(word: "could you pass the vegetables",      phonetic: "kud yoo pas thə VEJ-tə-bəlz",           category: .phrases, difficulty: .intermediate, tip: "'Could you' blends to 'cudja' — vegetables = 3 syllables"),
+        PracticeItem(word: "I literally cannot believe it",      phonetic: "ay LIT-ər-lee KAN-ot bih-LEEV it",      category: .phrases, difficulty: .beginner,     tip: "Stress 'lit' not 'er' — don't compress to 'litrally'"),
+        PracticeItem(word: "specifically and particularly",      phonetic: "spə-SIF-ik-lee and pər-TIK-yə-lər-lee", category: .phrases, difficulty: .advanced,     tip: "Two of the most commonly mispronounced adverbs together"),
     ]
 }

@@ -66,7 +66,7 @@ final class SubscriptionManager: ObservableObject {
     // MARK: - Constants
 
     static let productIDs: [String] = SubscriptionTier.allCases.map(\.rawValue)
-    static let freeWordLimit = 5
+    static let freeWordLimit = 20
     private static let wordsKey = "mimiq_free_words_v1"
 
     // MARK: - Free-tier word counter
@@ -221,11 +221,11 @@ final class SubscriptionManager: ObservableObject {
     // MARK: - Transaction listener (handles renewals, refunds, etc.)
 
     private func startTransactionListener() -> Task<Void, Never> {
-        Task.detached(priority: .background) { [weak self] in
+        Task { [weak self] in
             for await result in Transaction.updates {
                 guard case .verified(let tx) = result else { continue }
-                if let self { await self.refreshStatus() }
                 await tx.finish()
+                await self?.refreshStatus()
             }
         }
     }

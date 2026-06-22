@@ -54,7 +54,7 @@ final class SpeechAnalysisService: ObservableObject {
 
     @Published private(set) var isAnalyzing = false
 
-    private let locale: Locale
+    var locale: Locale
 
     init(locale: Locale = Locale(identifier: "en-US")) {
         self.locale = locale
@@ -129,12 +129,25 @@ final class SpeechAnalysisService: ObservableObject {
 
         return try await withCheckedThrowingContinuation { continuation in
             var resolved = false
-            recognizer.recognitionTask(with: request) { result, error in
+            let recognitionTask = recognizer.recognitionTask(with: request) { result, error in
                 guard !resolved else { return }
-                if let error { resolved = true; continuation.resume(throwing: error); return }
-                guard let result, result.isFinal else { return }
+                if let error {
+                    resolved = true
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let result else { return }
+                if result.isFinal {
+                    resolved = true
+                    continuation.resume(returning: result)
+                }
+            }
+            Task {
+                try? await Task.sleep(for: .seconds(15))
+                guard !resolved else { return }
                 resolved = true
-                continuation.resume(returning: result)
+                recognitionTask.cancel()
+                continuation.resume(throwing: AnalysisError.noResult)
             }
         }
     }

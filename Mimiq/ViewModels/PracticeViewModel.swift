@@ -110,6 +110,10 @@ final class PracticeViewModel: ObservableObject {
             return
         }
 
+        // Honour the language selected in Settings
+        let langRaw = UserDefaults.standard.string(forKey: "practiceLanguage") ?? "en-US"
+        analysisService.locale = Locale(identifier: langRaw)
+
         do {
             let result = try await analysisService.analyze(recordingURL: url, targetWord: word)
             if result.score >= 0.9      { HapticsService.success() }
