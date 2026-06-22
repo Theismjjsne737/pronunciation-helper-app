@@ -82,8 +82,9 @@ actor AnthropicService {
                     let (bytes, response) = try await URLSession.shared.bytes(for: request)
 
                     if let http = response as? HTTPURLResponse, http.statusCode != 200 {
-                        var body = ""
-                        for try await byte in bytes { body += String(UnicodeScalar(byte)) }
+                        var bodyData = Data()
+                        for try await byte in bytes { bodyData.append(byte) }
+                        let body = String(data: bodyData, encoding: .utf8) ?? "<non-UTF-8 error body>"
                         if http.statusCode == 429 {
                             continuation.finish(throwing: AnthropicError.rateLimited)
                         } else {

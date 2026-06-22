@@ -10,9 +10,13 @@ final class DailyChallengeService: ObservableObject {
     @Published private(set) var todaysWord: String = ""
     @Published private(set) var completedToday: Bool = false
 
+    private let completionKey: String
+
     private init() {
+        let key = "daily_challenge_completed_\(Self.todayISO)"
+        completionKey = key
         todaysWord = Self.wordForToday()
-        completedToday = Self.isCompletedToday()
+        completedToday = UserDefaults.standard.bool(forKey: key)
     }
 
     func markCompleted() {
@@ -20,17 +24,9 @@ final class DailyChallengeService: ObservableObject {
         completedToday = true
     }
 
-    var completionKey: String {
-        "daily_challenge_completed_\(Self.todayISO)"
-    }
-
     static func wordForToday() -> String {
         let day = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 1
         return challengeWords[(day - 1) % challengeWords.count]
-    }
-
-    static func isCompletedToday() -> Bool {
-        UserDefaults.standard.bool(forKey: "daily_challenge_completed_\(todayISO)")
     }
 
     static var todayISO: String {

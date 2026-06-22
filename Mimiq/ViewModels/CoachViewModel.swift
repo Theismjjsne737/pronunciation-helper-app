@@ -47,6 +47,7 @@ final class CoachViewModel: ObservableObject {
     private var currentRecordingURL: URL?
     private let sessionID = UUID()
     private var streamTask: Task<Void, Never>?
+    private var streamGeneration = 0
 
     // Session-level progress tracking
     private var sessionAttempts = 0
@@ -64,7 +65,7 @@ final class CoachViewModel: ObservableObject {
 
     func startSession() async {
         accentProfile.totalSessions += 1
-        try? modelContext.save()
+        do { try modelContext.save() } catch { assertionFailure("SwiftData save failed: \(error)") }
 
         // Permissions
         _ = await recordingService.requestPermission()
@@ -164,7 +165,7 @@ final class CoachViewModel: ObservableObject {
                 score: result.score,
                 into: accentProfile
             )
-            try? modelContext.save()
+            do { try modelContext.save() } catch { assertionFailure("SwiftData save failed: \(error)") }
             await StreakService.shared.recordPractice()
             await GamificationService.shared.award(score: result.score)
 
@@ -221,6 +222,8 @@ final class CoachViewModel: ObservableObject {
         let history = buildAPIHistory(appendingUser: userMessage)
 
         streamTask?.cancel()
+        streamGeneration += 1
+        let generation = streamGeneration
         streamTask = Task {
             var accumulated = ""
             do {
@@ -228,12 +231,14 @@ final class CoachViewModel: ObservableObject {
                     systemPrompt: systemPrompt,
                     messages: history
                 ) {
-                    guard !Task.isCancelled else { break }
+                    guard !Task.isCancelled, generation == streamGeneration else { break }
                     accumulated += chunk
                     streamingText = accumulated
                 }
+                guard generation == streamGeneration else { return }
                 await finalise(accumulated)
             } catch {
+                guard generation == streamGeneration else { return }
                 streamingText = ""
                 coachState = .idle
                 if !Task.isCancelled {
@@ -334,7 +339,7 @@ final class CoachViewModel: ObservableObject {
 
     private func persist(_ msg: ChatMessage) {
         modelContext.insert(msg)
-        try? modelContext.save()
+        do { try modelContext.save() } catch { assertionFailure("SwiftData save failed: \(error)") }
         messages.append(msg)
     }
 

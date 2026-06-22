@@ -43,7 +43,7 @@ final class StreakService: ObservableObject {
                 return // Already recorded today — don't double-count
             }
 
-            let yesterday = cal.date(byAdding: .day, value: -1, to: today)!
+            let yesterday = cal.date(byAdding: .day, value: -1, to: today) ?? today
             currentStreak = (lastDay == yesterday) ? currentStreak + 1 : 1
         } else {
             currentStreak = 1
@@ -116,7 +116,7 @@ final class StreakService: ObservableObject {
         let history = loadHistory()
         let cal = Calendar.current
         weekActivity = (0..<7).reversed().map { daysAgo in
-            let date = cal.date(byAdding: .day, value: -daysAgo, to: cal.startOfDay(for: Date()))!
+            let date = cal.date(byAdding: .day, value: -daysAgo, to: cal.startOfDay(for: Date())) ?? cal.startOfDay(for: Date())
             return history[isoDate(date)] == true
         }
     }
