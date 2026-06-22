@@ -100,9 +100,10 @@ struct AccentProfileView: View {
                 .padding(16)
                 .padding(.bottom, 24)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color(red: 0.027, green: 0.020, blue: 0.059))
             .navigationTitle("Progress")
             .navigationBarTitleDisplayMode(.large)
+            .preferredColorScheme(.dark)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Edit accent") { showOnboarding = true }
@@ -146,7 +147,7 @@ struct AccentProfileView: View {
                 ForEach(Array(streak.weekActivity.enumerated()), id: \.offset) { i, active in
                     VStack(spacing: 4) {
                         Circle()
-                            .fill(active ? Color.orange : Color(.systemGray5))
+                            .fill(active ? Color.orange : Color.white.opacity(0.10))
                             .frame(width: 28, height: 28)
                             .overlay {
                                 if active {
@@ -174,7 +175,7 @@ struct AccentProfileView: View {
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(Color(.systemGray5))
+                            .fill(Color.white.opacity(0.10))
                             .frame(height: 6)
                         RoundedRectangle(cornerRadius: 4)
                             .fill(Color.indigo.gradient)
@@ -186,9 +187,10 @@ struct AccentProfileView: View {
             }
         }
         .padding(20)
-        .background(Color(.systemBackground))
+        .background(Color.white.opacity(0.04))
         .clipShape(RoundedRectangle(cornerRadius: 20))
-        .shadow(color: .black.opacity(0.06), radius: 10, y: 4)
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.15), lineWidth: 1))
+        .shadow(color: Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.08), radius: 10, y: 4)
     }
 
     private func streakStat(label: String, value: String, icon: String, color: Color) -> some View {
@@ -282,7 +284,7 @@ struct AccentProfileView: View {
             .chartXScale(domain: 0...100)
             .chartXAxis {
                 AxisMarks(values: [0, 25, 50, 75, 100]) { val in
-                    AxisGridLine().foregroundStyle(Color(.systemGray5))
+                    AxisGridLine().foregroundStyle(Color.white.opacity(0.10))
                     AxisValueLabel("\(val.as(Int.self) ?? 0)%")
                         .font(.caption2)
                 }
@@ -290,9 +292,10 @@ struct AccentProfileView: View {
             .frame(height: CGFloat(patterns.count) * 38 + 24)
         }
         .padding(16)
-        .background(Color(.systemBackground))
+        .background(Color.white.opacity(0.04))
         .clipShape(RoundedRectangle(cornerRadius: 20))
-        .shadow(color: .black.opacity(0.05), radius: 8, y: 4)
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.15), lineWidth: 1))
+        .shadow(color: Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.08), radius: 8, y: 4)
     }
 
     private func phonemeBarColor(_ accuracy: Double) -> Color {
@@ -324,9 +327,10 @@ struct AccentProfileView: View {
                         .foregroundStyle(.secondary)
                 }
                 .padding(14)
-                .background(Color(.systemBackground))
+                .background(Color.white.opacity(0.04))
                 .clipShape(RoundedRectangle(cornerRadius: 14))
-                .shadow(color: .black.opacity(0.05), radius: 6, y: 2)
+                .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.15), lineWidth: 1))
+                .shadow(color: Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.06), radius: 6, y: 2)
             }
             .buttonStyle(.plain)
         }
@@ -388,7 +392,7 @@ struct AccentProfileView: View {
             }
             .chartYAxis {
                 AxisMarks(values: [0, 25, 50, 75, 100]) { val in
-                    AxisGridLine().foregroundStyle(Color(.systemGray5))
+                    AxisGridLine().foregroundStyle(Color.white.opacity(0.10))
                     AxisValueLabel("\(val.as(Int.self) ?? 0)%")
                 }
             }
@@ -397,9 +401,10 @@ struct AccentProfileView: View {
             .frame(height: 160)
         }
         .padding(16)
-        .background(Color(.systemBackground))
+        .background(Color.white.opacity(0.04))
         .clipShape(RoundedRectangle(cornerRadius: 20))
-        .shadow(color: .black.opacity(0.05), radius: 8, y: 4)
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.15), lineWidth: 1))
+        .shadow(color: Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.08), radius: 8, y: 4)
     }
 
     // MARK: - Accent fingerprint
@@ -435,9 +440,10 @@ struct AccentProfileView: View {
             }
         }
         .padding(16)
-        .background(Color(.systemBackground))
+        .background(Color.white.opacity(0.04))
         .clipShape(RoundedRectangle(cornerRadius: 20))
-        .shadow(color: .black.opacity(0.05), radius: 8, y: 4)
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.15), lineWidth: 1))
+        .shadow(color: Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.08), radius: 8, y: 4)
     }
 
     private func tierColor(_ tier: PhonemeTier) -> Color {
@@ -471,8 +477,9 @@ struct AccentProfileView: View {
                 }
             }
             .padding(16)
-            .background(Color(.systemBackground))
+            .background(Color.white.opacity(0.04))
             .clipShape(RoundedRectangle(cornerRadius: 20))
+            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.15), lineWidth: 1))
             .shadow(color: .black.opacity(0.05), radius: 8, y: 4)
         } else {
             // Empty state
@@ -489,8 +496,9 @@ struct AccentProfileView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(32)
-            .background(Color(.systemBackground))
+            .background(Color.white.opacity(0.04))
             .clipShape(RoundedRectangle(cornerRadius: 20))
+            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.15), lineWidth: 1))
         }
     }
 
@@ -538,9 +546,10 @@ private struct StatTile: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
-        .background(Color(.systemBackground))
+        .background(Color.white.opacity(0.04))
         .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.05), radius: 5, y: 2)
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.15), lineWidth: 1))
+        .shadow(color: Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.06), radius: 5, y: 2)
     }
 }
 
@@ -566,7 +575,7 @@ private struct PhonemeRow: View {
             }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 3).fill(Color(.systemGray5)).frame(height: 5)
+                    RoundedRectangle(cornerRadius: 3).fill(Color.white.opacity(0.10)).frame(height: 5)
                     RoundedRectangle(cornerRadius: 3)
                         .fill(barColor.gradient)
                         .frame(width: geo.size.width * pattern.accuracy, height: 5)
@@ -596,7 +605,7 @@ private struct RecentAttemptRow: View {
             // Score ring
             ZStack {
                 Circle()
-                    .stroke(Color(.systemGray5), lineWidth: 3)
+                    .stroke(Color.white.opacity(0.10), lineWidth: 3)
                     .frame(width: 42, height: 42)
                 Circle()
                     .trim(from: 0, to: message.pronunciationScore ?? 0)

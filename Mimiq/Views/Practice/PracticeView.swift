@@ -14,11 +14,12 @@ struct PracticeView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(.systemGroupedBackground).ignoresSafeArea()
+                Color(red: 0.027, green: 0.020, blue: 0.059).ignoresSafeArea()
                 phaseContent
                     .transition(.opacity.combined(with: .scale(scale: 0.97)))
                     .animation(.spring(duration: 0.35), value: phaseTag)
             }
+            .preferredColorScheme(.dark)
             .navigationTitle("Practice")
             .navigationBarTitleDisplayMode(.inline)
             .alert("Error", isPresented: Binding(
@@ -151,11 +152,11 @@ struct PracticeView: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 16)
-                        .background(Color(.secondarySystemGroupedBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .background(Color.white.opacity(0.03))
+                        .clipShape(RoundedRectangle(cornerRadius: 24))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.indigo.opacity(vm.wordInput.isEmpty ? 0 : 0.5), lineWidth: 1.5)
+                            RoundedRectangle(cornerRadius: 24)
+                                .stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(vm.wordInput.isEmpty ? 0.15 : 0.55), lineWidth: 1.5)
                         )
                         .submitLabel(.go)
                         .onSubmit { vm.startPractice() }
@@ -166,10 +167,13 @@ struct PracticeView: View {
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
-                            .background(
-                                vm.wordInput.trimmingCharacters(in: .whitespaces).isEmpty
-                                    ? Color(.systemGray4) : Color.indigo
-                            )
+                            .background {
+                                if vm.wordInput.trimmingCharacters(in: .whitespaces).isEmpty {
+                                    Color.white.opacity(0.08)
+                                } else {
+                                    LinearGradient(colors: [Color(red: 0.48, green: 0.33, blue: 1.0), Color(red: 0.35, green: 0.20, blue: 0.85)], startPoint: .leading, endPoint: .trailing)
+                                }
+                            }
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
                     .disabled(vm.wordInput.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -241,8 +245,9 @@ struct PracticeView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 24)
                 .padding(.horizontal, 20)
-                .background(Color(.secondarySystemGroupedBackground))
+                .background(Color.white.opacity(0.03))
                 .clipShape(RoundedRectangle(cornerRadius: 20))
+                .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.15), lineWidth: 1))
                 .padding(.horizontal, 20)
 
                 // Native reference
@@ -282,8 +287,9 @@ struct PracticeView: View {
                     }
                 }
                 .padding(20)
-                .background(Color(.secondarySystemGroupedBackground))
+                .background(Color.white.opacity(0.03))
                 .clipShape(RoundedRectangle(cornerRadius: 20))
+                .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.15), lineWidth: 1))
                 .padding(.horizontal, 20)
 
                 // vs divider
@@ -317,8 +323,9 @@ struct PracticeView: View {
                     }
                 }
                 .padding(20)
-                .background(Color(.secondarySystemGroupedBackground))
+                .background(Color.white.opacity(0.03))
                 .clipShape(RoundedRectangle(cornerRadius: 20))
+                .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.15), lineWidth: 1))
                 .padding(.horizontal, 20)
 
                 Button("← Try a different word") { vm.newWord() }
@@ -354,8 +361,9 @@ struct PracticeView: View {
                 .frame(height: 72)
                 .padding(.horizontal, 28)
                 .padding(.vertical, 20)
-                .background(Color(.secondarySystemGroupedBackground))
+                .background(Color.white.opacity(0.03))
                 .clipShape(RoundedRectangle(cornerRadius: 20))
+                .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.15), lineWidth: 1))
                 .padding(.horizontal, 20)
 
             HStack(spacing: 16) {
@@ -364,7 +372,7 @@ struct PracticeView: View {
                         .font(.title3)
                         .foregroundStyle(.secondary)
                         .frame(width: 52, height: 52)
-                        .background(Color(.tertiarySystemFill))
+                        .background(Color.white.opacity(0.06))
                         .clipShape(Circle())
                 }
                 .accessibilityLabel("Cancel recording")

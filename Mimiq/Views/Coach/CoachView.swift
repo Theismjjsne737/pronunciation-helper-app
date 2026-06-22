@@ -19,10 +19,15 @@ struct CoachView: View {
 
     // MARK: - Body
 
+    // MARK: - Design tokens
+    private let navyBg    = Color(red: 0.027, green: 0.020, blue: 0.059)
+    private let accent    = Color(red: 0.48,  green: 0.33,  blue: 1.0)
+    private let offWhite  = Color(red: 0.941, green: 0.933, blue: 1.0)
+
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
-                Color(.systemGroupedBackground).ignoresSafeArea()
+                navyBg.ignoresSafeArea()
 
                 if let vm {
                     chatLayout(vm: vm)
@@ -41,11 +46,13 @@ struct CoachView: View {
                             Text("No internet — coach unavailable offline")
                                 .font(.caption.weight(.medium))
                         }
-                        .foregroundStyle(.white)
+                        .foregroundStyle(offWhite)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
-                        .background(Color.secondary.opacity(0.85))
+                        .background(accent.opacity(0.18))
+                        .background(.ultraThinMaterial)
                         .clipShape(Capsule())
+                        .overlay(Capsule().stroke(accent.opacity(0.35), lineWidth: 1))
                         .padding(.top, 8)
                         Spacer()
                     }
@@ -53,6 +60,7 @@ struct CoachView: View {
                     .animation(.spring(duration: 0.3), value: network.isConnected)
                 }
             }
+            .preferredColorScheme(.dark)
             .navigationTitle("Coach")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbarItems }
@@ -255,8 +263,9 @@ struct StreakBadge: View {
         }
         .padding(.horizontal, 7)
         .padding(.vertical, 4)
-        .background(streak > 0 ? Color.orange.opacity(0.12) : Color(.secondarySystemFill))
+        .background(streak > 0 ? Color.orange.opacity(0.18) : Color.white.opacity(0.06))
         .clipShape(Capsule())
+        .overlay(Capsule().stroke(streak > 0 ? Color.orange.opacity(0.35) : Color.white.opacity(0.08), lineWidth: 1))
         .onAppear {
             if streak > 0 {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.5).delay(0.5)) { bounce = true }
@@ -307,8 +316,9 @@ private struct FreeWordsBadge: View {
         .foregroundStyle(badgeColor)
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
-        .background(badgeColor.opacity(0.12))
+        .background(badgeColor.opacity(0.15))
         .clipShape(Capsule())
+        .overlay(Capsule().stroke(badgeColor.opacity(0.35), lineWidth: 1))
     }
 
     private var badgeColor: Color {
@@ -342,7 +352,7 @@ private struct SuggestedWordsBar: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Try a tricky word:")
                 .font(.caption.weight(.medium))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.white.opacity(0.42))
                 .padding(.horizontal, 16)
 
             ScrollView(.horizontal, showsIndicators: false) {
@@ -354,15 +364,16 @@ private struct SuggestedWordsBar: View {
                             VStack(spacing: 2) {
                                 Text(item.word)
                                     .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(.primary)
+                                    .foregroundStyle(Color(red: 0.941, green: 0.933, blue: 1.0))
                                 Text("[\(item.hint)]")
                                     .font(.caption2)
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(Color.white.opacity(0.42))
                             }
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
-                            .background(Color(.secondarySystemGroupedBackground))
+                            .background(Color.white.opacity(0.04))
                             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.25), lineWidth: 1))
                         }
                         .buttonStyle(.plain)
                     }
@@ -371,6 +382,6 @@ private struct SuggestedWordsBar: View {
             }
         }
         .padding(.vertical, 8)
-        .background(Color(.systemGroupedBackground))
+        .background(Color(red: 0.027, green: 0.020, blue: 0.059))
     }
 }

@@ -53,11 +53,12 @@ private struct UserTextBubble: View {
     var body: some View {
         Text(text)
             .font(.body)
-            .foregroundStyle(.white)
+            .foregroundStyle(Color(red: 0.941, green: 0.933, blue: 1.0))
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
-            .background(Color.indigo.gradient)
+            .background(Color.white.opacity(0.06))
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(Color.white.opacity(0.08), lineWidth: 1))
     }
 }
 
@@ -73,7 +74,7 @@ private struct CoachBubble: View {
         VStack(alignment: .leading, spacing: 10) {
             Text(message.content)
                 .font(.body)
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color(red: 0.941, green: 0.933, blue: 1.0))
                 .fixedSize(horizontal: false, vertical: true)
 
             if showSpeaker, let word = message.targetWord {
@@ -100,9 +101,10 @@ private struct CoachBubble: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
-        .background(Color(.secondarySystemGroupedBackground))
+        .background(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.12))
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
+        .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.22), lineWidth: 1))
+        .shadow(color: Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.08), radius: 8, y: 4)
     }
 }
 
@@ -225,15 +227,16 @@ struct StreamingBubbleView: View {
                 } else {
                     Text(text)
                         .font(.body)
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(Color(red: 0.941, green: 0.933, blue: 1.0))
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
-            .background(Color(.secondarySystemGroupedBackground))
+            .background(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.12))
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-            .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
+            .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.22), lineWidth: 1))
+            .shadow(color: Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.08), radius: 8, y: 4)
 
             Spacer(minLength: 52)
         }
@@ -250,7 +253,7 @@ struct TypingIndicatorView: View {
         HStack(spacing: 5) {
             ForEach(0..<3, id: \.self) { i in
                 Circle()
-                    .fill(Color(.tertiaryLabel))
+                    .fill(Color.white.opacity(0.25))
                     .frame(width: 7, height: 7)
                     .scaleEffect(phase == i ? 1.4 : 0.9)
                     .animation(.easeInOut(duration: 0.3), value: phase)
@@ -337,9 +340,10 @@ private struct ExerciseCardBubble: View {
                     .transition(.opacity.combined(with: .move(edge: .top)))
                 }
             }
-            .background(Color(.secondarySystemGroupedBackground))
+            .background(Color.white.opacity(0.03))
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-            .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
+            .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.15), lineWidth: 1))
+            .shadow(color: Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.08), radius: 8, y: 4)
         }
     }
 
