@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mimiq — App Store Screenshots</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0d0b1a;
+  font-family: 'Syne', sans-serif;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  padding: 40px;
+  justify-content: center;
+}
+:root {
+  --navy: #07050f;
+  --violet: #7b55ff;
+  --lavender: #c5b8ff;
+  --white: #f0eeff;
+  --muted: rgba(240,238,255,0.42);
+  --card: rgba(255,255,255,0.04);
+  --border: rgba(123,85,255,0.18);
+}
+/* iPhone 6.7" ratio 9:19.5 — display at 390×844, export at 3× = 1170×2532 */
+.frame {
+  width: 390px;
+  height: 844px;
+  background: var(--navy);
+  border-radius: 48px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(123,85,255,0.22);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.04);
+}
+.glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 0;
+}
+.content { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; padding: 52px 24px 28px; }
+
+/* ── Typography ── */
+.headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.08;
+  margin-bottom: 6px;
+}
+.subline { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+
+/* ── Cards ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 18px 20px;
+}
+
+/* ── Phoneme chips ── */
+.chip { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 12px; font-weight: 700; font-family: monospace; }
+.chip-g { background: rgba(52,211,153,.15); color: #34d399; border: 1px solid rgba(52,211,153,.3); }
+.chip-o { background: rgba(251,146,60,.15); color: #fb923c; border: 1px solid rgba(251,146,60,.3); }
+.chip-r { background: rgba(248,113,113,.15); color: #f87171; border: 1px solid rgba(248,113,113,.3); }
+
+/* ── Screenshot label ── */
+.wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.tag { font-size: 11px; font-weight: 700; letter-spacing: .1em; color: rgba(255,255,255,.25); text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     SCREENSHOT 1 — AI Coach chat
+══════════════════════════════════════ -->
+<div class="wrap">
+<div class="tag">1 · AI Coach</div>
+<div class="frame">
+  <div class="glow" style="width:280px;height:280px;background:rgba(123,85,255,.13);top:-60px;left:50%;transform:translateX(-50%);"></div>
+  <div class="content">
+    <div class="headline">Your personal<br>AI coach.</div>
+    <div class="subline">Ask about any word, name, or phrase.<br>Get expert guidance tailored to your accent.</div>
+
+    <!-- chat bubbles -->
+    <div style="display:flex;flex-direction:column;gap:10px;flex:1;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--violet);margin-bottom:2px;">COACH</div>
+
+      <div style="max-width:82%;background:rgba(123,85,255,.12);border:1px solid rgba(123,85,255,.22);border-radius:18px 18px 18px 4px;padding:12px 14px;font-size:13px;color:var(--white);line-height:1.5;">
+        Let's work on <strong>"Worcestershire."</strong> Most people stumble on the middle — it's silent. Correct: <strong>WOOS-ter-sheer</strong>.
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;">
+          <span class="chip chip-g">/wʊs/</span>
+          <span class="chip chip-g">/tər/</span>
+          <span class="chip chip-o">/ʃɪr/</span>
+        </div>
+      </div>
+
+      <div style="max-width:75%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:18px 18px 4px 18px;padding:11px 14px;font-size:13px;color:var(--white);align-self:flex-end;">
+        Can you slow it down for me?
+      </div>
+
+      <div style="max-width:82%;background:rgba(123,85,255,.12);border:1px solid rgba(123,85,255,.22);border-radius:18px 18px 18px 4px;padding:12px 14px;font-size:13px;color:var(--white);line-height:1.5;">
+        Sure. Three parts: <strong>WOOS · ter · sheer</strong>. The "cester" and "shire" are both swallowed. Slow-motion audio 👇
+      </div>
+
+      <div style="max-width:75%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:18px 18px 4px 18px;padding:11px 14px;font-size:13px;color:var(--white);align-self:flex-end;">
+        Let me try recording now
+      </div>
+    </div>
+
+    <!-- input bar -->
+    <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(123,85,255,.25);border-radius:24px;padding:10px 14px;margin-top:14px;">
+      <span style="flex:1;font-size:13px;color:var(--muted);">Ask about any word…</span>
+      <div style="width:34px;height:34px;background:var(--violet);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M12 1a4 4 0 0 1 4 4v7a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm0 2a2 2 0 0 0-2 2v7a2 2 0 0 0 4 0V5a2 2 0 0 0-2-2zM8 12a4 4 0 0 0 8 0h2a6 6 0 0 1-5 5.92V21h-2v-3.08A6 6 0 0 1 6 12z"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREENSHOT 2 — Score + Phoneme breakdown
+══════════════════════════════════════ -->
+<div class="wrap">
+<div class="tag">2 · Phoneme Score</div>
+<div class="frame">
+  <div class="glow" style="width:240px;height:240px;background:rgba(123,85,255,.1);top:60px;right:-50px;"></div>
+  <div class="content">
+    <div class="headline">Scored down<br>to the sound.</div>
+    <div class="subline">Phoneme-level feedback on every attempt.</div>
+
+    <!-- score card -->
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px;">
+      <div style="font-size:28px;font-weight:800;color:var(--white);">Worcestershire</div>
+      <!-- ring -->
+      <div style="position:relative;width:110px;height:110px;">
+        <svg style="position:absolute;inset:0;" viewBox="0 0 110 110" fill="none">
+          <circle cx="55" cy="55" r="46" stroke="rgba(255,255,255,.06)" stroke-width="9" stroke-dasharray="230" stroke-dashoffset="46" stroke-linecap="round" transform="rotate(162 55 55)"/>
+          <circle cx="55" cy="55" r="46" stroke="url(#g2)" stroke-width="9" stroke-dasharray="230" stroke-dashoffset="60" stroke-linecap="round" transform="rotate(162 55 55)"/>
+          <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7b55ff"/><stop offset="100%" stop-color="#c5b8ff"/></linearGradient></defs>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <span style="font-size:34px;font-weight:800;color:var(--violet);line-height:1;">92</span>
+          <span style="font-size:11px;color:var(--muted);">/ 100</span>
+        </div>
+      </div>
+      <div style="font-size:17px;font-weight:700;color:var(--violet);">Excellent 🔥</div>
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--muted);">heard: "woos-ter-sheer"</div>
+    </div>
+
+    <!-- phoneme breakdown -->
+    <div class="card" style="margin-top:12px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--violet);text-transform:uppercase;margin-bottom:12px;">Sound Breakdown</div>
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="width:32px;font-size:13px;font-weight:700;color:var(--white);font-family:monospace;text-align:center;">/wʊ/</span>
+          <div style="flex:1;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;"><div style="width:96%;height:100%;background:#34d399;border-radius:3px;"></div></div>
+          <span style="width:28px;font-size:11px;color:var(--muted);text-align:right;">96%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="width:32px;font-size:13px;font-weight:700;color:var(--white);font-family:monospace;text-align:center;">/s/</span>
+          <div style="flex:1;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;"><div style="width:91%;height:100%;background:#34d399;border-radius:3px;"></div></div>
+          <span style="width:28px;font-size:11px;color:var(--muted);text-align:right;">91%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="width:32px;font-size:13px;font-weight:700;color:var(--white);font-family:monospace;text-align:center;">/tər/</span>
+          <div style="flex:1;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;"><div style="width:88%;height:100%;background:#818cf8;border-radius:3px;"></div></div>
+          <span style="width:28px;font-size:11px;color:var(--muted);text-align:right;">88%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="width:32px;font-size:13px;font-weight:700;color:var(--white);font-family:monospace;text-align:center;">/ʃɪr/</span>
+          <div style="flex:1;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;"><div style="width:72%;height:100%;background:#fb923c;border-radius:3px;"></div></div>
+          <span style="width:28px;font-size:11px;color:var(--muted);text-align:right;">72%</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:12px;">
+      <div style="flex:1;background:var(--violet);border-radius:14px;padding:13px;text-align:center;font-weight:700;color:white;font-size:14px;">Try Again</div>
+      <div style="flex:1;background:rgba(123,85,255,.1);border:1px solid rgba(123,85,255,.3);border-radius:14px;padding:13px;text-align:center;font-weight:700;color:var(--lavender);font-size:14px;">↑ Share</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREENSHOT 3 — Daily Challenge
+══════════════════════════════════════ -->
+<div class="wrap">
+<div class="tag">3 · Daily Challenge</div>
+<div class="frame">
+  <div class="glow" style="width:260px;height:260px;background:rgba(251,146,60,.07);bottom:80px;left:-60px;"></div>
+  <div class="content">
+    <div class="headline">One word a day.<br>Massive gains.</div>
+    <div class="subline">A new tricky word every morning. Beat your score.</div>
+
+    <!-- challenge pill -->
+    <div style="background:rgba(123,85,255,.1);border:1px solid rgba(123,85,255,.3);border-radius:18px;padding:18px;display:flex;align-items:center;gap:14px;">
+      <div style="width:46px;height:46px;background:var(--violet);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🎯</div>
+      <div style="flex:1;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--lavender);text-transform:uppercase;margin-bottom:3px;">Today's Challenge</div>
+        <div style="font-size:22px;font-weight:800;color:var(--white);">Worcestershire</div>
+        <div style="font-size:12px;color:var(--muted);font-family:monospace;">/ˈwʊstərʃər/</div>
+      </div>
+      <div style="color:var(--violet);font-size:20px;">›</div>
+    </div>
+
+    <!-- streak -->
+    <div style="background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.25);border-radius:16px;padding:14px 18px;display:flex;align-items:center;gap:14px;margin-top:12px;">
+      <div style="font-size:26px;">🔥</div>
+      <div>
+        <div style="font-size:20px;font-weight:800;color:#fb923c;">7-day streak</div>
+        <div style="font-size:12px;color:var(--muted);">Keep it going — you're on a roll</div>
+      </div>
+    </div>
+
+    <!-- word list -->
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;flex:1;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:2px;">Practice Library</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:12px 16px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:14px;font-weight:600;color:var(--white);flex:1;">Nguyen</span>
+        <span style="font-size:11px;font-weight:700;background:rgba(52,211,153,.15);color:#34d399;padding:3px 10px;border-radius:20px;">✓ 94%</span>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:12px 16px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:14px;font-weight:600;color:var(--white);flex:1;">quinoa</span>
+        <span style="font-size:11px;font-weight:700;background:rgba(52,211,153,.15);color:#34d399;padding:3px 10px;border-radius:20px;">✓ 89%</span>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:12px 16px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:14px;font-weight:600;color:var(--white);flex:1;">colonel</span>
+        <span style="font-size:11px;font-weight:700;background:rgba(251,146,60,.15);color:#fb923c;padding:3px 10px;border-radius:20px;">Hard</span>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:12px 16px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:14px;font-weight:600;color:var(--white);flex:1;">hyperbole</span>
+        <span style="font-size:11px;font-weight:700;background:rgba(123,85,255,.15);color:var(--lavender);padding:3px 10px;border-radius:20px;">New</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREENSHOT 4 — Progress / XP
+══════════════════════════════════════ -->
+<div class="wrap">
+<div class="tag">4 · Progress</div>
+<div class="frame">
+  <div class="glow" style="width:220px;height:220px;background:rgba(123,85,255,.1);top:100px;left:-50px;"></div>
+  <div class="content">
+    <div class="headline">Watch your<br>accent transform.</div>
+    <div class="subline">XP, levels, and charts for every word you practice.</div>
+
+    <!-- XP card -->
+    <div class="card" style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div>
+          <div style="font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px;">Level 4</div>
+          <div style="font-size:18px;font-weight:800;color:var(--white);">Practitioner</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:20px;font-weight:800;color:var(--violet);">840 XP</div>
+          <div style="font-size:11px;color:var(--muted);">160 to next level</div>
+        </div>
+      </div>
+      <div style="height:7px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;margin-bottom:5px;">
+        <div style="width:68%;height:100%;background:linear-gradient(90deg,#7b55ff,#c5b8ff);border-radius:4px;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);"><span>Learner</span><span>Speaker</span></div>
+    </div>
+
+    <!-- stats -->
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <div class="card" style="flex:1;text-align:center;padding:14px 10px;">
+        <div style="font-size:26px;font-weight:800;color:var(--white);">58</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px;">Words</div>
+      </div>
+      <div class="card" style="flex:1;text-align:center;padding:14px 10px;">
+        <div style="font-size:26px;font-weight:800;color:var(--white);">84%</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px;">Avg score</div>
+      </div>
+      <div class="card" style="flex:1;text-align:center;padding:14px 10px;">
+        <div style="font-size:26px;font-weight:800;color:var(--white);">7🔥</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px;">Streak</div>
+      </div>
+    </div>
+
+    <!-- chart -->
+    <div class="card" style="margin-bottom:12px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--violet);text-transform:uppercase;margin-bottom:10px;">Accuracy this week</div>
+      <svg width="100%" height="80" viewBox="0 0 330 80" fill="none">
+        <defs>
+          <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#7b55ff" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#7b55ff" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path d="M0,68 C40,58 80,44 120,34 C160,24 200,14 240,12 C275,10 305,16 330,12" stroke="#7b55ff" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M0,68 C40,58 80,44 120,34 C160,24 200,14 240,12 C275,10 305,16 330,12 V80 H0Z" fill="url(#cg)"/>
+        <line x1="0" y1="30" x2="330" y2="30" stroke="rgba(52,211,153,.25)" stroke-width="1" stroke-dasharray="4"/>
+      </svg>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <div style="flex:1;height:5px;border-radius:3px;background:var(--violet);"></div>
+        <div style="flex:1;height:5px;border-radius:3px;background:var(--violet);"></div>
+        <div style="flex:1;height:5px;border-radius:3px;background:var(--violet);"></div>
+        <div style="flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.08);"></div>
+        <div style="flex:1;height:5px;border-radius:3px;background:var(--violet);"></div>
+        <div style="flex:1;height:5px;border-radius:3px;background:var(--violet);"></div>
+        <div style="flex:1;height:5px;border-radius:3px;background:var(--violet);"></div>
+      </div>
+    </div>
+
+    <!-- mastered -->
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      <div class="card" style="display:flex;align-items:center;gap:12px;padding:11px 14px;">
+        <span style="font-size:16px;">🏆</span>
+        <span style="flex:1;font-size:13px;font-weight:600;color:var(--white);">Worcestershire</span>
+        <span style="font-size:13px;font-weight:700;color:#34d399;">98%</span>
+      </div>
+      <div class="card" style="display:flex;align-items:center;gap:12px;padding:11px 14px;">
+        <span style="font-size:16px;">⭐</span>
+        <span style="flex:1;font-size:13px;font-weight:600;color:var(--white);">Nguyen</span>
+        <span style="font-size:13px;font-weight:700;color:#818cf8;">94%</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREENSHOT 5 — Share Card
+══════════════════════════════════════ -->
+<div class="wrap">
+<div class="tag">5 · Share &amp; Challenge</div>
+<div class="frame">
+  <div class="glow" style="width:300px;height:300px;background:rgba(123,85,255,.12);top:80px;left:50%;transform:translateX(-50%);"></div>
+  <div class="content" style="align-items:center;">
+    <div class="headline" style="text-align:center;">Flex your<br>pronunciation.</div>
+    <div class="subline" style="text-align:center;">Share your score. Challenge your friends.</div>
+
+    <!-- share card preview -->
+    <div style="width:280px;background:#07050f;border:1px solid rgba(123,85,255,.25);border-radius:26px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 24px 70px rgba(123,85,255,.2);margin:4px 0;">
+      <!-- header -->
+      <div style="width:100%;display:flex;align-items:center;">
+        <span style="font-size:14px;font-weight:800;color:white;">⟨ Mimiq</span>
+        <span style="margin-left:auto;font-size:10px;color:rgba(240,238,255,.35);">pronunciation coach</span>
+      </div>
+      <div style="font-size:30px;font-weight:800;color:white;text-align:center;">Worcestershire</div>
+      <!-- ring -->
+      <div style="position:relative;width:120px;height:120px;">
+        <svg style="position:absolute;inset:0;" viewBox="0 0 120 120" fill="none">
+          <circle cx="60" cy="60" r="50" stroke="rgba(255,255,255,.06)" stroke-width="10" stroke-dasharray="251" stroke-dashoffset="50" stroke-linecap="round" transform="rotate(162 60 60)"/>
+          <circle cx="60" cy="60" r="50" stroke="url(#g5)" stroke-width="10" stroke-dasharray="251" stroke-dashoffset="18" stroke-linecap="round" transform="rotate(162 60 60)"/>
+          <defs><linearGradient id="g5" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#6ee7b7"/></linearGradient></defs>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <span style="font-size:40px;font-weight:800;color:#34d399;line-height:1;">98</span>
+          <span style="font-size:11px;color:rgba(240,238,255,.4);">/ 100</span>
+        </div>
+      </div>
+      <div style="font-size:17px;font-weight:700;color:#34d399;">Native-level 🎉</div>
+      <div style="font-size:11px;color:rgba(240,238,255,.35);">Can you beat me? 🎯 mimiq.app</div>
+    </div>
+
+    <!-- action buttons -->
+    <div style="display:flex;gap:10px;width:100%;margin-top:6px;">
+      <div style="flex:1;background:var(--violet);border-radius:14px;padding:13px;text-align:center;font-weight:700;color:white;font-size:13px;">Share to Stories</div>
+      <div style="flex:1;background:rgba(123,85,255,.1);border:1px solid rgba(123,85,255,.3);border-radius:14px;padding:13px;text-align:center;font-weight:700;color:var(--lavender);font-size:13px;">Copy Image</div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:4px;">Also: iMessage, X, WhatsApp, Instagram…</div>
+  </div>
+</div>
+</div>
+
+</body>
+</html>
