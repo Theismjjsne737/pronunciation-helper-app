@@ -27,8 +27,8 @@ struct WordJournalView: View {
             let best   = scores.max() ?? 0
             let last   = scores.first ?? 0
             let avg    = scores.isEmpty ? 0 : scores.reduce(0, +) / Double(scores.count)
-            let firstAt = msgs.compactMap(\.timestamp as Date?).min() ?? Date()
-            let lastAt  = msgs.compactMap(\.timestamp as Date?).max() ?? Date()
+            let firstAt = msgs.map(\.timestamp).min() ?? Date()
+            let lastAt  = msgs.map(\.timestamp).max() ?? Date()
             return WordEntry(word: word, bestScore: best, lastScore: last,
                              avgScore: avg, attempts: msgs.count, firstAt: firstAt, lastAt: lastAt)
         }
