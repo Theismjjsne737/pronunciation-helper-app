@@ -60,6 +60,10 @@ final class StreakService: ObservableObject {
         markHistoryDate(today)
         save()
         updateWeekActivity()
+        ReviewService.shared.recordStreakMilestone(currentStreak)
+        let streak = currentStreak
+        let practiced = practicedToday
+        Task { await NotificationService.shared.scheduleSmartNotifications(currentStreak: streak, practicedToday: practiced) }
     }
 
     // MARK: - Load / Save

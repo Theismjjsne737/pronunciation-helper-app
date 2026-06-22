@@ -50,6 +50,7 @@ struct PracticeResultView: View {
         }
         .onAppear {
             withAnimation(.spring(duration: 0.5).delay(0.15)) { revealScore = true }
+            ReviewService.shared.recordGoodScore(result.score)
         }
     }
 
@@ -242,14 +243,33 @@ struct PracticeResultView: View {
                     .background(Color.indigo)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             }
-            Button { vm.newWord() } label: {
-                Text("Practice a New Word")
+
+            HStack(spacing: 10) {
+                Button { vm.newWord() } label: {
+                    Text("New Word")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.indigo)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.indigo.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                }
+
+                Button {
+                    shareScoreCard(word: word, score: result.score, transcription: result.transcription)
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "square.and.arrow.up")
+                        Text("Share")
+                    }
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.indigo)
+                    .foregroundStyle(Color(red: 0.48, green: 0.33, blue: 1.0))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Color.indigo.opacity(0.1))
+                    .background(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.1))
                     .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.25), lineWidth: 1))
+                }
             }
         }
     }

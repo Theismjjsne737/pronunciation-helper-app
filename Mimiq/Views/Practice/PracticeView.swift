@@ -6,6 +6,7 @@ import SwiftData
 struct PracticeView: View {
 
     @StateObject private var vm = PracticeViewModel()
+    @StateObject private var dailyChallenge = DailyChallengeService.shared
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.modelContext) private var modelContext
     @State private var wordHistory: [Double] = []
@@ -67,6 +68,10 @@ struct PracticeView: View {
         }
 
         StreakService.shared.recordPractice()
+
+        if word.lowercased() == dailyChallenge.todaysWord.lowercased() {
+            dailyChallenge.markCompleted()
+        }
     }
 
     private func fetchRecentWords() -> [String] {
@@ -179,6 +184,57 @@ struct PracticeView: View {
                     .disabled(vm.wordInput.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
                 .padding(.horizontal, 24)
+
+                // Daily Challenge
+                Button {
+                    vm.wordInput = dailyChallenge.todaysWord
+                    vm.startPractice()
+                } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: dailyChallenge.completedToday ? "checkmark.seal.fill" : "seal.fill")
+                            .font(.subheadline)
+                            .foregroundStyle(dailyChallenge.completedToday ? .green : Color(red: 0.48, green: 0.33, blue: 1.0))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("TODAY'S CHALLENGE")
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(.secondary)
+                                .tracking(1)
+                            Text(dailyChallenge.todaysWord)
+                                .font(.headline.weight(.bold))
+                                .foregroundStyle(.white)
+                        }
+                        Spacer()
+                        if dailyChallenge.completedToday {
+                            Text("Done ✓")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.green)
+                        } else {
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 14)
+                    .background(
+                        dailyChallenge.completedToday
+                            ? Color.green.opacity(0.08)
+                            : Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.1)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(
+                                dailyChallenge.completedToday
+                                    ? Color.green.opacity(0.3)
+                                    : Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.3),
+                                lineWidth: 1
+                            )
+                    )
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal, 24)
+                .disabled(dailyChallenge.completedToday)
 
                 if !recentWords.isEmpty {
                     VStack(alignment: .leading, spacing: 10) {

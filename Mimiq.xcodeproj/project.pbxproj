@@ -6,6 +6,16 @@
 	objectVersion = 70;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		DD4C5B3E0F1A6D7E8C9B0A1F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9C972F28E2BF4E56BBA1128A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6727086524D744E182895399;
+			remoteInfo = Mimiq;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		A0AB12D40F6645A7844150D0 /* Mimiq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mimiq.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB2A3F1C8D9E4B5C6A7F8E9D /* MimiqTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MimiqTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -25,16 +35,6 @@
 		9E0A2D62DDAC4EDA9E42C178 /* Mimiq */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (737408302F8F4FFC0003C299 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Mimiq; sourceTree = "<group>"; };
 		CC3B4A2D9E0F5C6D7B8A9F0E /* MimiqTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MimiqTests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
-
-/* Begin PBXContainerItemProxy section */
-		DD4C5B3E0F1A6D7E8C9B0A1F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 9C972F28E2BF4E56BBA1128A /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6727086524D744E182895399;
-			remoteInfo = Mimiq;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		6075D8D963404FE7AB921135 /* Frameworks */ = {

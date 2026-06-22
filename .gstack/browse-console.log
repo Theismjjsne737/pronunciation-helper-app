@@ -1,0 +1,6 @@
+[2026-06-22T04:55:52.728Z] [error] Failed to load resource: the server responded with a status of 429 ()
+[2026-06-22T04:55:52.895Z] [warning] "debugSource" found.
+This will override any same-named client-supplied configSource fields.
+This setting "sticks" across session, use "setDebugSource(null)" to clear
+[2026-06-22T04:55:53.067Z] [error] Failed to load resource: the server responded with a status of 404 ()
+[2026-06-22T04:55:57.702Z] [error] Failed to load resource: the server responded with a status of 403 ()

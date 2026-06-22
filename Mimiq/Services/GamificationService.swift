@@ -41,6 +41,7 @@ final class GamificationService: ObservableObject {
         recompute()
         if level > previousLevel {
             levelUpEvent = level
+            ReviewService.shared.recordLevelUp()
         }
     }
 
