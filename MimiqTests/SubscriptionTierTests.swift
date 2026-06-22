@@ -1,5 +1,5 @@
 import Testing
-@testable import LingoLab
+@testable import Mimiq
 
 @Suite("SubscriptionTier")
 struct SubscriptionTierTests {

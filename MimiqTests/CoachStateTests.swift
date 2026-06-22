@@ -1,5 +1,5 @@
 import Testing
-@testable import LingoLab
+@testable import Mimiq
 
 @Suite("CoachState")
 struct CoachStateTests {

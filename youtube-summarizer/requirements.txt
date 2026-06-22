@@ -1,4 +1,0 @@
-gradio>=4.0
-yt-dlp
-openai-whisper
-anthropic

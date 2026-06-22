@@ -10,38 +10,38 @@
     {
       "name": "writing-assistant",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["/Users/rhearao/lingolab/writing-assistant/server.js"],
+      "runtimeArgs": ["/Users/rhearao/writing-assistant/server.js"],
       "port": 3001
     },
     {
       "name": "memory-chatbot",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["/Users/rhearao/lingolab/memory-chatbot/server.js"],
+      "runtimeArgs": ["/Users/rhearao/memory-chatbot/server.js"],
       "port": 3002
-    }
-    ,{
+    },
+    {
       "name": "codecraft",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "-p", "3003", "/Users/rhearao/lingolab/codecraft"],
+      "runtimeArgs": ["serve", "-p", "3003", "/Users/rhearao/codecraft"],
       "port": 3003
-    }
-    ,{
-      "name": "forgecoach-replica",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "-p", "3004", "/Users/rhearao/lingolab/forgecoach-replica"],
-      "port": 3004
-    }
-    ,{
+    },
+    {
       "name": "lingolab-server",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["/Users/rhearao/lingolab/pronunciation-helper/server/index.js"],
+      "runtimeArgs": ["/Users/rhearao/pronunciation-helper/server/index.js"],
       "port": 3005
-    }
-    ,{
+    },
+    {
       "name": "lingolab-client",
       "runtimeExecutable": "/bin/sh",
-      "runtimeArgs": ["/Users/rhearao/lingolab/pronunciation-helper/start-client.sh"],
+      "runtimeArgs": ["/Users/rhearao/pronunciation-helper/start-client.sh"],
       "port": 5173
+    },
+    {
+      "name": "verbalstack",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "/Users/rhearao/verbalstack", "run", "dev"],
+      "port": 3006
     }
   ]
 }

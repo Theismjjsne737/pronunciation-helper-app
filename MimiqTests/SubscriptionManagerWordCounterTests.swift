@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import LingoLab
+@testable import Mimiq
 
 // SubscriptionManager is a @MainActor singleton backed by UserDefaults.
 // Each test clears the storage key in init/deinit for isolation.
