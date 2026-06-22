@@ -232,6 +232,11 @@ final class SubscriptionManager: ObservableObject {
 
     var canAccessPro: Bool { hasActiveSubscription || !hasUsedAllFreeWords }
 
+    // Test support only — resets in-memory counter to match UserDefaults state
+    func resetWordCounterForTesting() {
+        uniqueWordCount = storedWords().count
+    }
+
     // MARK: - Computed helpers
 
     var subscriptionStatusLabel: String {
