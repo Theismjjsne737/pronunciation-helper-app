@@ -27,7 +27,7 @@
               "locale" : "en_US"
             }
           ],
-          "productID" : "com.yourname.lingolab.yearly",
+          "productID" : "com.rhearao.Mimiq.yearly",
           "referenceName" : "Mimiq Yearly",
           "subscriptionPeriod" : "P1Y",
           "type" : "RecurringSubscription"
@@ -46,7 +46,7 @@
               "locale" : "en_US"
             }
           ],
-          "productID" : "com.yourname.lingolab.monthly",
+          "productID" : "com.rhearao.Mimiq.monthly",
           "referenceName" : "Mimiq Monthly",
           "subscriptionPeriod" : "P1M",
           "type" : "RecurringSubscription"

@@ -13,7 +13,9 @@ struct MimiqApp: App {
         do {
             container = try ModelContainer(for: schema, configurations: config)
         } catch {
-            fatalError("SwiftData container failed to initialise: \(error)")
+            let fallback = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+            container = (try? ModelContainer(for: schema, configurations: fallback))
+                ?? (try! ModelContainer(for: schema))
         }
 
         // Register Siri shortcuts on every launch

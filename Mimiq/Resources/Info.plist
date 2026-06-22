@@ -9,9 +9,9 @@
 
     <!-- Bundle name -->
     <key>CFBundleName</key>
-    <string>[AppName]</string>
+    <string>Mimiq</string>
     <key>CFBundleDisplayName</key>
-    <string>[AppName]</string>
+    <string>Mimiq</string>
 
     <!-- Bundle version -->
     <key>CFBundleVersion</key>
@@ -23,15 +23,15 @@
 
     <!-- Microphone — required for recording -->
     <key>NSMicrophoneUsageDescription</key>
-    <string>[AppName] needs microphone access to record your pronunciation attempts.</string>
+    <string>Mimiq needs microphone access to record your pronunciation attempts.</string>
 
     <!-- Speech recognition — required for analysis -->
     <key>NSSpeechRecognitionUsageDescription</key>
-    <string>[AppName] uses speech recognition to analyse and score your pronunciation.</string>
+    <string>Mimiq uses speech recognition to analyse and score your pronunciation.</string>
 
     <!-- Notifications — for daily practice reminders (nice-to-have) -->
     <key>NSUserNotificationsUsageDescription</key>
-    <string>[AppName] sends a daily reminder to help you build a practice habit.</string>
+    <string>Mimiq sends a daily reminder to help you build a practice habit.</string>
 
     <key>UIBackgroundModes</key>
     <array>
@@ -54,8 +54,5 @@
         <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
 
-    <!-- Anthropic API key for Claude API calls (dev only) -->
-    <key>ANTHROPIC_API_KEY</key>
-    <string>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</string>
 </dict>
 </plist>

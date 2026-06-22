@@ -4,8 +4,8 @@ import Foundation
 // MARK: - Subscription tier
 
 enum SubscriptionTier: String, CaseIterable, Identifiable {
-    case monthly = "com.yourname.lingolab.monthly"
-    case yearly  = "com.yourname.lingolab.yearly"
+    case monthly = "com.rhearao.Mimiq.monthly"
+    case yearly  = "com.rhearao.Mimiq.yearly"
 
     var id: String { rawValue }
 
