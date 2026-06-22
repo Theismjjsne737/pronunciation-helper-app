@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1024">
+<title>Mimiq App Icon — 1024×1024</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1024px;
+    height: 1024px;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .icon {
+    width: 1024px;
+    height: 1024px;
+    position: relative;
+    overflow: hidden;
+    background: #07050f;
+  }
+
+  .bg-gradient {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 30%, #1a0f3a 0%, transparent 70%),
+      radial-gradient(ellipse 50% 50% at 20% 80%, #0d0828 0%, transparent 60%),
+      linear-gradient(160deg, #0f0a22 0%, #07050f 50%, #0a0618 100%);
+  }
+
+  .glow {
+    position: absolute;
+    width: 700px;
+    height: 400px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -55%);
+    background: radial-gradient(ellipse at center, rgba(123,85,255,0.30) 0%, rgba(123,85,255,0.10) 50%, transparent 75%);
+    filter: blur(50px);
+  }
+
+  .waveform {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -58%);
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    height: 240px;
+  }
+
+  .bar {
+    width: 20px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #d4caff 0%, #7b55ff 55%, rgba(123,85,255,0.35) 100%);
+    flex-shrink: 0;
+  }
+
+  .wordmark {
+    position: absolute;
+    left: 50%;
+    bottom: 158px;
+    transform: translateX(-50%);
+    font-size: 136px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+    font-family: -apple-system, 'Helvetica Neue', sans-serif;
+    background: linear-gradient(135deg, #ffffff 0%, #c5b8ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .tagline {
+    position: absolute;
+    left: 50%;
+    bottom: 96px;
+    transform: translateX(-50%);
+    font-size: 38px;
+    font-weight: 400;
+    letter-spacing: 0.20em;
+    text-transform: uppercase;
+    color: rgba(197,184,255,0.52);
+    white-space: nowrap;
+    font-family: -apple-system, 'Helvetica Neue', sans-serif;
+  }
+</style>
+</head>
+<body>
+<div class="icon">
+  <div class="bg-gradient"></div>
+  <div class="glow"></div>
+
+  <!-- Voice waveform — asymmetric heights for organic feel -->
+  <div class="waveform">
+    <div class="bar" style="height:52px;opacity:0.42"></div>
+    <div class="bar" style="height:88px;opacity:0.58"></div>
+    <div class="bar" style="height:136px;opacity:0.70"></div>
+    <div class="bar" style="height:104px;opacity:0.64"></div>
+    <div class="bar" style="height:188px;opacity:0.88"></div>
+    <div class="bar" style="height:220px"></div>
+    <div class="bar" style="height:172px;opacity:0.90"></div>
+    <div class="bar" style="height:208px;opacity:0.96"></div>
+    <div class="bar" style="height:240px"></div>
+    <div class="bar" style="height:196px;opacity:0.92"></div>
+    <div class="bar" style="height:224px;opacity:0.98"></div>
+    <div class="bar" style="height:184px;opacity:0.88"></div>
+    <div class="bar" style="height:152px;opacity:0.78"></div>
+    <div class="bar" style="height:112px;opacity:0.67"></div>
+    <div class="bar" style="height:76px;opacity:0.54"></div>
+    <div class="bar" style="height:48px;opacity:0.40"></div>
+  </div>
+
+  <div class="wordmark">Mimiq</div>
+  <div class="tagline">Pronunciation Coach</div>
+</div>
+</body>
+</html>
