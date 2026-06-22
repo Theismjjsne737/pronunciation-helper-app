@@ -70,12 +70,33 @@ struct SettingsView: View {
             .padding(.vertical, 4)
 
             if subs.hasActiveSubscription {
+                if let date = subs.renewalDate {
+                    LabeledContent("Renews", value: date.formatted(date: .abbreviated, time: .omitted))
+                        .font(.subheadline)
+                }
+
                 if let url = URL(string: "https://apps.apple.com/account/subscriptions") {
                     Link(destination: url) {
                         Label("Manage Subscription", systemImage: "arrow.up.right.square")
                             .font(.subheadline)
                     }
                 }
+
+                Button {
+                    Task { await subs.restorePurchases() }
+                } label: {
+                    Label(
+                        subs.restoreSuccess ? "Subscription Restored ✓" : "Restore Purchases",
+                        systemImage: subs.restoreSuccess ? "checkmark.circle.fill" : "arrow.clockwise"
+                    )
+                    .font(.subheadline)
+                    .foregroundStyle(subs.restoreSuccess ? .green : .indigo)
+                }
+                .disabled(subs.isPurchasing)
+
+                Text("To cancel, go to App Store → Settings → Subscriptions.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             } else {
                 // Free word counter bar
                 VStack(alignment: .leading, spacing: 6) {
@@ -105,6 +126,19 @@ struct SettingsView: View {
                     .frame(height: 6)
                 }
                 .padding(.vertical, 4)
+
+                Button {
+                    Task { await subs.restorePurchases() }
+                } label: {
+                    Label(
+                        subs.restoreSuccess ? "Subscription Restored ✓" : "Restore Previous Purchase",
+                        systemImage: subs.restoreSuccess ? "checkmark.circle.fill" : "arrow.clockwise"
+                    )
+                    .font(.subheadline)
+                    .foregroundStyle(subs.restoreSuccess ? .green : .secondary)
+                    .frame(maxWidth: .infinity)
+                }
+                .disabled(subs.isPurchasing)
 
                 Button {
                     showPaywall = true

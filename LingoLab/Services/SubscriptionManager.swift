@@ -57,6 +57,7 @@ final class SubscriptionManager: ObservableObject {
 
     @Published private(set) var hasActiveSubscription = false
     @Published private(set) var currentTier: SubscriptionTier?
+    @Published private(set) var renewalDate: Date?
     @Published private(set) var products: [Product] = []
     @Published var isPurchasing = false
     @Published var purchaseError: String?
@@ -130,12 +131,14 @@ final class SubscriptionManager: ObservableObject {
                   SubscriptionTier(productID: tx.productID) != nil else { continue }
             hasActiveSubscription = true
             currentTier = SubscriptionTier(productID: tx.productID)
+            renewalDate = tx.expirationDate
             found = true
             break
         }
         if !found {
             hasActiveSubscription = false
             currentTier = nil
+            renewalDate = nil
         }
     }
 

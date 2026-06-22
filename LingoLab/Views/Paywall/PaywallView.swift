@@ -170,7 +170,7 @@ struct PaywallView: View {
     // MARK: - Secondary actions
 
     private var secondaryActions: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 12) {
             if let err = subs.purchaseError {
                 Text(err)
                     .font(.caption)
@@ -181,11 +181,29 @@ struct PaywallView: View {
             Button {
                 Task { await subs.restorePurchases() }
             } label: {
-                Text(subs.restoreSuccess ? "✓ Purchases restored!" : "Restore Purchases")
-                    .font(.subheadline)
-                    .foregroundStyle(subs.restoreSuccess ? .green : .indigo)
+                HStack(spacing: 8) {
+                    if subs.isPurchasing {
+                        ProgressView().scaleEffect(0.75)
+                    } else {
+                        Image(systemName: subs.restoreSuccess ? "checkmark.circle.fill" : "arrow.clockwise")
+                    }
+                    Text(subs.restoreSuccess ? "Subscription Restored!" : "Restore Purchases")
+                        .font(.subheadline.weight(.medium))
+                }
+                .foregroundStyle(subs.restoreSuccess ? .green : .indigo)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 13)
+                .background(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(subs.restoreSuccess ? Color.green : Color.indigo.opacity(0.4), lineWidth: 1.5)
+                )
             }
             .disabled(subs.isPurchasing)
+
+            Text("Already subscribed on another device? Tap above.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
         }
     }
 
