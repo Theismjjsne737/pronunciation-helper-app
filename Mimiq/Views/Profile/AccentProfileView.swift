@@ -8,6 +8,7 @@ struct AccentProfileView: View {
     @Query(filter: #Predicate<AccentProfile> { _ in true }) private var profiles: [AccentProfile]
     @Query(sort: \ChatMessage.timestamp, order: .reverse) private var allMessages: [ChatMessage]
     @ObservedObject private var streak = StreakService.shared
+    @ObservedObject private var gamification = GamificationService.shared
     @State private var showOnboarding = false
     @Environment(\.modelContext) private var modelContext
 
@@ -158,6 +159,31 @@ struct AccentProfileView: View {
                     }
                 }
             }
+
+            // XP / Level bar
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Text("Lv.\(gamification.level) · \(gamification.levelTitle)")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(.indigo)
+                    Spacer()
+                    Text("\(gamification.xpInCurrentLevel)/\(gamification.xpToNextLevel) XP")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color(.systemGray5))
+                            .frame(height: 6)
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.indigo.gradient)
+                            .frame(width: geo.size.width * gamification.levelProgress, height: 6)
+                            .animation(.spring(duration: 0.6), value: gamification.levelProgress)
+                    }
+                }
+                .frame(height: 6)
+            }
         }
         .padding(20)
         .background(Color(.systemBackground))
@@ -276,11 +302,33 @@ struct AccentProfileView: View {
     // MARK: - Stats grid
 
     private var statsGrid: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-            StatTile(value: "\(attemptMessages.count)", label: "Attempts",   icon: "mic.fill",        color: .indigo)
-            StatTile(value: "\(Int(averageScore * 100))%", label: "Avg Score", icon: "chart.bar.fill", color: .blue)
-            StatTile(value: "\(masteredWordsCount)/\(wordsCount)", label: "Mastered", icon: "checkmark.seal.fill", color: .green)
-            StatTile(value: "\(Int(bestScore * 100))%",    label: "Best",      icon: "star.fill",       color: .yellow)
+        VStack(spacing: 12) {
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                StatTile(value: "\(attemptMessages.count)", label: "Attempts",   icon: "mic.fill",        color: .indigo)
+                StatTile(value: "\(Int(averageScore * 100))%", label: "Avg Score", icon: "chart.bar.fill", color: .blue)
+                StatTile(value: "\(masteredWordsCount)/\(wordsCount)", label: "Mastered", icon: "checkmark.seal.fill", color: .green)
+                StatTile(value: "\(Int(bestScore * 100))%",    label: "Best",      icon: "star.fill",       color: .yellow)
+            }
+            NavigationLink(destination: WordJournalView()) {
+                HStack {
+                    Image(systemName: "book.closed.fill")
+                        .foregroundStyle(.purple)
+                    Text("Word Journal")
+                        .font(.subheadline.weight(.semibold))
+                    Spacer()
+                    Text("\(wordsCount) words")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+                .padding(14)
+                .background(Color(.systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .shadow(color: .black.opacity(0.05), radius: 6, y: 2)
+            }
+            .buttonStyle(.plain)
         }
     }
 

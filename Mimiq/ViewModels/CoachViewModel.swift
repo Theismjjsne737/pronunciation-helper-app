@@ -166,6 +166,7 @@ final class CoachViewModel: ObservableObject {
             )
             try? modelContext.save()
             await StreakService.shared.recordPractice()
+            await GamificationService.shared.award(score: result.score)
 
             // Index in Spotlight
             SpotlightService.index(word: word, score: result.score, transcription: result.transcription)
