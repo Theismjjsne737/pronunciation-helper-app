@@ -4,17 +4,22 @@ struct SplashView: View {
 
     var onComplete: () -> Void
 
-    @State private var logoScale: CGFloat = 0.4
     @State private var logoOpacity: Double = 0
-    @State private var glowRadius: CGFloat = 0
-    @State private var lettersVisible: [Bool] = Array(repeating: false, count: 5)
+    @State private var logoScale: CGFloat = 0.7
+    @State private var wordmarkOpacity: Double = 0
+    @State private var wordmarkOffset: CGFloat = 12
     @State private var taglineOpacity: Double = 0
     @State private var wavePhase: Double = 0
-    @State private var waveAmplitudes: [CGFloat] = (0..<28).map { _ in CGFloat.random(in: 0.15...0.45) }
     @State private var screenOpacity: Double = 1
 
-    private let letters: [String] = ["M", "I", "M", "I", "Q"]
-    private let letterDelays: [Double] = [0.3, 0.45, 0.6, 0.75, 0.9]
+    // Heights from icon.html (normalised to 0–1, original max = 240)
+    private let barHeights: [CGFloat] = [
+        52, 88, 136, 104, 188, 220, 172, 208,
+        240, 196, 224, 184, 152, 112, 76, 48
+    ].map { $0 / 240.0 }
+
+    private let violet   = Color(red: 0.48, green: 0.33, blue: 1.0)
+    private let lavender = Color(red: 0.835, green: 0.804, blue: 1.0)
 
     var body: some View {
         ZStack {
@@ -23,149 +28,122 @@ struct SplashView: View {
             VStack(spacing: 0) {
                 Spacer()
 
+                // Waveform logo mark
                 ZStack {
-                    // Glow halo behind the M
-                    Circle()
+                    // Glow halo
+                    Ellipse()
                         .fill(
                             RadialGradient(
-                                colors: [Color.indigo.opacity(0.35), .clear],
+                                colors: [violet.opacity(0.40), .clear],
                                 center: .center,
-                                startRadius: 20,
-                                endRadius: 90
+                                startRadius: 10,
+                                endRadius: 80
                             )
                         )
-                        .frame(width: 180, height: 180)
-                        .blur(radius: glowRadius)
+                        .frame(width: 180, height: 100)
+                        .blur(radius: 24)
                         .opacity(logoOpacity)
 
-                    // M monogram
-                    Text("M")
-                        .font(.system(size: 100, weight: .black, design: .rounded))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 0.60, green: 0.45, blue: 1.0),
-                                    Color(red: 0.38, green: 0.27, blue: 0.88)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .scaleEffect(logoScale)
-                        .opacity(logoOpacity)
-                        .shadow(color: Color.indigo.opacity(0.6), radius: 20, x: 0, y: 8)
+                    waveformBars
+                        .frame(width: 160, height: 64)
                 }
+                .scaleEffect(logoScale)
+                .opacity(logoOpacity)
 
                 Spacer().frame(height: 28)
 
-                // "IMIQ" letters staggered in beside the M
-                HStack(spacing: 3) {
-                    ForEach(1..<letters.count, id: \.self) { i in
-                        Text(letters[i])
-                            .font(.system(size: 38, weight: .bold, design: .rounded))
-                            .foregroundStyle(Color.white.opacity(0.9))
-                            .opacity(lettersVisible[i] ? 1 : 0)
-                            .offset(y: lettersVisible[i] ? 0 : 12)
-                    }
-                }
-                .tracking(8)
+                // "Mimiq" wordmark
+                Text("Mimiq")
+                    .font(.system(size: 48, weight: .bold, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.white, lavender],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .tracking(1)
+                    .opacity(wordmarkOpacity)
+                    .offset(y: wordmarkOffset)
 
-                Spacer().frame(height: 18)
+                Spacer().frame(height: 10)
 
-                Text("your accent, perfected")
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
-                    .foregroundStyle(Color.white.opacity(0.4))
-                    .tracking(2)
+                // Tagline
+                Text("PRONUNCIATION COACH")
+                    .font(.system(size: 11, weight: .medium, design: .default))
+                    .foregroundStyle(lavender.opacity(0.52))
+                    .tracking(3.2)
                     .opacity(taglineOpacity)
 
-                Spacer().frame(height: 56)
-
-                waveformBars
-                    .frame(height: 48)
-                    .padding(.horizontal, 40)
-                    .opacity(taglineOpacity)
-
-                Spacer()
+                Spacer().frame(height: 72)
             }
         }
         .opacity(screenOpacity)
         .onAppear { runSequence() }
     }
 
-    // MARK: - Sub-views
-
-    private var background: some View {
-        LinearGradient(
-            colors: [
-                Color(red: 0.06, green: 0.04, blue: 0.14),
-                Color(red: 0.08, green: 0.05, blue: 0.20)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-        .ignoresSafeArea()
-    }
+    // MARK: - Waveform bars
 
     private var waveformBars: some View {
-        HStack(alignment: .center, spacing: 3) {
-            ForEach(0..<waveAmplitudes.count, id: \.self) { i in
-                let phase = wavePhase + Double(i) * 0.35
-                let factor = CGFloat(0.5 + 0.5 * sin(phase))
-                let height = max(4, waveAmplitudes[i] * factor * 48)
+        HStack(alignment: .bottom, spacing: 4) {
+            ForEach(barHeights.indices, id: \.self) { i in
+                let phase = wavePhase + Double(i) * 0.38
+                let factor = CGFloat(0.72 + 0.28 * sin(phase))
+                let h = max(4, barHeights[i] * factor * 64)
 
                 RoundedRectangle(cornerRadius: 2)
                     .fill(
                         LinearGradient(
-                            colors: [
-                                Color(red: 0.60, green: 0.45, blue: 1.0),
-                                Color.indigo.opacity(0.5)
-                            ],
+                            colors: [lavender, violet, violet.opacity(0.35)],
                             startPoint: .top,
                             endPoint: .bottom
                         )
                     )
-                    .frame(width: 4, height: height)
-                    .animation(.easeInOut(duration: 0.12), value: height)
+                    .frame(width: 6, height: h)
+                    .animation(.easeInOut(duration: 0.14), value: h)
             }
         }
+    }
+
+    // MARK: - Background
+
+    private var background: some View {
+        Color(red: 0.027, green: 0.020, blue: 0.059)
+            .ignoresSafeArea()
     }
 
     // MARK: - Animation sequence
 
     private func runSequence() {
-        // Logo spring pop
-        withAnimation(.spring(response: 0.5, dampingFraction: 0.6).delay(0.15)) {
+        // Logo waveform springs in
+        withAnimation(.spring(response: 0.55, dampingFraction: 0.65).delay(0.1)) {
             logoScale = 1.0
             logoOpacity = 1.0
         }
-        withAnimation(.easeOut(duration: 0.6).delay(0.15)) {
-            glowRadius = 40
+
+        // Wordmark slides up
+        withAnimation(.spring(response: 0.45, dampingFraction: 0.72).delay(0.55)) {
+            wordmarkOpacity = 1.0
+            wordmarkOffset = 0
         }
 
-        // Letters stagger in
-        for i in 1..<letters.count {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.7).delay(letterDelays[i])) {
-                lettersVisible[i] = true
-            }
-        }
-
-        // Tagline + waveform fade in
-        withAnimation(.easeIn(duration: 0.5).delay(1.1)) {
+        // Tagline fades in
+        withAnimation(.easeIn(duration: 0.4).delay(0.85)) {
             taglineOpacity = 1.0
         }
 
-        // Animate waveform bars at ~30 fps
-        let waveTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 30.0, repeats: true) { _ in
-            wavePhase += 0.12
+        // Animate waveform bars at ~24 fps
+        let waveTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 24.0, repeats: true) { _ in
+            wavePhase += 0.10
         }
 
-        // Dismiss after 2.3 s
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.3) {
+        // Dismiss after 2.4 s total
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.4) {
             waveTimer.invalidate()
-            withAnimation(.easeInOut(duration: 0.45)) {
+            withAnimation(.easeInOut(duration: 0.40)) {
                 screenOpacity = 0
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.40) {
                 onComplete()
             }
         }

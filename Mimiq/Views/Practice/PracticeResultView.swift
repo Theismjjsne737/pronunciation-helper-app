@@ -5,10 +5,16 @@ struct PracticeResultView: View {
 
     let word: String
     let result: AnalysisResult
-    let wordHistory: [Double]       // 0–1 scores, chronological, current attempt included
+    let wordHistory: [Double]
     @ObservedObject var vm: PracticeViewModel
 
     @State private var revealScore = false
+
+    private let navyBg   = Color(red: 0.027, green: 0.020, blue: 0.059)
+    private let cardBg   = Color.white.opacity(0.04)
+    private let cardBorder = Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.15)
+    private let violet   = Color(red: 0.48, green: 0.33, blue: 1.0)
+    private let lavender = Color(red: 0.773, green: 0.722, blue: 1.0)
 
     private var weakestPhoneme: PhonemeScore? {
         result.phonemeScores.min(by: { $0.score < $1.score })
@@ -31,13 +37,8 @@ struct PracticeResultView: View {
                 }
 
                 if !result.phonemeScores.isEmpty {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Label("Sound Breakdown", systemImage: "list.bullet.rectangle")
-                            .font(.subheadline.weight(.semibold))
-                            .padding(.horizontal, 20)
-                        PhonemeBreakdownView(scores: result.phonemeScores)
-                            .padding(.horizontal, 20)
-                    }
+                    phonemeBreakdownCard
+                        .padding(.horizontal, 20)
                 }
 
                 waveformCard
@@ -48,6 +49,8 @@ struct PracticeResultView: View {
             }
             .padding(.vertical, 24)
         }
+        .background(navyBg.ignoresSafeArea())
+        .preferredColorScheme(.dark)
         .onAppear {
             withAnimation(.spring(duration: 0.5).delay(0.15)) { revealScore = true }
             ReviewService.shared.recordGoodScore(result.score)
@@ -60,6 +63,7 @@ struct PracticeResultView: View {
         VStack(spacing: 20) {
             Text(word)
                 .font(.system(size: 32, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
 
@@ -71,26 +75,35 @@ struct PracticeResultView: View {
                     .foregroundStyle(scoreColor(result.score))
                 Text(result.feedbackMessage)
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.white.opacity(0.58))
                     .multilineTextAlignment(.center)
             }
 
             if !result.transcription.isEmpty {
                 HStack(spacing: 6) {
-                    Image(systemName: "ear.fill").font(.caption).foregroundStyle(.secondary)
-                    Text("I heard:").font(.caption).foregroundStyle(.secondary)
-                    Text("\"\(result.transcription)\"").font(.caption.weight(.medium)).italic()
+                    Image(systemName: "ear.fill")
+                        .font(.caption)
+                        .foregroundStyle(lavender.opacity(0.7))
+                    Text("I heard:")
+                        .font(.caption)
+                        .foregroundStyle(Color.white.opacity(0.42))
+                    Text("\"\(result.transcription)\"")
+                        .font(.caption.weight(.medium))
+                        .italic()
+                        .foregroundStyle(lavender)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
-                .background(Color(.tertiarySystemFill))
+                .background(violet.opacity(0.10))
                 .clipShape(Capsule())
+                .overlay(Capsule().stroke(violet.opacity(0.25), lineWidth: 1))
             }
         }
         .frame(maxWidth: .infinity)
         .padding(24)
-        .background(Color(.secondarySystemGroupedBackground))
+        .background(cardBg)
         .clipShape(RoundedRectangle(cornerRadius: 24))
+        .overlay(RoundedRectangle(cornerRadius: 24).stroke(cardBorder, lineWidth: 1))
     }
 
     // MARK: - Word history chart
@@ -99,6 +112,7 @@ struct PracticeResultView: View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Your Progress on \"\(word)\"", systemImage: "chart.line.uptrend.xyaxis")
                 .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white)
 
             let points = wordHistory.enumerated().map { ($0.offset, $0.element * 100) }
 
@@ -108,26 +122,26 @@ struct PracticeResultView: View {
                         x: .value("Attempt", i + 1),
                         y: .value("Score", score)
                     )
-                    .foregroundStyle(Color.indigo.gradient)
+                    .foregroundStyle(violet.gradient)
                     .interpolationMethod(.catmullRom)
 
                     AreaMark(
                         x: .value("Attempt", i + 1),
                         y: .value("Score", score)
                     )
-                    .foregroundStyle(Color.indigo.opacity(0.1).gradient)
+                    .foregroundStyle(violet.opacity(0.12).gradient)
                     .interpolationMethod(.catmullRom)
 
                     PointMark(
                         x: .value("Attempt", i + 1),
                         y: .value("Score", score)
                     )
-                    .foregroundStyle(i == points.count - 1 ? Color.indigo : Color.indigo.opacity(0.4))
+                    .foregroundStyle(i == points.count - 1 ? violet : violet.opacity(0.4))
                     .symbolSize(i == points.count - 1 ? 60 : 30)
                 }
 
                 RuleMark(y: .value("Good", 75))
-                    .foregroundStyle(Color.green.opacity(0.5))
+                    .foregroundStyle(Color.green.opacity(0.4))
                     .lineStyle(StrokeStyle(dash: [4]))
                     .annotation(position: .trailing) {
                         Text("75%").font(.caption2).foregroundStyle(.green)
@@ -137,18 +151,21 @@ struct PracticeResultView: View {
             .chartXAxis(.hidden)
             .chartYAxis {
                 AxisMarks(values: [0, 50, 100]) {
-                    AxisValueLabel().font(.caption2)
+                    AxisValueLabel()
+                        .font(.caption2)
+                        .foregroundStyle(Color.white.opacity(0.42))
                 }
             }
             .frame(height: 110)
 
             Text("\(wordHistory.count) attempt\(wordHistory.count == 1 ? "" : "s") · Latest: \(Int((wordHistory.last ?? 0) * 100))%")
                 .font(.caption2)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.white.opacity(0.42))
         }
         .padding(20)
-        .background(Color(.secondarySystemGroupedBackground))
+        .background(cardBg)
         .clipShape(RoundedRectangle(cornerRadius: 20))
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(cardBorder, lineWidth: 1))
     }
 
     // MARK: - Focus area card
@@ -157,26 +174,29 @@ struct PracticeResultView: View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Focus Area", systemImage: "target")
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.orange)
+                .foregroundStyle(Color.orange)
 
             HStack(spacing: 16) {
                 VStack(spacing: 4) {
                     Text(phoneme.phoneme)
                         .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
                     Text("\(Int(phoneme.score * 100))%")
                         .font(.caption.monospacedDigit())
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(Color.orange)
                 }
                 .frame(width: 72, height: 72)
-                .background(Color.orange.opacity(0.1))
+                .background(Color.orange.opacity(0.10))
                 .clipShape(RoundedRectangle(cornerRadius: 14))
+                .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color.orange.opacity(0.25), lineWidth: 1))
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Weakest syllable")
                         .font(.caption.weight(.semibold))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.white.opacity(0.42))
                     Text(articulationTip(for: phoneme.phoneme))
                         .font(.subheadline)
+                        .foregroundStyle(Color.white.opacity(0.80))
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
@@ -191,14 +211,31 @@ struct PracticeResultView: View {
                     .foregroundStyle(.orange)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 8)
-                    .background(Color.orange.opacity(0.1))
+                    .background(Color.orange.opacity(0.10))
                     .clipShape(Capsule())
-                    .overlay(Capsule().stroke(Color.orange.opacity(0.3), lineWidth: 1))
+                    .overlay(Capsule().stroke(Color.orange.opacity(0.25), lineWidth: 1))
             }
         }
         .padding(20)
-        .background(Color(.secondarySystemGroupedBackground))
+        .background(cardBg)
         .clipShape(RoundedRectangle(cornerRadius: 20))
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(cardBorder, lineWidth: 1))
+    }
+
+    // MARK: - Phoneme breakdown
+
+    private var phonemeBreakdownCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Sound Breakdown", systemImage: "list.bullet.rectangle")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white)
+
+            PhonemeBreakdownView(scores: result.phonemeScores)
+        }
+        .padding(20)
+        .background(cardBg)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(cardBorder, lineWidth: 1))
     }
 
     // MARK: - Waveform comparison
@@ -207,27 +244,33 @@ struct PracticeResultView: View {
         VStack(alignment: .leading, spacing: 16) {
             Label("Waveform Comparison", systemImage: "waveform")
                 .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white)
 
             VStack(alignment: .leading, spacing: 6) {
-                Text("Native").font(.caption.weight(.medium)).foregroundStyle(.indigo)
-                StaticWaveformView(samples: idealWaveform(count: 60), color: .indigo.opacity(0.5))
+                Text("Native")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(lavender)
+                StaticWaveformView(samples: idealWaveform(count: 60), color: violet.opacity(0.6))
                     .frame(height: 36)
             }
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("You").font(.caption.weight(.medium)).foregroundStyle(.red)
-                StaticWaveformView(samples: vm.capturedSamples, color: .red.opacity(0.7))
+                Text("You")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(Color(red: 1.0, green: 0.45, blue: 0.45))
+                StaticWaveformView(samples: vm.capturedSamples, color: Color(red: 1.0, green: 0.45, blue: 0.45).opacity(0.75))
                     .frame(height: 36)
                 Button { vm.playRecording() } label: {
                     Label("Replay your recording", systemImage: "play.circle.fill")
                         .font(.caption.weight(.medium))
-                        .foregroundStyle(.red)
+                        .foregroundStyle(Color(red: 1.0, green: 0.45, blue: 0.45))
                 }
             }
         }
         .padding(20)
-        .background(Color(.secondarySystemGroupedBackground))
+        .background(cardBg)
         .clipShape(RoundedRectangle(cornerRadius: 20))
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(cardBorder, lineWidth: 1))
     }
 
     // MARK: - Actions
@@ -240,7 +283,13 @@ struct PracticeResultView: View {
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(Color.indigo)
+                    .background(
+                        LinearGradient(
+                            colors: [violet, Color(red: 0.35, green: 0.20, blue: 0.90)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             }
 
@@ -248,11 +297,12 @@ struct PracticeResultView: View {
                 Button { vm.newWord() } label: {
                     Text("New Word")
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.indigo)
+                        .foregroundStyle(lavender)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
-                        .background(Color.indigo.opacity(0.1))
+                        .background(violet.opacity(0.10))
                         .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .overlay(RoundedRectangle(cornerRadius: 16).stroke(violet.opacity(0.25), lineWidth: 1))
                 }
 
                 Button {
@@ -263,12 +313,12 @@ struct PracticeResultView: View {
                         Text("Share")
                     }
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color(red: 0.48, green: 0.33, blue: 1.0))
+                    .foregroundStyle(lavender)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.1))
+                    .background(violet.opacity(0.10))
                     .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.25), lineWidth: 1))
+                    .overlay(RoundedRectangle(cornerRadius: 16).stroke(violet.opacity(0.25), lineWidth: 1))
                 }
             }
         }
@@ -278,10 +328,10 @@ struct PracticeResultView: View {
 
     private func scoreColor(_ score: Double) -> Color {
         switch score {
-        case 0.9...:      return .green
-        case 0.75..<0.9:  return .blue
-        case 0.55..<0.75: return .orange
-        default:          return .red
+        case 0.9...:      return Color(red: 0.25, green: 0.90, blue: 0.55)
+        case 0.75..<0.9:  return lavender
+        case 0.55..<0.75: return Color.orange
+        default:          return Color(red: 1.0, green: 0.45, blue: 0.45)
         }
     }
 

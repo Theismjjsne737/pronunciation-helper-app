@@ -8,14 +8,17 @@ struct MimiqApp: App {
     let container: ModelContainer
 
     init() {
-        let schema = Schema([ChatMessage.self, AccentProfile.self, SavedWord.self])
+        let schema = Schema([ChatMessage.self, AccentProfile.self, SavedWord.self, PracticeSession.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         do {
             container = try ModelContainer(for: schema, configurations: config)
         } catch {
-            let fallback = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-            container = (try? ModelContainer(for: schema, configurations: fallback))
-                ?? (try! ModelContainer(for: schema))
+            do {
+                let fallback = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+                container = try ModelContainer(for: schema, configurations: fallback)
+            } catch {
+                fatalError("SwiftData failed to initialise even in-memory: \(error)")
+            }
         }
 
         // Register Siri shortcuts on every launch
