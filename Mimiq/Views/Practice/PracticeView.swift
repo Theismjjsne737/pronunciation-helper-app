@@ -7,20 +7,24 @@ struct PracticeView: View {
 
     @StateObject private var vm = PracticeViewModel()
     @StateObject private var dailyChallenge = DailyChallengeService.shared
+    @ObservedObject private var streak = StreakService.shared
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.modelContext) private var modelContext
     @State private var wordHistory: [Double] = []
     @State private var recentWords: [String] = []
+    @State private var wordBestScores: [String: Double] = [:]
+
+    private let violet   = Color(red: 0.48, green: 0.33, blue: 1.0)
+    private let lavender = Color(red: 0.773, green: 0.722, blue: 1.0)
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color(red: 0.027, green: 0.020, blue: 0.059).ignoresSafeArea()
-                phaseContent
-                    .transition(.opacity.combined(with: .scale(scale: 0.97)))
-                    .animation(.spring(duration: 0.35), value: phaseTag)
-            }
-            .preferredColorScheme(.dark)
+            phaseContent
+                .transition(.opacity.combined(with: .scale(scale: 0.97)))
+                .animation(.spring(duration: 0.35), value: phaseTag)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color(red: 0.027, green: 0.020, blue: 0.059).ignoresSafeArea())
+                .preferredColorScheme(.dark)
             .navigationTitle("Practice")
             .navigationBarTitleDisplayMode(.inline)
             .alert("Error", isPresented: Binding(
@@ -32,12 +36,13 @@ struct PracticeView: View {
                 Text(vm.errorMessage ?? "")
             }
             .task { await vm.requestPermissions() }
-            .task { recentWords = fetchRecentWords() }
+            .task { recentWords = fetchRecentWords(); wordBestScores = fetchBestScores() }
             .onChange(of: phaseTag) { _, _ in
                 if case .result(let word, let result, _) = vm.phase {
                     saveResult(word: word, result: result)
                     wordHistory = fetchHistory(for: word)
                     recentWords = fetchRecentWords()
+                    wordBestScores = fetchBestScores()
                 }
             }
         }
@@ -91,6 +96,20 @@ struct PracticeView: View {
         return result
     }
 
+    private func fetchBestScores() -> [String: Double] {
+        let descriptor = FetchDescriptor<ChatMessage>(
+            predicate: #Predicate { $0.kindRaw == "pronunciationResult" }
+        )
+        let msgs = (try? modelContext.fetch(descriptor)) ?? []
+        var best: [String: Double] = [:]
+        for msg in msgs {
+            if let word = msg.targetWord?.lowercased(), let score = msg.pronunciationScore {
+                best[word] = max(best[word] ?? 0, score)
+            }
+        }
+        return best
+    }
+
     private func fetchHistory(for word: String) -> [Double] {
         let descriptor = FetchDescriptor<ChatMessage>(
             predicate: #Predicate { $0.targetWord == word && $0.kindRaw == "pronunciationResult" },
@@ -122,157 +141,184 @@ struct PracticeView: View {
 
     private var wordEntryView: some View {
         ScrollView {
-            VStack(spacing: 32) {
-                Spacer(minLength: 16)
+            VStack(alignment: .leading, spacing: 0) {
 
-                ZStack {
-                    Circle()
-                        .fill(LinearGradient(
-                            colors: [.indigo.opacity(0.15), .purple.opacity(0.08)],
-                            startPoint: .topLeading, endPoint: .bottomTrailing
-                        ))
-                        .frame(width: 100, height: 100)
-                    Image(systemName: "waveform.and.mic")
-                        .font(.system(size: 42, weight: .medium))
-                        .foregroundStyle(LinearGradient(
-                            colors: [.indigo, .purple],
-                            startPoint: .topLeading, endPoint: .bottomTrailing
-                        ))
-                }
-
-                VStack(spacing: 8) {
-                    Text("What would you like to master?")
-                        .font(.title2.weight(.bold))
-                        .multilineTextAlignment(.center)
-                    Text("Enter any word, name, or short phrase.")
+                // Headline
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("One word a day.\nMassive gains.")
+                        .font(.system(size: 34, weight: .bold, design: .serif))
+                        .foregroundStyle(.white)
+                        .lineSpacing(2)
+                    Text("A new tricky word every morning. Beat your score.")
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
+                        .foregroundStyle(Color.white.opacity(0.58))
                 }
                 .padding(.horizontal, 24)
+                .padding(.top, 20)
+                .padding(.bottom, 20)
 
-                VStack(spacing: 14) {
-                    TextField("e.g. \"Nguyen\", \"worcestershire\"", text: $vm.wordInput)
-                        .font(.title3)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 16)
-                        .background(Color.white.opacity(0.03))
-                        .clipShape(RoundedRectangle(cornerRadius: 24))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 24)
-                                .stroke(Color(red: 0.48, green: 0.33, blue: 1.0).opacity(vm.wordInput.isEmpty ? 0.15 : 0.55), lineWidth: 1.5)
-                        )
-                        .submitLabel(.go)
-                        .onSubmit { vm.startPractice() }
-
-                    Button(action: vm.startPractice) {
-                        Text("Start Practicing")
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background {
-                                if vm.wordInput.trimmingCharacters(in: .whitespaces).isEmpty {
-                                    Color.white.opacity(0.08)
-                                } else {
-                                    LinearGradient(colors: [Color(red: 0.48, green: 0.33, blue: 1.0), Color(red: 0.35, green: 0.20, blue: 0.85)], startPoint: .leading, endPoint: .trailing)
-                                }
-                            }
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
-                    }
-                    .disabled(vm.wordInput.trimmingCharacters(in: .whitespaces).isEmpty)
-                }
-                .padding(.horizontal, 24)
-
-                // Daily Challenge
+                // Daily Challenge pill
                 Button {
                     vm.wordInput = dailyChallenge.todaysWord
                     vm.startPractice()
                 } label: {
-                    HStack(spacing: 10) {
-                        Image(systemName: dailyChallenge.completedToday ? "checkmark.seal.fill" : "seal.fill")
-                            .font(.subheadline)
-                            .foregroundStyle(dailyChallenge.completedToday ? .green : Color(red: 0.48, green: 0.33, blue: 1.0))
+                    HStack(spacing: 14) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(violet)
+                                .frame(width: 46, height: 46)
+                            Text("🎯").font(.system(size: 22))
+                        }
                         VStack(alignment: .leading, spacing: 2) {
                             Text("TODAY'S CHALLENGE")
-                                .font(.caption2.weight(.bold))
-                                .foregroundStyle(.secondary)
-                                .tracking(1)
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(lavender)
+                                .tracking(1.2)
                             Text(dailyChallenge.todaysWord)
-                                .font(.headline.weight(.bold))
+                                .font(.system(size: 20, weight: .bold))
                                 .foregroundStyle(.white)
+                            if let ipa = IPAMapper.ipa(for: dailyChallenge.todaysWord) {
+                                Text(ipa)
+                                    .font(.system(size: 11, design: .monospaced))
+                                    .foregroundStyle(Color.white.opacity(0.42))
+                            }
                         }
                         Spacer()
-                        if dailyChallenge.completedToday {
-                            Text("Done ✓")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.green)
-                        } else {
-                            Image(systemName: "chevron.right")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.secondary)
-                        }
+                        Image(systemName: dailyChallenge.completedToday ? "checkmark.circle.fill" : "chevron.right")
+                            .font(.system(size: 18))
+                            .foregroundStyle(dailyChallenge.completedToday ? Color.green : violet)
                     }
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 14)
-                    .background(
-                        dailyChallenge.completedToday
-                            ? Color.green.opacity(0.08)
-                            : Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.1)
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(
-                                dailyChallenge.completedToday
-                                    ? Color.green.opacity(0.3)
-                                    : Color(red: 0.48, green: 0.33, blue: 1.0).opacity(0.3),
-                                lineWidth: 1
-                            )
-                    )
+                    .padding(18)
+                    .background(violet.opacity(0.10))
+                    .clipShape(RoundedRectangle(cornerRadius: 18))
+                    .overlay(RoundedRectangle(cornerRadius: 18).stroke(violet.opacity(0.30), lineWidth: 1))
                 }
                 .buttonStyle(.plain)
-                .padding(.horizontal, 24)
                 .disabled(dailyChallenge.completedToday)
+                .padding(.horizontal, 20)
 
-                if !recentWords.isEmpty {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Recent")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                            .padding(.horizontal, 24)
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                ForEach(recentWords, id: \.self) { word in
-                                    Button {
-                                        vm.wordInput = word
-                                        vm.startPractice()
-                                    } label: {
-                                        HStack(spacing: 5) {
-                                            Image(systemName: "arrow.clockwise").font(.caption2)
-                                            Text(word).font(.subheadline.weight(.semibold))
-                                        }
-                                        .padding(.horizontal, 14)
-                                        .padding(.vertical, 9)
-                                        .background(Color.indigo.opacity(0.1))
-                                        .foregroundStyle(.indigo)
-                                        .clipShape(Capsule())
-                                        .overlay(Capsule().stroke(Color.indigo.opacity(0.25), lineWidth: 1))
-                                    }
-                                }
-                            }
-                            .padding(.horizontal, 24)
+                // Streak row
+                HStack(spacing: 14) {
+                    Text("🔥").font(.system(size: 26))
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("\(streak.currentStreak)-day streak")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundStyle(Color.orange)
+                        Text(streak.practicedToday ? "You practiced today — great!" : "Keep it going")
+                            .font(.system(size: 12))
+                            .foregroundStyle(Color.white.opacity(0.42))
+                    }
+                    Spacer()
+                }
+                .padding(14)
+                .background(Color.orange.opacity(0.10))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.orange.opacity(0.25), lineWidth: 1))
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+
+                // Custom word entry
+                HStack(spacing: 10) {
+                    TextField("Enter any word or name…", text: $vm.wordInput)
+                        .font(.subheadline)
+                        .foregroundStyle(.white)
+                        .tint(violet)
+                        .submitLabel(.go)
+                        .onSubmit { if !vm.wordInput.trimmingCharacters(in: .whitespaces).isEmpty { vm.startPractice() } }
+                    if !vm.wordInput.isEmpty {
+                        Button(action: vm.startPractice) {
+                            Image(systemName: "arrow.right.circle.fill")
+                                .font(.title3)
+                                .foregroundStyle(violet)
                         }
                     }
                 }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(Color.white.opacity(0.04))
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .overlay(RoundedRectangle(cornerRadius: 14).stroke(violet.opacity(vm.wordInput.isEmpty ? 0.15 : 0.45), lineWidth: 1))
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
 
-                Divider()
+                // Practice Library header
+                Text("PRACTICE LIBRARY")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(Color.white.opacity(0.42))
+                    .tracking(1.0)
                     .padding(.horizontal, 20)
+                    .padding(.top, 20)
+                    .padding(.bottom, 10)
 
-                PracticeLibraryView(vm: vm)
-                    .padding(.bottom, 24)
+                // Word rows
+                VStack(spacing: 8) {
+                    ForEach(PracticeItem.library.prefix(12), id: \.word) { item in
+                        wordRow(item)
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 28)
             }
+        }
+    }
+
+    // MARK: - Library word row
+
+    private func wordRow(_ item: PracticeItem) -> some View {
+        Button {
+            vm.wordInput = item.word
+            vm.startPractice()
+        } label: {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(item.word)
+                        .font(.system(.subheadline, design: .default, weight: .semibold))
+                        .foregroundStyle(.white)
+                    Text(item.phonetic)
+                        .font(.system(size: 11, design: .monospaced))
+                        .foregroundStyle(Color.white.opacity(0.42))
+                }
+                Spacer()
+                wordBadge(for: item)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color.white.opacity(0.04))
+            .clipShape(RoundedRectangle(cornerRadius: 13))
+            .overlay(RoundedRectangle(cornerRadius: 13).stroke(violet.opacity(0.15), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private func wordBadge(for item: PracticeItem) -> some View {
+        if let best = wordBestScores[item.word.lowercased()] {
+            let pct = Int(best * 100)
+            let good = best >= 0.55
+            let color: Color = best >= 0.75 ? Color(red: 0.20, green: 0.85, blue: 0.55) : .orange
+            Text(good ? "✓ \(pct)%" : "\(pct)%")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(color)
+                .padding(.horizontal, 10).padding(.vertical, 3)
+                .background(color.opacity(0.15))
+                .clipShape(Capsule())
+                .overlay(Capsule().stroke(color.opacity(0.30), lineWidth: 1))
+        } else if item.difficulty == .advanced {
+            Text("Hard")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(Color.orange)
+                .padding(.horizontal, 10).padding(.vertical, 3)
+                .background(Color.orange.opacity(0.15))
+                .clipShape(Capsule())
+                .overlay(Capsule().stroke(Color.orange.opacity(0.30), lineWidth: 1))
+        } else {
+            Text("New")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(lavender)
+                .padding(.horizontal, 10).padding(.vertical, 3)
+                .background(lavender.opacity(0.15))
+                .clipShape(Capsule())
+                .overlay(Capsule().stroke(lavender.opacity(0.30), lineWidth: 1))
         }
     }
 
