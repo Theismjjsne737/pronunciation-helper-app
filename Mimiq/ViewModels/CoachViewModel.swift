@@ -52,6 +52,8 @@ final class CoachViewModel: ObservableObject {
     // Session-level progress tracking
     private var sessionAttempts = 0
     private var sessionScoreTotal: Double = 0
+    // Guarantees retry prompt appears after low-score attempt even if Claude omits [RECORD:] tag
+    private var pendingRetryWord: String?
 
     // MARK: - Init
 
@@ -192,6 +194,8 @@ final class CoachViewModel: ObservableObject {
             // Phoneme pattern note for Claude context
             let patternNote = detectedLabels.isEmpty ? "" : "\nDetected pattern: \(detectedLabels.joined(separator: ", "))"
 
+            if result.score < 0.85 { pendingRetryWord = word }
+
             let ctx = "User recorded '\(word)'. I heard: '\(result.transcription)'. Score: \(result.scorePercentage)%.\(patternNote)\(sessionLine)\(milestoneNote)"
             await streamCoachResponse(userMessage: ctx)
 
@@ -270,6 +274,7 @@ final class CoachViewModel: ObservableObject {
         appendCoach(display, targetWord: targetWord)
 
         if let word = targetWord {
+            pendingRetryWord = nil
             let subs = SubscriptionManager.shared
             let isNewWord = !subs.hasSeenWord(word)
             if isNewWord && !subs.hasActiveSubscription && subs.hasUsedAllFreeWords {
@@ -281,6 +286,11 @@ final class CoachViewModel: ObservableObject {
             coachState = .awaitingAttempt(word: word)
             try? await Task.sleep(for: .milliseconds(400))
             tts.speak(word)
+        } else if let retryWord = pendingRetryWord {
+            pendingRetryWord = nil
+            coachState = .awaitingAttempt(word: retryWord)
+            try? await Task.sleep(for: .milliseconds(400))
+            tts.speak(retryWord)
         } else {
             coachState = .idle
         }
