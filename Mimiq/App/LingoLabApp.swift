@@ -40,14 +40,14 @@ struct MimiqApp: App {
                     async let streak: () = StreakService.shared.recordPractice()
                     _ = await (auth, subs, notifs, streak)
 
-                    if let userID = authViewModel.currentUser?.appleUserID {
+                    if let userID = authViewModel.currentUser?.id {
                         await SupabaseSyncService.shared.pull(userID: userID, into: container.mainContext)
                     }
                 }
         }
         .onChange(of: scenePhase) { _, newPhase in
             guard newPhase == .background,
-                  let userID = authViewModel.currentUser?.appleUserID
+                  let userID = authViewModel.currentUser?.id
             else { return }
             Task {
                 let profiles = (try? container.mainContext.fetch(FetchDescriptor<AccentProfile>())) ?? []

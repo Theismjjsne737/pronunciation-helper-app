@@ -10,6 +10,11 @@ enum KeychainService {
         case anthropicAPIKey = "anthropic_api_key"
         case appleUserID     = "apple_user_id"
         case appleFullName   = "apple_full_name"
+        case authToken       = "auth_access_token"
+        case refreshToken    = "auth_refresh_token"
+        case userEmail       = "auth_user_email"
+        case userProvider    = "auth_user_provider"
+        case supabaseUserID  = "auth_supabase_user_id"
     }
 
     // MARK: - Read

@@ -38,6 +38,18 @@
         <string>audio</string>
     </array>
 
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>mimiq</string>
+            </array>
+            <key>CFBundleURLName</key>
+            <string>com.rhearao.Mimiq</string>
+        </dict>
+    </array>
+
     <key>UILaunchScreen</key>
     <dict/>
 
