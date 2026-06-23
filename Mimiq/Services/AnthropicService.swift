@@ -66,8 +66,8 @@ actor AnthropicService {
 
     private let directEndpoint = URL(string: "https://api.anthropic.com/v1/messages")!
     private let apiVersion = "2023-06-01"
-    private let model      = "claude-opus-4-5"
-    private let maxTokens  = 512
+    private let model      = "claude-sonnet-4-6"
+    private let maxTokens  = 1024
 
     // MARK: - Public streaming API
 
