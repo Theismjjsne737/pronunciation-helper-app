@@ -279,6 +279,8 @@ final class CoachViewModel: ObservableObject {
             }
             if isNewWord { subs.markWordSeen(word) }
             coachState = .awaitingAttempt(word: word)
+            try? await Task.sleep(for: .milliseconds(400))
+            tts.speak(word)
         } else {
             coachState = .idle
         }
@@ -349,7 +351,7 @@ final class CoachViewModel: ObservableObject {
     /// Pronunciation results are translated to the analytical text format.
     private func buildAPIHistory(appendingUser newMsg: String) -> [(role: String, content: String)] {
         var history: [(role: String, content: String)] = messages
-            .suffix(20)
+            .suffix(8)
             .filter { $0.kind != .exerciseCard }   // exercise cards are UI-only, not part of Claude's context
             .map { msg in
                 let role = msg.isUser ? "user" : "assistant"
