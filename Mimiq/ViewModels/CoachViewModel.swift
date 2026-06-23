@@ -81,7 +81,12 @@ final class CoachViewModel: ObservableObject {
 
     func send() async {
         let text = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty, coachState == .idle else { return }
+        guard !text.isEmpty else { return }
+        switch coachState {
+        case .idle, .awaitingAttempt: break
+        default: return
+        }
+        pendingRetryWord = nil
         inputText = ""
         appendUser(text)
         await streamCoachResponse(userMessage: text)

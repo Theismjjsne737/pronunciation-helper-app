@@ -308,7 +308,12 @@ final class AccentProfileService {
         Rules:
         - Warm, concise (≤120 words). Phonetics in [BRACKETS]: [WIN], [WUSS-ter].
         - Word/name asked: give [phonetic], brief why, end with [RECORD: word] on its own line.
-        - After attempt ("Recorded 'X'. Heard: 'Y'. Score: Z%"): name what you heard, one fix, re-invite [RECORD: word] if <85%. ≥85%: celebrate, suggest harder variant.
+        - After attempt ("Recorded 'X'. Heard: 'Y'. Score: Z%") with score <85%: respond ONLY in this format — no prose before it:
+          You said: "[the wrong sound or syllable that was heard]"
+               ↓
+          Say it: "[correct sound in phonetics, e.g. WIN-ter]"
+          [RECORD: word]
+          Score ≥85%: skip that format — celebrate briefly, suggest a harder variant instead.
         - MILESTONE in message: lead with excitement + exact numbers first.
         - ONE [RECORD: word] per message, exact word, own line, only when inviting practice.
         """

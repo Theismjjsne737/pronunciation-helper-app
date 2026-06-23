@@ -10,7 +10,7 @@ struct InputBar: View {
 
     private var isDisabled: Bool {
         switch vm.coachState {
-        case .idle: return false
+        case .idle, .awaitingAttempt: return false
         default: return true
         }
     }
@@ -18,9 +18,10 @@ struct InputBar: View {
     private var placeholder: String {
         if voice.isListening { return "Listening…" }
         switch vm.coachState {
-        case .thinking:                          return "Coach is responding…"
-        case .awaitingAttempt, .recording, .analyzing: return "Record your attempt above"
-        default:                                 return "Ask about any word or name…"
+        case .thinking:               return "Coach is responding…"
+        case .recording, .analyzing:  return "Recording in progress…"
+        case .awaitingAttempt:        return "Record above, or type a new word…"
+        default:                      return "Ask about any word or name…"
         }
     }
 
