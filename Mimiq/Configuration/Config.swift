@@ -24,7 +24,8 @@ enum Config {
     static let anthropicAPIKey: String = {
         if let key = Bundle.main.object(forInfoDictionaryKey: "ANTHROPIC_API_KEY") as? String,
            !key.isEmpty, key != "$(ANTHROPIC_API_KEY)" { return key }
-        return ""
+        let envKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"] ?? ""
+        return envKey
     }()
 
     // MARK: - Supabase
