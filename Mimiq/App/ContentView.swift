@@ -23,6 +23,12 @@ struct ContentView: View {
 
                     AccentProfileView()
                         .tabItem { Label("Progress", systemImage: "chart.line.uptrend.xyaxis") }
+
+                    ShareTabView()
+                        .tabItem { Label("Share", systemImage: "square.and.arrow.up") }
+
+                    SettingsView()
+                        .tabItem { Label("Settings", systemImage: "gearshape.fill") }
                 }
                 .tint(.indigo)
                 .transition(.opacity)

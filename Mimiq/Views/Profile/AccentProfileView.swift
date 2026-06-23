@@ -94,16 +94,6 @@ struct AccentProfileView: View {
     private let green    = Color(red: 0.204, green: 0.827, blue: 0.600)
     private let orange   = Color(red: 0.984, green: 0.573, blue: 0.235)
 
-    private var levelName: String {
-        switch gamification.level {
-        case 0: return "Learner"
-        case 1: return "Novice"
-        case 2: return "Explorer"
-        case 3: return "Practitioner"
-        default: return "Speaker"
-        }
-    }
-
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -127,19 +117,19 @@ struct AccentProfileView: View {
 
                     // XP card
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(levelName.uppercased())
-                            .font(.system(size: 10, weight: .bold))
-                            .tracking(1.0)
-                            .foregroundStyle(violet)
-                        HStack(alignment: .firstTextBaseline, spacing: 6) {
-                            Text("\(gamification.xpInCurrentLevel + gamification.xpToNextLevel * gamification.level) XP")
-                                .font(.system(size: 28, weight: .bold))
-                                .foregroundStyle(offWhite)
+                        HStack {
+                            Text("LEVEL \(gamification.level)")
+                                .font(.system(size: 10, weight: .bold))
+                                .tracking(1.0)
+                                .foregroundStyle(violet)
                             Spacer()
-                            Text("Lv. \(gamification.level)")
+                            Text("\(gamification.totalXP) XP")
                                 .font(.system(size: 13, weight: .semibold))
                                 .foregroundStyle(lavender)
                         }
+                        Text(gamification.levelTitle)
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundStyle(offWhite)
                         GeometryReader { geo in
                             ZStack(alignment: .leading) {
                                 RoundedRectangle(cornerRadius: 4)
@@ -155,9 +145,13 @@ struct AccentProfileView: View {
                             }
                         }
                         .frame(height: 6)
-                        Text("\(gamification.xpToNextLevel - gamification.xpInCurrentLevel) XP to next level")
-                            .font(.system(size: 11))
-                            .foregroundStyle(muted)
+                        HStack {
+                            Text("Learner")
+                            Spacer()
+                            Text("Speaker")
+                        }
+                        .font(.system(size: 11))
+                        .foregroundStyle(muted)
                     }
                     .padding(20)
                     .background(cardBg)

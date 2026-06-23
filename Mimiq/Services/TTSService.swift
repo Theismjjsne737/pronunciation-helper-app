@@ -55,15 +55,24 @@ final class TTSService: NSObject, ObservableObject {
 
     // MARK: - Private
 
+    // Ranked by naturalness on iOS 17+ — Ava and Zoe are closest to human speech
+    private static let naturalVoiceNames = ["Ava", "Zoe", "Samantha", "Nathan", "Tom"]
+
     private func preferredVoice() -> AVSpeechSynthesisVoice? {
         let lang = UserDefaults.standard.string(forKey: "practiceLanguage") ?? "en-US"
         let voices = AVSpeechSynthesisVoice.speechVoices()
-        if let premium = voices.first(where: {
-            $0.language.hasPrefix(lang) && $0.quality == .premium
-        }) { return premium }
-        if let enhanced = voices.first(where: {
-            $0.language.hasPrefix(lang) && $0.quality == .enhanced
-        }) { return enhanced }
+
+        for name in Self.naturalVoiceNames {
+            if let voice = voices.first(where: {
+                $0.language.hasPrefix(lang) && $0.quality == .premium && $0.name.contains(name)
+            }) { return voice }
+        }
+        if let premium = voices.first(where: { $0.language.hasPrefix(lang) && $0.quality == .premium }) {
+            return premium
+        }
+        if let enhanced = voices.first(where: { $0.language.hasPrefix(lang) && $0.quality == .enhanced }) {
+            return enhanced
+        }
         return AVSpeechSynthesisVoice(language: lang)
     }
 }
