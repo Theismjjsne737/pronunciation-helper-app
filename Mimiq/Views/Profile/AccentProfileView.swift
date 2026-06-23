@@ -83,36 +83,219 @@ struct AccentProfileView: View {
             }
     }
 
+    // Design tokens
+    private let navy     = Color(red: 0.027, green: 0.020, blue: 0.059)
+    private let violet   = Color(red: 0.482, green: 0.333, blue: 1.0)
+    private let lavender = Color(red: 0.773, green: 0.722, blue: 1.0)
+    private let offWhite = Color(red: 0.941, green: 0.933, blue: 1.0)
+    private let muted    = Color(red: 0.941, green: 0.933, blue: 1.0).opacity(0.58)
+    private let cardBg   = Color.white.opacity(0.04)
+    private let cardBorder = Color(red: 0.482, green: 0.333, blue: 1.0).opacity(0.18)
+    private let green    = Color(red: 0.204, green: 0.827, blue: 0.600)
+    private let orange   = Color(red: 0.984, green: 0.573, blue: 0.235)
+
+    private var levelName: String {
+        switch gamification.level {
+        case 0: return "Learner"
+        case 1: return "Novice"
+        case 2: return "Explorer"
+        case 3: return "Practitioner"
+        default: return "Speaker"
+        }
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
-                LazyVStack(spacing: 16) {
-                    streakSection
-                    weeklyInsightBanner
-                    statsGrid
-                    if let p = profile, p.phonemePatterns.filter({ $0.attemptCount >= 2 }).count >= 2 {
-                        phonemeAccuracyChart(p)
+                VStack(spacing: 16) {
+
+                    // Header
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Watch your\naccent transform.")
+                            .font(.system(size: 42, weight: .bold, design: .serif))
+                            .foregroundStyle(offWhite)
+                            .lineSpacing(2)
+                        Text("XP, levels, and charts for every word you practice.")
+                            .font(.system(size: 13))
+                            .foregroundStyle(muted)
+                            .lineSpacing(4)
                     }
-                    if chartData.count >= 2 { progressChart }
-                    if let p = profile, !p.phonemeTiers.isEmpty { fingerprintCard(p) }
-                    recentAttemptsCard
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
+                    .padding(.bottom, 4)
+
+                    // XP card
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(levelName.uppercased())
+                            .font(.system(size: 10, weight: .bold))
+                            .tracking(1.0)
+                            .foregroundStyle(violet)
+                        HStack(alignment: .firstTextBaseline, spacing: 6) {
+                            Text("\(gamification.xpInCurrentLevel + gamification.xpToNextLevel * gamification.level) XP")
+                                .font(.system(size: 28, weight: .bold))
+                                .foregroundStyle(offWhite)
+                            Spacer()
+                            Text("Lv. \(gamification.level)")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(lavender)
+                        }
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.white.opacity(0.08))
+                                    .frame(height: 6)
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(
+                                        LinearGradient(colors: [violet, lavender],
+                                                       startPoint: .leading, endPoint: .trailing)
+                                    )
+                                    .frame(width: geo.size.width * gamification.levelProgress, height: 6)
+                                    .animation(.spring(duration: 0.6), value: gamification.levelProgress)
+                            }
+                        }
+                        .frame(height: 6)
+                        Text("\(gamification.xpToNextLevel - gamification.xpInCurrentLevel) XP to next level")
+                            .font(.system(size: 11))
+                            .foregroundStyle(muted)
+                    }
+                    .padding(20)
+                    .background(cardBg)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .overlay(RoundedRectangle(cornerRadius: 20).stroke(cardBorder, lineWidth: 1))
+                    .padding(.horizontal, 20)
+
+                    // Stats row
+                    HStack(spacing: 10) {
+                        profileStatCard(value: "\(wordsCount)", label: "Words")
+                        profileStatCard(value: "\(Int(averageScore * 100))%", label: "Avg Score")
+                        profileStatCard(value: "\(streak.currentStreak) 🔥", label: "Streak")
+                    }
+                    .padding(.horizontal, 20)
+
+                    // Accuracy chart
+                    if chartData.count >= 2 {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("ACCURACY THIS WEEK")
+                                .font(.system(size: 10, weight: .bold))
+                                .tracking(1.0)
+                                .foregroundStyle(violet)
+
+                            Chart(chartData) { point in
+                                LineMark(
+                                    x: .value("Session", point.date),
+                                    y: .value("Score", point.score)
+                                )
+                                .foregroundStyle(violet)
+                                .lineStyle(StrokeStyle(lineWidth: 2.5))
+                                .interpolationMethod(.catmullRom)
+
+                                AreaMark(
+                                    x: .value("Session", point.date),
+                                    y: .value("Score", point.score)
+                                )
+                                .foregroundStyle(
+                                    LinearGradient(colors: [violet.opacity(0.25), violet.opacity(0)],
+                                                   startPoint: .top, endPoint: .bottom)
+                                )
+                                .interpolationMethod(.catmullRom)
+
+                                RuleMark(y: .value("Good", 75))
+                                    .foregroundStyle(green.opacity(0.5))
+                                    .lineStyle(StrokeStyle(dash: [4]))
+                            }
+                            .chartYAxis {
+                                AxisMarks(values: [0, 50, 100]) { val in
+                                    AxisGridLine().foregroundStyle(Color.white.opacity(0.08))
+                                    AxisValueLabel("\(val.as(Int.self) ?? 0)%")
+                                        .font(.caption2)
+                                        .foregroundStyle(muted)
+                                }
+                            }
+                            .chartYScale(domain: 0...100)
+                            .chartXAxis(.hidden)
+                            .frame(height: 140)
+                        }
+                        .padding(20)
+                        .background(cardBg)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                        .overlay(RoundedRectangle(cornerRadius: 20).stroke(cardBorder, lineWidth: 1))
+                        .padding(.horizontal, 20)
+                    }
+
+                    // Mastered words
+                    masteredWordsCard
+
                 }
-                .padding(16)
                 .padding(.bottom, 24)
             }
-            .background(Color(red: 0.027, green: 0.020, blue: 0.059))
-            .navigationTitle("Progress")
-            .navigationBarTitleDisplayMode(.large)
+            .background(navy.ignoresSafeArea())
             .preferredColorScheme(.dark)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Edit accent") { showOnboarding = true }
-                        .font(.subheadline)
-                }
-            }
+            .navigationBarHidden(true)
             .sheet(isPresented: $showOnboarding) {
                 if let p = profile { OnboardingView(profile: p) }
             }
+        }
+    }
+
+    private func profileStatCard(value: String, label: String) -> some View {
+        VStack(spacing: 4) {
+            Text(value)
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(offWhite)
+                .minimumScaleFactor(0.6)
+                .lineLimit(1)
+            Text(label)
+                .font(.system(size: 11))
+                .foregroundStyle(muted)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background(cardBg)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(cardBorder, lineWidth: 1))
+    }
+
+    @ViewBuilder
+    private var masteredWordsCard: some View {
+        let topWords = Dictionary(grouping: attemptMessages.compactMap { msg -> (String, Double)? in
+            guard let w = msg.targetWord, let s = msg.pronunciationScore else { return nil }
+            return (w, s)
+        }, by: \.0)
+        .compactMap { (word, pairs) -> (String, Double)? in
+            guard let best = pairs.map(\.1).max() else { return nil }
+            return (word, best)
+        }
+        .sorted { $0.1 > $1.1 }
+        .prefix(8)
+
+        if !topWords.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("MASTERED WORDS")
+                    .font(.system(size: 10, weight: .bold))
+                    .tracking(1.0)
+                    .foregroundStyle(violet)
+
+                ForEach(Array(topWords.enumerated()), id: \.element.0) { _, pair in
+                    HStack {
+                        Text(pair.1 >= 0.90 ? "🏆" : "⭐")
+                            .font(.system(size: 16))
+                        Text(pair.0)
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(offWhite)
+                        Spacer()
+                        Text("\(Int(pair.1 * 100))%")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(pair.1 >= 0.85 ? green : lavender)
+                    }
+                    .padding(.vertical, 2)
+                }
+            }
+            .padding(20)
+            .background(cardBg)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .overlay(RoundedRectangle(cornerRadius: 20).stroke(cardBorder, lineWidth: 1))
+            .padding(.horizontal, 20)
         }
     }
 

@@ -20,14 +20,39 @@ struct PracticeResultView: View {
         result.phonemeScores.min(by: { $0.score < $1.score })
     }
 
+    // Additional tokens
+    private let green  = Color(red: 0.204, green: 0.827, blue: 0.600)
+    private let orange = Color(red: 0.984, green: 0.573, blue: 0.235)
+    private let red    = Color(red: 0.973, green: 0.443, blue: 0.443)
+    private let indigo = Color(red: 0.506, green: 0.549, blue: 0.973)
+    private let muted  = Color(red: 0.941, green: 0.933, blue: 1.0).opacity(0.58)
+    private let offWhite = Color(red: 0.941, green: 0.933, blue: 1.0)
+
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
+
+                // ── Header ────────────────────────────────────
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Scored down\nto the sound.")
+                        .font(.system(size: 42, weight: .bold, design: .serif))
+                        .foregroundStyle(offWhite)
+                        .lineSpacing(2)
+                    Text("Phoneme-level feedback on every attempt.")
+                        .font(.system(size: 13))
+                        .foregroundStyle(muted)
+                        .lineSpacing(4)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
+                .padding(.bottom, 4)
+
                 scoreCard
                     .padding(.horizontal, 20)
 
-                if wordHistory.count >= 2 {
-                    wordHistoryChart
+                if !result.phonemeScores.isEmpty {
+                    phonemeBreakdownCard
                         .padding(.horizontal, 20)
                 }
 
@@ -36,8 +61,8 @@ struct PracticeResultView: View {
                         .padding(.horizontal, 20)
                 }
 
-                if !result.phonemeScores.isEmpty {
-                    phonemeBreakdownCard
+                if wordHistory.count >= 2 {
+                    wordHistoryChart
                         .padding(.horizontal, 20)
                 }
 
@@ -47,7 +72,7 @@ struct PracticeResultView: View {
                 actionsCard
                     .padding(.horizontal, 20)
             }
-            .padding(.vertical, 24)
+            .padding(.bottom, 24)
         }
         .background(navyBg.ignoresSafeArea())
         .preferredColorScheme(.dark)
@@ -63,11 +88,37 @@ struct PracticeResultView: View {
         VStack(spacing: 20) {
             Text(word)
                 .font(.system(size: 32, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+                .foregroundStyle(offWhite)
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
 
-            ScoreGaugeView(score: revealScore ? result.score : 0, size: 110)
+            // Violet gradient ring
+            ZStack {
+                Circle()
+                    .trim(from: 0.15, to: 0.85)
+                    .stroke(Color.white.opacity(0.08), style: StrokeStyle(lineWidth: 14, lineCap: .round))
+                    .rotationEffect(.degrees(90))
+                Circle()
+                    .trim(from: 0.15, to: 0.15 + 0.7 * (revealScore ? result.score : 0))
+                    .stroke(
+                        LinearGradient(
+                            colors: [violet, Color(red: 0.773, green: 0.722, blue: 1.0)],
+                            startPoint: .leading, endPoint: .trailing
+                        ),
+                        style: StrokeStyle(lineWidth: 14, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(90))
+                    .animation(.spring(duration: 0.8), value: revealScore)
+                VStack(spacing: 2) {
+                    Text("\(Int(result.score * 100))")
+                        .font(.system(size: 42, weight: .bold, design: .rounded))
+                        .foregroundStyle(offWhite)
+                    Text("/ 100")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(muted)
+                }
+            }
+            .frame(width: 110, height: 110)
 
             VStack(spacing: 6) {
                 Text(result.scoreLabel)
@@ -75,7 +126,7 @@ struct PracticeResultView: View {
                     .foregroundStyle(scoreColor(result.score))
                 Text(result.feedbackMessage)
                     .font(.subheadline)
-                    .foregroundStyle(Color.white.opacity(0.58))
+                    .foregroundStyle(muted)
                     .multilineTextAlignment(.center)
             }
 
@@ -225,17 +276,59 @@ struct PracticeResultView: View {
     // MARK: - Phoneme breakdown
 
     private var phonemeBreakdownCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Label("Sound Breakdown", systemImage: "list.bullet.rectangle")
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.white)
+        VStack(alignment: .leading, spacing: 16) {
+            Text("SOUND BREAKDOWN")
+                .font(.system(size: 10, weight: .bold))
+                .tracking(1.0)
+                .foregroundStyle(violet)
 
-            PhonemeBreakdownView(scores: result.phonemeScores)
+            VStack(spacing: 12) {
+                ForEach(result.phonemeScores) { ps in
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack {
+                            Text(ps.phoneme)
+                                .font(.system(size: 12, design: .monospaced))
+                                .foregroundStyle(phonemeChipColor(ps.score))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(phonemeChipBg(ps.score))
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                            Spacer()
+                            Text("\(Int(ps.score * 100))%")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundStyle(phonemeChipColor(ps.score))
+                        }
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                RoundedRectangle(cornerRadius: 3)
+                                    .fill(Color.white.opacity(0.06))
+                                    .frame(height: 5)
+                                RoundedRectangle(cornerRadius: 3)
+                                    .fill(phonemeChipColor(ps.score))
+                                    .frame(width: geo.size.width * ps.score, height: 5)
+                            }
+                        }
+                        .frame(height: 5)
+                    }
+                }
+            }
         }
         .padding(20)
         .background(cardBg)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .overlay(RoundedRectangle(cornerRadius: 20).stroke(cardBorder, lineWidth: 1))
+    }
+
+    private func phonemeChipColor(_ score: Double) -> Color {
+        if score >= 0.85 { return green }
+        if score >= 0.75 { return indigo }
+        return orange
+    }
+
+    private func phonemeChipBg(_ score: Double) -> Color {
+        if score >= 0.85 { return green.opacity(0.15) }
+        if score >= 0.75 { return indigo.opacity(0.15) }
+        return orange.opacity(0.15)
     }
 
     // MARK: - Waveform comparison
@@ -293,33 +386,20 @@ struct PracticeResultView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             }
 
-            HStack(spacing: 10) {
-                Button { vm.newWord() } label: {
-                    Text("New Word")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(lavender)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(violet.opacity(0.10))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .overlay(RoundedRectangle(cornerRadius: 16).stroke(violet.opacity(0.25), lineWidth: 1))
+            Button {
+                shareScoreCard(word: word, score: result.score, transcription: result.transcription)
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "square.and.arrow.up")
+                    Text("Share")
                 }
-
-                Button {
-                    shareScoreCard(word: word, score: result.score, transcription: result.transcription)
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "square.and.arrow.up")
-                        Text("Share")
-                    }
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(lavender)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(violet.opacity(0.10))
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .overlay(RoundedRectangle(cornerRadius: 16).stroke(violet.opacity(0.25), lineWidth: 1))
-                }
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(violet)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(Color.clear)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .overlay(RoundedRectangle(cornerRadius: 16).stroke(violet.opacity(0.45), lineWidth: 1))
             }
         }
     }

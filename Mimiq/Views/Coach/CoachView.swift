@@ -61,8 +61,7 @@ struct CoachView: View {
                 }
             }
             .preferredColorScheme(.dark)
-            .navigationTitle("Coach")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarHidden(true)
             .toolbar { toolbarItems }
             .sheet(isPresented: $showSettings,   onDismiss: rebuild) { SettingsView() }
             .sheet(isPresented: $showOnboarding, onDismiss: rebuild) {
@@ -87,6 +86,22 @@ struct CoachView: View {
 
     private func chatLayout(vm: CoachViewModel) -> some View {
         VStack(spacing: 0) {
+            // ── Header ────────────────────────────────────────
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Your personal\nAI coach.")
+                    .font(.system(size: 42, weight: .bold, design: .serif))
+                    .foregroundStyle(Color(red: 0.941, green: 0.933, blue: 1.0))
+                    .lineSpacing(2)
+                Text("Ask about any word, name, or phrase.\nGet expert guidance tailored to your accent.")
+                    .font(.system(size: 13))
+                    .foregroundStyle(Color(red: 0.941, green: 0.933, blue: 1.0).opacity(0.58))
+                    .lineSpacing(4)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+            .padding(.bottom, 8)
+
             // ── Message list ──────────────────────────────────
             ScrollViewReader { proxy in
                 ScrollView {
@@ -176,10 +191,10 @@ struct CoachView: View {
                         .font(.caption.weight(.medium))
                 }
                 .font(.caption)
-                .foregroundStyle(.indigo)
+                .foregroundStyle(Color(red: 0.482, green: 0.333, blue: 1.0))
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(Color.indigo.opacity(0.1))
+                .background(Color(red: 0.482, green: 0.333, blue: 1.0).opacity(0.1))
                 .clipShape(Capsule())
             }
             .accessibilityLabel("Edit accent profile")

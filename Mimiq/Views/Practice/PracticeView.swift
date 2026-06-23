@@ -146,12 +146,13 @@ struct PracticeView: View {
                 // Headline
                 VStack(alignment: .leading, spacing: 6) {
                     Text("One word a day.\nMassive gains.")
-                        .font(.system(size: 34, weight: .bold, design: .serif))
-                        .foregroundStyle(.white)
+                        .font(.system(size: 42, weight: .bold, design: .serif))
+                        .foregroundStyle(Color(red: 0.941, green: 0.933, blue: 1.0))
                         .lineSpacing(2)
                     Text("A new tricky word every morning. Beat your score.")
-                        .font(.subheadline)
-                        .foregroundStyle(Color.white.opacity(0.58))
+                        .font(.system(size: 13))
+                        .foregroundStyle(Color(red: 0.941, green: 0.933, blue: 1.0).opacity(0.58))
+                        .lineSpacing(4)
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 20)
@@ -172,21 +173,21 @@ struct PracticeView: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("TODAY'S CHALLENGE")
                                 .font(.system(size: 10, weight: .bold))
-                                .foregroundStyle(lavender)
-                                .tracking(1.2)
+                                .foregroundStyle(violet)
+                                .tracking(1.0)
                             Text(dailyChallenge.todaysWord)
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundStyle(.white)
+                                .font(.system(size: 22, weight: .bold))
+                                .foregroundStyle(Color(red: 0.941, green: 0.933, blue: 1.0))
                             if let ipa = IPAMapper.ipa(for: dailyChallenge.todaysWord) {
                                 Text(ipa)
-                                    .font(.system(size: 11, design: .monospaced))
-                                    .foregroundStyle(Color.white.opacity(0.42))
+                                    .font(.system(size: 12, design: .monospaced))
+                                    .foregroundStyle(Color(red: 0.941, green: 0.933, blue: 1.0).opacity(0.58))
                             }
                         }
                         Spacer()
-                        Image(systemName: dailyChallenge.completedToday ? "checkmark.circle.fill" : "chevron.right")
-                            .font(.system(size: 18))
-                            .foregroundStyle(dailyChallenge.completedToday ? Color.green : violet)
+                        Text("›")
+                            .font(.system(size: 22, weight: .medium))
+                            .foregroundStyle(violet)
                     }
                     .padding(18)
                     .background(violet.opacity(0.10))
@@ -202,18 +203,19 @@ struct PracticeView: View {
                     Text("🔥").font(.system(size: 26))
                     VStack(alignment: .leading, spacing: 1) {
                         Text("\(streak.currentStreak)-day streak")
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundStyle(Color.orange)
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundStyle(Color(red: 0.984, green: 0.573, blue: 0.235))
                         Text(streak.practicedToday ? "You practiced today — great!" : "Keep it going")
                             .font(.system(size: 12))
-                            .foregroundStyle(Color.white.opacity(0.42))
+                            .foregroundStyle(Color(red: 0.941, green: 0.933, blue: 1.0).opacity(0.58))
                     }
                     Spacer()
                 }
-                .padding(14)
-                .background(Color.orange.opacity(0.10))
+                .padding(.horizontal, 18)
+                .padding(.vertical, 14)
+                .background(Color(red: 0.984, green: 0.573, blue: 0.235).opacity(0.10))
                 .clipShape(RoundedRectangle(cornerRadius: 16))
-                .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.orange.opacity(0.25), lineWidth: 1))
+                .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color(red: 0.984, green: 0.573, blue: 0.235).opacity(0.25), lineWidth: 1))
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
 
@@ -221,7 +223,7 @@ struct PracticeView: View {
                 HStack(spacing: 10) {
                     TextField("Enter any word or name…", text: $vm.wordInput)
                         .font(.subheadline)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color(red: 0.941, green: 0.933, blue: 1.0))
                         .tint(violet)
                         .submitLabel(.go)
                         .onSubmit { if !vm.wordInput.trimmingCharacters(in: .whitespaces).isEmpty { vm.startPractice() } }
@@ -243,9 +245,9 @@ struct PracticeView: View {
 
                 // Practice Library header
                 Text("PRACTICE LIBRARY")
-                    .font(.system(size: 10, weight: .bold))
-                    .foregroundStyle(Color.white.opacity(0.42))
-                    .tracking(1.0)
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(Color(red: 0.941, green: 0.933, blue: 1.0).opacity(0.58))
+                    .tracking(0.08 * 11)
                     .padding(.horizontal, 20)
                     .padding(.top, 20)
                     .padding(.bottom, 10)
