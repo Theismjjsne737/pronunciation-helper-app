@@ -86,12 +86,12 @@ final class AuthService {
         guard !Config.supabaseURL.isEmpty, !Config.supabaseAnonKey.isEmpty
         else { throw AuthError.supabaseNotConfigured }
 
-        let authURL = URL(string: "\(Config.supabaseURL)/auth/v1/authorize?provider=google&redirect_to=mimiq://auth-callback")!
+        let authURL = URL(string: "\(Config.supabaseURL)/auth/v1/authorize?provider=google&redirect_to=pronce://auth-callback")!
 
         return try await withCheckedThrowingContinuation { continuation in
             let session = ASWebAuthenticationSession(
                 url: authURL,
-                callbackURLScheme: "mimiq"
+                callbackURLScheme: "pronce"
             ) { url, error in
                 if let err = error as? ASWebAuthenticationSessionError, err.code == .canceledLogin {
                     continuation.resume(throwing: AuthError.cancelled); return

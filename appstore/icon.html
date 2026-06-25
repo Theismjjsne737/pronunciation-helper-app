@@ -33,30 +33,31 @@
 
   .glow {
     position: absolute;
-    width: 700px;
-    height: 400px;
+    width: 900px;
+    height: 600px;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -55%);
-    background: radial-gradient(ellipse at center, rgba(123,85,255,0.30) 0%, rgba(123,85,255,0.10) 50%, transparent 75%);
-    filter: blur(50px);
+    top: 400px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse at center, rgba(123,85,255,0.32) 0%, rgba(123,85,255,0.12) 50%, transparent 75%);
+    filter: blur(60px);
   }
 
   .waveform {
     position: absolute;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -58%);
+    top: 400px;
+    transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
-    gap: 13px;
-    height: 240px;
+    gap: 17px;
+    height: 500px;
   }
 
   .bar {
-    width: 20px;
-    border-radius: 10px;
-    background: linear-gradient(180deg, #d4caff 0%, #7b55ff 55%, rgba(123,85,255,0.35) 100%);
+    width: 30px;
+    border-radius: 15px;
+    background: linear-gradient(180deg, #e2daff 0%, #8b65ff 45%, rgba(123,85,255,0.40) 100%);
+    box-shadow: 0 0 0 2px rgba(200,182,255,0.50);
     flex-shrink: 0;
   }
 
@@ -98,22 +99,22 @@
 
   <!-- Voice waveform — asymmetric heights for organic feel -->
   <div class="waveform">
-    <div class="bar" style="height:52px;opacity:0.42"></div>
-    <div class="bar" style="height:88px;opacity:0.58"></div>
-    <div class="bar" style="height:136px;opacity:0.70"></div>
-    <div class="bar" style="height:104px;opacity:0.64"></div>
-    <div class="bar" style="height:188px;opacity:0.88"></div>
-    <div class="bar" style="height:220px"></div>
-    <div class="bar" style="height:172px;opacity:0.90"></div>
-    <div class="bar" style="height:208px;opacity:0.96"></div>
-    <div class="bar" style="height:240px"></div>
-    <div class="bar" style="height:196px;opacity:0.92"></div>
-    <div class="bar" style="height:224px;opacity:0.98"></div>
-    <div class="bar" style="height:184px;opacity:0.88"></div>
-    <div class="bar" style="height:152px;opacity:0.78"></div>
-    <div class="bar" style="height:112px;opacity:0.67"></div>
-    <div class="bar" style="height:76px;opacity:0.54"></div>
-    <div class="bar" style="height:48px;opacity:0.40"></div>
+    <div class="bar" style="height:108px;opacity:0.42"></div>
+    <div class="bar" style="height:183px;opacity:0.58"></div>
+    <div class="bar" style="height:283px;opacity:0.70"></div>
+    <div class="bar" style="height:217px;opacity:0.64"></div>
+    <div class="bar" style="height:391px;opacity:0.88"></div>
+    <div class="bar" style="height:458px"></div>
+    <div class="bar" style="height:358px;opacity:0.90"></div>
+    <div class="bar" style="height:433px;opacity:0.96"></div>
+    <div class="bar" style="height:500px"></div>
+    <div class="bar" style="height:408px;opacity:0.92"></div>
+    <div class="bar" style="height:467px;opacity:0.98"></div>
+    <div class="bar" style="height:383px;opacity:0.88"></div>
+    <div class="bar" style="height:317px;opacity:0.78"></div>
+    <div class="bar" style="height:233px;opacity:0.67"></div>
+    <div class="bar" style="height:158px;opacity:0.54"></div>
+    <div class="bar" style="height:100px;opacity:0.40"></div>
   </div>
 
   <div class="wordmark">Mimiq</div>

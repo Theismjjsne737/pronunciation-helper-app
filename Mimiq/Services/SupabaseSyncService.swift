@@ -16,9 +16,13 @@ import SwiftData
 //   last_updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 // );
 // ALTER TABLE accent_profiles ENABLE ROW LEVEL SECURITY;
+// ⚠️  SECURITY: open policy below allows any anon caller to read/write any row.
+// Before production: exchange the Sign in with Apple token for a Supabase JWT, then replace with:
+// CREATE POLICY "own_row" ON accent_profiles
+//   FOR ALL USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
+// Dev-only open policy (remove before shipping):
 // CREATE POLICY "anon_own_row" ON accent_profiles
 //   FOR ALL USING (true) WITH CHECK (true);
-// -- Tighten with JWT-based RLS once you add Supabase Auth exchange.
 
 // MARK: - DTO
 

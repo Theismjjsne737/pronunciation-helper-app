@@ -23,21 +23,17 @@ struct SignInView: View {
                 VStack(spacing: 0) {
                     // Logo
                     VStack(spacing: 16) {
-                        ZStack {
-                            Circle()
-                                .fill(violet.opacity(0.15))
-                                .frame(width: 96, height: 96)
-                            Image(systemName: "waveform.and.person.filled")
-                                .font(.system(size: 42))
-                                .foregroundStyle(violet)
-                        }
-                        .padding(.top, 72)
+                        Image("PronceParrot")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 110, height: 128)
+                            .padding(.top, 72)
 
-                        Text("Mimiq")
+                        Text("Pronce")
                             .font(.system(size: 36, weight: .bold, design: .serif))
                             .foregroundStyle(offWhite)
 
-                        Text("Your personal pronunciation coach")
+                        Text("The AI that makes you unforgettable")
                             .font(.system(size: 15))
                             .foregroundStyle(muted)
                     }

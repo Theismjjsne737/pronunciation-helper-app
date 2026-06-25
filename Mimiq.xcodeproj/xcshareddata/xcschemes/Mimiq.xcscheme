@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "2620"
+   LastUpgradeVersion = "2650"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6727086524D744E182895399"
-               BuildableName = "Mimiq.app"
+               BuildableName = "Pronce.app"
                BlueprintName = "Mimiq"
                ReferencedContainer = "container:Mimiq.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6727086524D744E182895399"
-            BuildableName = "Mimiq.app"
+            BuildableName = "Pronce.app"
             BlueprintName = "Mimiq"
             ReferencedContainer = "container:Mimiq.xcodeproj">
          </BuildableReference>
@@ -65,7 +65,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6727086524D744E182895399"
-            BuildableName = "Mimiq.app"
+            BuildableName = "Pronce.app"
             BlueprintName = "Mimiq"
             ReferencedContainer = "container:Mimiq.xcodeproj">
          </BuildableReference>

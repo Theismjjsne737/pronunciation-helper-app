@@ -363,18 +363,53 @@ private struct ExerciseCardBubble: View {
 // MARK: - Coach avatar
 
 struct CoachAvatar: View {
+    private let violet = Color(red: 0.53, green: 0.39, blue: 0.98)
+    private let deep   = Color(red: 0.08, green: 0.04, blue: 0.20)
+
     var body: some View {
         ZStack {
+            // Base: deep gradient orb
             Circle()
-                .fill(LinearGradient(
-                    colors: [.indigo, .purple],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ))
-                .frame(width: 34, height: 34)
-            Image(systemName: "waveform")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(.white)
+                .fill(
+                    RadialGradient(
+                        colors: [Color(red: 0.22, green: 0.14, blue: 0.48), deep],
+                        center: .init(x: 0.38, y: 0.32),
+                        startRadius: 0,
+                        endRadius: 22
+                    )
+                )
+                .frame(width: 40, height: 40)
+                // Outer glow
+                .shadow(color: violet.opacity(0.55), radius: 8, x: 0, y: 4)
+                // Deep drop shadow for lift
+                .shadow(color: Color.black.opacity(0.6), radius: 6, x: 0, y: 6)
+
+            // Rim light — top-left highlight arc
+            Circle()
+                .stroke(
+                    AngularGradient(
+                        colors: [
+                            Color.white.opacity(0.35),
+                            Color.white.opacity(0.0),
+                            Color.white.opacity(0.0),
+                            Color.white.opacity(0.12),
+                        ],
+                        center: .center,
+                        startAngle: .degrees(210),
+                        endAngle: .degrees(200)
+                    ),
+                    lineWidth: 1
+                )
+                .frame(width: 39, height: 39)
+
+            // Parrot
+            Image("PronceParrot")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 30, height: 35)
+                .offset(y: 1)
+                // Inner shadow to ground it
+                .shadow(color: deep.opacity(0.8), radius: 2, x: 0, y: 2)
         }
     }
 }

@@ -52,8 +52,8 @@ struct SplashView: View {
 
                 Spacer().frame(height: 28)
 
-                // "Mimiq" wordmark
-                Text("Mimiq")
+                // "Pronce" wordmark
+                Text("Pronce")
                     .font(.system(size: 48, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -99,7 +99,7 @@ struct SplashView: View {
                             endPoint: .bottom
                         )
                     )
-                    .frame(width: 6, height: h)
+                    .frame(width: 3, height: h)
                     .animation(.easeInOut(duration: 0.14), value: h)
             }
         }

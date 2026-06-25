@@ -8,7 +8,7 @@ import Foundation
 @MainActor
 final class SubscriptionManagerWordCounterTests {
 
-    private let storageKey = "mimiq_free_words_v1"
+    private let storageKey = "pronce_free_words_v1"
 
     init() {
         UserDefaults.standard.removeObject(forKey: storageKey)

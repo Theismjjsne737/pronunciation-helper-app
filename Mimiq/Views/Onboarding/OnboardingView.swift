@@ -74,7 +74,7 @@ struct OnboardingView: View {
 
     // MARK: - Mascot helper
 
-    private func mascotImage(_ name: String, fallback: String = "MimiqParrot") -> some View {
+    private func mascotImage(_ name: String, fallback: String = "PronceParrot") -> some View {
         let imageName = UIImage(named: name) != nil ? name : fallback
         return Image(imageName)
             .resizable()
@@ -88,7 +88,7 @@ struct OnboardingView: View {
         VStack(spacing: 28) {
             Spacer()
 
-            mascotImage("MimiqHello")
+            mascotImage("PronceHello")
 
             VStack(spacing: 12) {
                 Text("Your Personal\nPronunciation Coach")
@@ -176,9 +176,9 @@ struct OnboardingView: View {
                 VStack(spacing: 24) {
                     let mascotName: String = {
                         switch sentenceStep {
-                        case .recording:     return "MimiqListening"
-                        case .transcribing:  return "MimiqAnalyzing"
-                        default:             return "MimiqHello"
+                        case .recording:     return "PronceListening"
+                        case .transcribing:  return "PronceAnalyzing"
+                        default:             return "PronceHello"
                         }
                     }()
 
@@ -370,7 +370,7 @@ struct OnboardingView: View {
         VStack(spacing: 28) {
             Spacer()
 
-            mascotImage("MimiqWave")
+            mascotImage("PronceWave")
 
             VStack(spacing: 12) {
                 Text("Stay on track")
@@ -444,7 +444,7 @@ struct OnboardingView: View {
         VStack(spacing: 28) {
             Spacer()
 
-            mascotImage("MimiqCelebrate")
+            mascotImage("PronceCelebrate")
 
             VStack(spacing: 12) {
                 Text("You're ready!")

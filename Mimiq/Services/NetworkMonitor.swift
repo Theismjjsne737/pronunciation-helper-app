@@ -10,7 +10,7 @@ final class NetworkMonitor: ObservableObject {
     @Published private(set) var isConnected: Bool = true
 
     private let monitor = NWPathMonitor()
-    private let queue   = DispatchQueue(label: "mimiq.network", qos: .utility)
+    private let queue   = DispatchQueue(label: "pronce.network", qos: .utility)
 
     private init() {
         monitor.pathUpdateHandler = { [weak self] path in

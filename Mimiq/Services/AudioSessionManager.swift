@@ -54,7 +54,7 @@ final class AudioSessionManager: ObservableObject {
                            object: session)
     }
 
-    @objc private func handleInterruption(_ notification: Notification) {
+    @objc nonisolated private func handleInterruption(_ notification: Notification) {
         guard let info = notification.userInfo,
               let typeRaw = info[AVAudioSessionInterruptionTypeKey] as? UInt,
               let type = AVAudioSession.InterruptionType(rawValue: typeRaw)
@@ -77,7 +77,7 @@ final class AudioSessionManager: ObservableObject {
         }
     }
 
-    @objc private func handleRouteChange(_ notification: Notification) {
+    @objc nonisolated private func handleRouteChange(_ notification: Notification) {
         guard let info = notification.userInfo,
               let reasonRaw = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
               let reason = AVAudioSession.RouteChangeReason(rawValue: reasonRaw)

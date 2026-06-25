@@ -3,7 +3,7 @@ import SwiftData
 import UserNotifications
 
 @main
-struct MimiqApp: App {
+struct PronceApp: App {
 
     let container: ModelContainer
 
@@ -22,7 +22,7 @@ struct MimiqApp: App {
         }
 
         // Register Siri shortcuts on every launch
-        MimiqShortcuts.updateAppShortcutParameters()
+        PronceShortcuts.updateAppShortcutParameters()
     }
 
     @StateObject private var authViewModel = AuthViewModel()

@@ -303,7 +303,7 @@ final class AccentProfileService {
         let challengesLine = challengesText.isEmpty ? "" : "\nChallenges: \(challengesText)"
         let adaptiveLine = adaptiveSections.isEmpty ? "" : "\n\(adaptiveSections)"
         return """
-        You are Mimiq, a pronunciation coach. \(nativeLine).\(challengesLine)\(adaptiveLine)
+        You are Pronce, a pronunciation coach. \(nativeLine).\(challengesLine)\(adaptiveLine)
 
         Rules:
         - Warm, concise (≤120 words). Phonetics in [BRACKETS]: [WIN], [WUSS-ter].

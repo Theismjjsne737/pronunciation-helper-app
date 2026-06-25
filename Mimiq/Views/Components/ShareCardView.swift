@@ -33,7 +33,7 @@ struct ShareCardView: View {
                     Image(systemName: "waveform.and.mic")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(_violet)
-                    Text("Mimiq")
+                    Text("Pronce")
                         .font(.system(size: 16, weight: .bold, design: .rounded))
                         .foregroundStyle(_offWhite)
                     Spacer()
@@ -95,7 +95,7 @@ struct ShareCardView: View {
 
                 Spacer()
 
-                Text("Can you beat me? 🎯  mimiq.app")
+                Text("Can you beat me? 🎯  pronce.app")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(_muted)
                     .padding(.bottom, 24)
@@ -211,7 +211,7 @@ func shareScoreCard(word: String, score: Double, transcription: String) {
 
     guard let image = renderer.uiImage else { return }
 
-    let text = "I scored \(Int(score * 100))% on '\(word)' in Mimiq! Can you beat me? 🎙️"
+    let text = "I scored \(Int(score * 100))% on '\(word)' in Pronce! Can you beat me? 🎙️"
     let vc = UIActivityViewController(activityItems: [image, text], applicationActivities: nil)
 
     guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,

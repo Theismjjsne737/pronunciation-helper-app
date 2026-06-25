@@ -32,8 +32,8 @@ final class NotificationService: ObservableObject {
     static let reminderKey   = "lingolab_reminder_enabled"
     static let hourKey       = "lingolab_reminder_hour"
     static let notifID       = "lingolab.daily_practice"
-    static let streakSaveID  = "mimiq.streak_save"
-    static let dailyChalID   = "mimiq.daily_challenge"
+    static let streakSaveID  = "pronce.streak_save"
+    static let dailyChalID   = "pronce.daily_challenge"
 
     // MARK: - Init
 
@@ -121,7 +121,7 @@ final class NotificationService: ObservableObject {
         let word = DailyChallengeService.wordForToday()
         let chalContent = UNMutableNotificationContent()
         chalContent.title = "Today's challenge: \(word) 🎯"
-        chalContent.body  = "Can you nail the pronunciation? Open Mimiq to find out."
+        chalContent.body  = "Can you nail the pronunciation? Open Pronce to find out."
         chalContent.sound = .default
 
         var chalComps = DateComponents()

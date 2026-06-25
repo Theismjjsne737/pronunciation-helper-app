@@ -4,8 +4,8 @@ import Foundation
 // MARK: - Subscription tier
 
 enum SubscriptionTier: String, CaseIterable, Identifiable {
-    case monthly = "com.rhearao.Mimiq.monthly"
-    case yearly  = "com.rhearao.Mimiq.yearly"
+    case monthly = "com.rhearao.Pronce.monthly"
+    case yearly  = "com.rhearao.Pronce.yearly"
 
     var id: String { rawValue }
 
@@ -66,8 +66,8 @@ final class SubscriptionManager: ObservableObject {
     // MARK: - Constants
 
     static let productIDs: [String] = SubscriptionTier.allCases.map(\.rawValue)
-    static let freeWordLimit = 20
-    private static let wordsKey = "mimiq_free_words_v1"
+    static let freeWordLimit = 5
+    private static let wordsKey = "pronce_free_words_v1"
 
     // MARK: - Free-tier word counter
 

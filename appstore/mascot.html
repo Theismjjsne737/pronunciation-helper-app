@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1024">
+<title>Mimiq Mascot — Parrot</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #07050f;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+    padding: 48px;
+    font-family: -apple-system, 'Helvetica Neue', sans-serif;
+  }
+
+  h2 {
+    color: rgba(197,184,255,0.5);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.20em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: -24px;
+  }
+
+  .row {
+    display: flex;
+    align-items: flex-end;
+    gap: 64px;
+  }
+
+  .variant {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .label {
+    color: rgba(197,184,255,0.4);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<h2>Mimiq Mascot — Pip the Parrot</h2>
+
+<div class="row">
+
+  <!-- Full body -->
+  <div class="variant">
+    <svg width="200" height="260" viewBox="0 0 200 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bodyGrad" cx="40%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#9b79ff"/>
+          <stop offset="100%" stop-color="#4a2fb0"/>
+        </radialGradient>
+        <radialGradient id="bellyGrad" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="#c5b8ff"/>
+          <stop offset="100%" stop-color="#7b55ff"/>
+        </radialGradient>
+        <radialGradient id="eyeWhite" cx="38%" cy="35%" r="60%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#e8e0ff"/>
+        </radialGradient>
+        <radialGradient id="wingGrad" cx="30%" cy="25%" r="70%">
+          <stop offset="0%" stop-color="#7b55ff"/>
+          <stop offset="100%" stop-color="#3620a0"/>
+        </radialGradient>
+        <filter id="softShadow" x="-20%" y="-10%" width="140%" height="130%">
+          <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#1a0a40" flood-opacity="0.6"/>
+        </filter>
+        <filter id="glowPurple" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="4" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Drop shadow group -->
+      <g filter="url(#softShadow)">
+
+        <!-- Tail feathers -->
+        <ellipse cx="100" cy="232" rx="8" ry="22" fill="#3620a0" transform="rotate(-12,100,232)"/>
+        <ellipse cx="100" cy="232" rx="8" ry="26" fill="#4a2fb0" transform="rotate(0,100,232)"/>
+        <ellipse cx="100" cy="232" rx="8" ry="22" fill="#3620a0" transform="rotate(12,100,232)"/>
+
+        <!-- Body -->
+        <ellipse cx="100" cy="165" rx="52" ry="62" fill="url(#bodyGrad)"/>
+
+        <!-- Belly -->
+        <ellipse cx="100" cy="178" rx="30" ry="40" fill="url(#bellyGrad)" opacity="0.85"/>
+
+        <!-- Left wing -->
+        <path d="M52 150 Q20 155 18 195 Q30 210 55 200 Q60 180 62 158 Z" fill="url(#wingGrad)"/>
+        <path d="M52 150 Q22 160 20 195" stroke="#7b55ff" stroke-width="1" fill="none" opacity="0.4"/>
+
+        <!-- Right wing -->
+        <path d="M148 150 Q180 155 182 195 Q170 210 145 200 Q140 180 138 158 Z" fill="url(#wingGrad)"/>
+        <path d="M148 150 Q178 160 180 195" stroke="#7b55ff" stroke-width="1" fill="none" opacity="0.4"/>
+
+        <!-- Head -->
+        <circle cx="100" cy="95" r="52" fill="url(#bodyGrad)"/>
+
+        <!-- Crest feathers -->
+        <path d="M82 47 Q75 18 70 5 Q80 20 88 44" fill="#3620a0"/>
+        <path d="M82 47 Q76 14 72 0 Q84 15 90 44" fill="#6040e0"/>
+        <circle cx="72" cy="5" r="4" fill="#ffd060"/><!-- gold tip -->
+
+        <path d="M95 43 Q93 12 92 -2 Q100 14 100 42" fill="#4a2fb0"/>
+        <path d="M95 43 Q94 8 94 -4 Q103 12 102 42" fill="#7b55ff"/>
+        <circle cx="93" cy="-2" r="4.5" fill="#ffd060"/>
+
+        <path d="M108 47 Q115 18 120 5 Q110 20 102 44" fill="#3620a0"/>
+        <path d="M108 47 Q116 14 122 0 Q108 15 104 44" fill="#6040e0"/>
+        <circle cx="122" cy="5" r="4" fill="#ffd060"/>
+
+        <!-- Face mask (slightly lighter) -->
+        <ellipse cx="100" cy="100" rx="36" ry="32" fill="#8060e8" opacity="0.45"/>
+
+        <!-- Left eye -->
+        <circle cx="80" cy="92" r="16" fill="url(#eyeWhite)"/>
+        <circle cx="82" cy="93" r="10" fill="#1a0a3a"/>
+        <circle cx="80" cy="91" r="6" fill="#0d0520"/>
+        <circle cx="84" cy="88" r="3" fill="white" opacity="0.9"/><!-- catchlight -->
+        <circle cx="80" cy="94" r="1.5" fill="white" opacity="0.4"/>
+
+        <!-- Right eye -->
+        <circle cx="120" cy="92" r="16" fill="url(#eyeWhite)"/>
+        <circle cx="122" cy="93" r="10" fill="#1a0a3a"/>
+        <circle cx="120" cy="91" r="6" fill="#0d0520"/>
+        <circle cx="124" cy="88" r="3" fill="white" opacity="0.9"/>
+        <circle cx="120" cy="94" r="1.5" fill="white" opacity="0.4"/>
+
+        <!-- Cheek blush -->
+        <ellipse cx="68" cy="106" rx="9" ry="6" fill="#ff7bbf" opacity="0.35"/>
+        <ellipse cx="132" cy="106" rx="9" ry="6" fill="#ff7bbf" opacity="0.35"/>
+
+        <!-- Beak -->
+        <path d="M88 110 Q100 108 112 110 Q106 124 100 128 Q94 124 88 110 Z" fill="#f0b030"/>
+        <path d="M88 110 Q100 108 112 110 Q100 116 88 110 Z" fill="#ffd060"/>
+        <path d="M100 116 L100 128" stroke="#d09020" stroke-width="1" opacity="0.6"/>
+
+        <!-- Feet -->
+        <path d="M80 222 Q74 230 68 234 M80 222 Q76 232 72 238 M80 222 Q80 232 80 238" stroke="#f0b030" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M120 222 Q126 230 132 234 M120 222 Q124 232 128 238 M120 222 Q120 232 120 238" stroke="#f0b030" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+      </g>
+
+      <!-- Sound waves from beak -->
+      <g filter="url(#glowPurple)" opacity="0.7">
+        <path d="M118 116 Q128 112 130 120 Q132 128 122 130" stroke="#c5b8ff" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M122 110 Q138 104 141 118 Q144 132 128 136" stroke="#9b79ff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M126 104 Q148 96 152 116 Q156 136 134 142" stroke="#7b55ff" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.6"/>
+      </g>
+
+      <!-- Sheen highlight on body -->
+      <ellipse cx="82" cy="135" rx="16" ry="22" fill="white" opacity="0.06" transform="rotate(-15,82,135)"/>
+      <ellipse cx="84" cy="80" rx="12" ry="8" fill="white" opacity="0.08" transform="rotate(-10,84,80)"/>
+
+    </svg>
+    <span class="label">Full Body</span>
+  </div>
+
+  <!-- Head / Icon -->
+  <div class="variant">
+    <svg width="120" height="140" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bodyGrad2" cx="40%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#9b79ff"/>
+          <stop offset="100%" stop-color="#4a2fb0"/>
+        </radialGradient>
+        <radialGradient id="eyeWhite2" cx="38%" cy="35%" r="60%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#e8e0ff"/>
+        </radialGradient>
+        <filter id="softShadow2" x="-20%" y="-10%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#1a0a40" flood-opacity="0.7"/>
+        </filter>
+      </defs>
+
+      <g filter="url(#softShadow2)">
+        <!-- Crest feathers -->
+        <path d="M48 32 Q42 10 38 0 Q48 14 54 30" fill="#3620a0"/>
+        <path d="M48 32 Q43 6 40 -2 Q52 12 56 30" fill="#6040e0"/>
+        <circle cx="40" cy="0" r="3.5" fill="#ffd060"/>
+
+        <path d="M59 28 Q58 4 57 -4 Q64 10 63 28" fill="#7b55ff"/>
+        <circle cx="57" cy="-2" r="4" fill="#ffd060"/>
+
+        <path d="M70 32 Q76 10 80 0 Q70 14 64 30" fill="#3620a0"/>
+        <path d="M70 32 Q77 6 82 -2 Q68 12 62 30" fill="#6040e0"/>
+        <circle cx="80" cy="0" r="3.5" fill="#ffd060"/>
+
+        <!-- Head -->
+        <circle cx="60" cy="72" r="46" fill="url(#bodyGrad2)"/>
+
+        <!-- Face highlight -->
+        <ellipse cx="60" cy="76" rx="30" ry="26" fill="#8060e8" opacity="0.4"/>
+
+        <!-- Left eye -->
+        <circle cx="43" cy="66" r="14" fill="url(#eyeWhite2)"/>
+        <circle cx="45" cy="67" r="8.5" fill="#1a0a3a"/>
+        <circle cx="43" cy="65" r="5" fill="#0d0520"/>
+        <circle cx="47" cy="62" r="2.5" fill="white" opacity="0.9"/>
+        <circle cx="43" cy="68" r="1.2" fill="white" opacity="0.4"/>
+
+        <!-- Right eye -->
+        <circle cx="77" cy="66" r="14" fill="url(#eyeWhite2)"/>
+        <circle cx="79" cy="67" r="8.5" fill="#1a0a3a"/>
+        <circle cx="77" cy="65" r="5" fill="#0d0520"/>
+        <circle cx="81" cy="62" r="2.5" fill="white" opacity="0.9"/>
+        <circle cx="77" cy="68" r="1.2" fill="white" opacity="0.4"/>
+
+        <!-- Cheek blush -->
+        <ellipse cx="32" cy="78" rx="8" ry="5" fill="#ff7bbf" opacity="0.35"/>
+        <ellipse cx="88" cy="78" rx="8" ry="5" fill="#ff7bbf" opacity="0.35"/>
+
+        <!-- Beak -->
+        <path d="M50 86 Q60 84 70 86 Q65 97 60 101 Q55 97 50 86 Z" fill="#f0b030"/>
+        <path d="M50 86 Q60 84 70 86 Q60 91 50 86 Z" fill="#ffd060"/>
+        <path d="M60 91 L60 101" stroke="#d09020" stroke-width="0.8" opacity="0.6"/>
+
+        <!-- Sound waves -->
+        <path d="M73 88 Q82 84 83 92 Q84 100 75 102" stroke="#c5b8ff" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.8"/>
+        <path d="M76 82 Q90 76 91 90 Q92 104 78 108" stroke="#9b79ff" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.5"/>
+
+        <!-- Sheen -->
+        <ellipse cx="44" cy="55" rx="10" ry="7" fill="white" opacity="0.07" transform="rotate(-10,44,55)"/>
+      </g>
+    </svg>
+    <span class="label">Icon / Head</span>
+  </div>
+
+  <!-- Avatar circle -->
+  <div class="variant">
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bgCircle" cx="40%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#1a0f3a"/>
+          <stop offset="100%" stop-color="#07050f"/>
+        </radialGradient>
+        <radialGradient id="bodyGrad3" cx="40%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#9b79ff"/>
+          <stop offset="100%" stop-color="#4a2fb0"/>
+        </radialGradient>
+        <clipPath id="avatarClip">
+          <circle cx="40" cy="40" r="38"/>
+        </clipPath>
+      </defs>
+
+      <!-- Background circle -->
+      <circle cx="40" cy="40" r="40" fill="url(#bgCircle)"/>
+      <circle cx="40" cy="40" r="38" stroke="#7b55ff" stroke-width="1.5" fill="none" opacity="0.4"/>
+
+      <g clip-path="url(#avatarClip)">
+        <!-- Crest -->
+        <path d="M33 22 Q30 10 28 3 Q34 12 36 21" fill="#3620a0"/>
+        <path d="M33 22 Q31 8 30 2 Q37 11 38 21" fill="#7b55ff"/>
+        <circle cx="29" cy="3" r="2.5" fill="#ffd060"/>
+
+        <path d="M40 20 Q39 7 39 1 Q44 9 43 20" fill="#6040e0"/>
+        <circle cx="39" cy="2" r="3" fill="#ffd060"/>
+
+        <path d="M47 22 Q50 10 52 3 Q46 12 44 21" fill="#3620a0"/>
+        <path d="M47 22 Q51 8 54 2 Q45 11 42 21" fill="#7b55ff"/>
+        <circle cx="53" cy="3" r="2.5" fill="#ffd060"/>
+
+        <!-- Head -->
+        <circle cx="40" cy="48" r="30" fill="url(#bodyGrad3)"/>
+
+        <!-- Face highlight -->
+        <ellipse cx="40" cy="51" rx="18" ry="16" fill="#8060e8" opacity="0.35"/>
+
+        <!-- Left eye -->
+        <circle cx="28" cy="44" r="8.5" fill="white"/>
+        <circle cx="29" cy="45" r="5.5" fill="#1a0a3a"/>
+        <circle cx="28" cy="43" r="3" fill="#0d0520"/>
+        <circle cx="31" cy="41" r="1.5" fill="white" opacity="0.9"/>
+
+        <!-- Right eye -->
+        <circle cx="52" cy="44" r="8.5" fill="white"/>
+        <circle cx="53" cy="45" r="5.5" fill="#1a0a3a"/>
+        <circle cx="52" cy="43" r="3" fill="#0d0520"/>
+        <circle cx="55" cy="41" r="1.5" fill="white" opacity="0.9"/>
+
+        <!-- Cheek -->
+        <ellipse cx="20" cy="52" rx="5.5" ry="3.5" fill="#ff7bbf" opacity="0.35"/>
+        <ellipse cx="60" cy="52" rx="5.5" ry="3.5" fill="#ff7bbf" opacity="0.35"/>
+
+        <!-- Beak -->
+        <path d="M33 58 Q40 56 47 58 Q43 65 40 68 Q37 65 33 58 Z" fill="#f0b030"/>
+        <path d="M33 58 Q40 56 47 58 Q40 62 33 58 Z" fill="#ffd060"/>
+
+        <!-- Sound wave -->
+        <path d="M49 59 Q55 56 56 62 Q57 68 51 70" stroke="#c5b8ff" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.8"/>
+        <path d="M51 54 Q60 50 61 59 Q62 68 53 72" stroke="#9b79ff" stroke-width="0.8" fill="none" stroke-linecap="round" opacity="0.4"/>
+      </g>
+    </svg>
+    <span class="label">Avatar 80px</span>
+  </div>
+
+</div>
+
+<!-- Color palette reference -->
+<div style="display:flex;gap:12px;align-items:center;margin-top:16px;">
+  <div style="width:28px;height:28px;border-radius:8px;background:#9b79ff;"></div>
+  <div style="width:28px;height:28px;border-radius:8px;background:#4a2fb0;"></div>
+  <div style="width:28px;height:28px;border-radius:8px;background:#7b55ff;"></div>
+  <div style="width:28px;height:28px;border-radius:8px;background:#c5b8ff;"></div>
+  <div style="width:28px;height:28px;border-radius:8px;background:#ffd060;"></div>
+  <div style="width:28px;height:28px;border-radius:8px;background:#ff7bbf;"></div>
+  <div style="width:28px;height:28px;border-radius:8px;background:#f0b030;"></div>
+</div>
+
+</body>
+</html>

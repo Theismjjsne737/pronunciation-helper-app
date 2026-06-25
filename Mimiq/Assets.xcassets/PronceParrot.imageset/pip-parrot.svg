@@ -1,0 +1,135 @@
+<svg width="160" height="180" viewBox="0 0 160 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Body gradient: rich purple with top-left light source -->
+    <radialGradient id="bodyG" cx="36%" cy="28%" r="68%">
+      <stop offset="0%" stop-color="#c4a8ff"/>
+      <stop offset="40%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#3b1fa8"/>
+    </radialGradient>
+    <!-- Belly / face highlight -->
+    <radialGradient id="faceG" cx="50%" cy="42%" r="55%">
+      <stop offset="0%" stop-color="#ddd0ff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Eye whites -->
+    <radialGradient id="eyeW" cx="35%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e0d8ff"/>
+    </radialGradient>
+    <!-- Pupil depth -->
+    <radialGradient id="pupilG" cx="35%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#2a1060"/>
+      <stop offset="100%" stop-color="#0a0420"/>
+    </radialGradient>
+    <!-- Wing / crest shadow -->
+    <radialGradient id="crestG" cx="40%" cy="20%" r="70%">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#1e0a6e"/>
+    </radialGradient>
+    <!-- Glow filter -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <!-- Drop shadow -->
+    <filter id="drop" x="-20%" y="-10%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#1a0050" flood-opacity="0.7"/>
+    </filter>
+    <!-- Inner glow on beak -->
+    <filter id="beakGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <g filter="url(#drop)">
+
+    <!-- ── CREST FEATHERS ── -->
+    <!-- Left feather -->
+    <path d="M58 44 Q50 18 44 2 Q56 18 64 42" fill="#2a1070"/>
+    <path d="M58 44 Q51 12 48 -2 Q62 16 66 42" fill="#6d28d9"/>
+    <circle cx="47" cy="2" r="5" fill="#fbbf24"/>
+    <circle cx="47" cy="2" r="2.5" fill="#fde68a"/>
+
+    <!-- Center feather (tallest) -->
+    <path d="M78 40 Q76 8 75 -6 Q84 12 83 40" fill="#4c1d95"/>
+    <path d="M78 40 Q77 4 76 -8 Q87 10 86 40" fill="#7c3aed"/>
+    <circle cx="76" cy="-5" r="5.5" fill="#fbbf24"/>
+    <circle cx="76" cy="-5" r="2.8" fill="#fde68a"/>
+
+    <!-- Right feather -->
+    <path d="M98 44 Q106 18 112 2 Q100 18 92 42" fill="#2a1070"/>
+    <path d="M98 44 Q107 12 112 -2 Q96 16 90 42" fill="#6d28d9"/>
+    <circle cx="111" cy="2" r="5" fill="#fbbf24"/>
+    <circle cx="111" cy="2" r="2.5" fill="#fde68a"/>
+
+    <!-- ── HEAD ── -->
+    <circle cx="79" cy="96" r="60" fill="url(#bodyG)"/>
+
+    <!-- Face highlight -->
+    <ellipse cx="79" cy="102" rx="40" ry="36" fill="url(#faceG)"/>
+
+    <!-- Sheen top-left -->
+    <ellipse cx="58" cy="72" rx="16" ry="11" fill="white" opacity="0.10" transform="rotate(-18,58,72)"/>
+
+    <!-- ── LEFT EYE ── -->
+    <!-- Sclera -->
+    <circle cx="54" cy="86" r="18" fill="url(#eyeW)"/>
+    <!-- Subtle sclera shadow at bottom -->
+    <ellipse cx="54" cy="97" rx="14" ry="6" fill="#c4b5fd" opacity="0.25"/>
+    <!-- Iris -->
+    <circle cx="56" cy="87" r="12" fill="url(#pupilG)"/>
+    <!-- Iris color ring -->
+    <circle cx="56" cy="87" r="9" fill="#1e0a5e"/>
+    <circle cx="56" cy="87" r="7" fill="#0f0530"/>
+    <!-- Catchlight main -->
+    <circle cx="60" cy="82" r="3.5" fill="white" opacity="0.95"/>
+    <!-- Catchlight secondary -->
+    <circle cx="54" cy="90" r="1.8" fill="white" opacity="0.4"/>
+
+    <!-- ── RIGHT EYE ── -->
+    <circle cx="104" cy="86" r="18" fill="url(#eyeW)"/>
+    <ellipse cx="104" cy="97" rx="14" ry="6" fill="#c4b5fd" opacity="0.25"/>
+    <circle cx="106" cy="87" r="12" fill="url(#pupilG)"/>
+    <circle cx="106" cy="87" r="9" fill="#1e0a5e"/>
+    <circle cx="106" cy="87" r="7" fill="#0f0530"/>
+    <circle cx="110" cy="82" r="3.5" fill="white" opacity="0.95"/>
+    <circle cx="104" cy="90" r="1.8" fill="white" opacity="0.4"/>
+
+    <!-- ── EYE RINGS (stylized outline) ── -->
+    <circle cx="54" cy="86" r="18" stroke="#a78bfa" stroke-width="1.2" fill="none" opacity="0.5"/>
+    <circle cx="104" cy="86" r="18" stroke="#a78bfa" stroke-width="1.2" fill="none" opacity="0.5"/>
+
+    <!-- ── CHEEK BLUSH ── -->
+    <ellipse cx="36" cy="100" rx="11" ry="7" fill="#f472b6" opacity="0.40"/>
+    <ellipse cx="122" cy="100" rx="11" ry="7" fill="#f472b6" opacity="0.40"/>
+
+    <!-- ── BEAK ── -->
+    <!-- Upper mandible -->
+    <path d="M64 114 Q79 111 94 114 Q88 128 79 133 Q70 128 64 114 Z" fill="#f59e0b"/>
+    <!-- Highlight on upper mandible -->
+    <path d="M64 114 Q79 111 94 114 Q79 120 64 114 Z" fill="#fde68a"/>
+    <!-- Lower mandible division -->
+    <path d="M79 120 L79 133" stroke="#b45309" stroke-width="1" opacity="0.7" stroke-linecap="round"/>
+    <!-- Beak inner shadow -->
+    <path d="M68 116 Q79 114 90 116 Q88 125 79 130 Q70 125 68 116 Z" fill="#d97706" opacity="0.3"/>
+
+    <!-- ── SOUND WAVES (from right side of beak) ── -->
+    <g filter="url(#glow)" opacity="0.85">
+      <path d="M97 116 Q108 111 110 121 Q112 131 101 134" stroke="#c4b5fd" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M101 109 Q118 102 121 118 Q124 134 107 139" stroke="#a78bfa" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+      <path d="M105 102 Q128 93 132 115 Q136 137 113 144" stroke="#7c3aed" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.45"/>
+    </g>
+
+  </g>
+
+  <!-- Rim light: top-left arc highlight -->
+  <circle cx="79" cy="96" r="59" stroke="url(#rimLight)" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <defs>
+    <linearGradient id="rimLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="white" stop-opacity="0.5"/>
+      <stop offset="40%" stop-color="white" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>

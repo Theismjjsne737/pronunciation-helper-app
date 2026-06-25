@@ -5,13 +5,13 @@
 <dict>
     <!-- Bundle identifier -->
     <key>CFBundleIdentifier</key>
-    <string>com.rhearao.Mimiq</string>
+    <string>com.rhearao.Pronce</string>
 
     <!-- Bundle name -->
     <key>CFBundleName</key>
-    <string>Mimiq</string>
+    <string>Pronce</string>
     <key>CFBundleDisplayName</key>
-    <string>Mimiq</string>
+    <string>Pronce</string>
 
     <!-- Bundle version -->
     <key>CFBundleVersion</key>
@@ -19,19 +19,19 @@
 
     <!-- Bundle executable -->
     <key>CFBundleExecutable</key>
-    <string>Mimiq</string>
+    <string>Pronce</string>
 
     <!-- Microphone — required for recording -->
     <key>NSMicrophoneUsageDescription</key>
-    <string>Mimiq needs microphone access to record your pronunciation attempts.</string>
+    <string>Pronce needs microphone access to record your pronunciation attempts.</string>
 
     <!-- Speech recognition — required for analysis -->
     <key>NSSpeechRecognitionUsageDescription</key>
-    <string>Mimiq uses speech recognition to analyse and score your pronunciation.</string>
+    <string>Pronce uses speech recognition to analyse and score your pronunciation.</string>
 
     <!-- Notifications — for daily practice reminders (nice-to-have) -->
     <key>NSUserNotificationsUsageDescription</key>
-    <string>Mimiq sends a daily reminder to help you build a practice habit.</string>
+    <string>Pronce sends a daily reminder to help you build a practice habit.</string>
 
     <key>UIBackgroundModes</key>
     <array>
@@ -43,10 +43,10 @@
         <dict>
             <key>CFBundleURLSchemes</key>
             <array>
-                <string>mimiq</string>
+                <string>pronce</string>
             </array>
             <key>CFBundleURLName</key>
-            <string>com.rhearao.Mimiq</string>
+            <string>com.rhearao.Pronce</string>
         </dict>
     </array>
 
