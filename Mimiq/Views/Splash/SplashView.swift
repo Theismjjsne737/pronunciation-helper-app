@@ -69,10 +69,9 @@ struct SplashView: View {
                 Spacer().frame(height: 10)
 
                 // Tagline
-                Text("PRONUNCIATION COACH")
-                    .font(.system(size: 11, weight: .medium, design: .default))
+                Text("Say it right. Every time.")
+                    .font(.system(size: 13, weight: .medium, design: .default))
                     .foregroundStyle(lavender.opacity(0.52))
-                    .tracking(3.2)
                     .opacity(taglineOpacity)
 
                 Spacer().frame(height: 72)

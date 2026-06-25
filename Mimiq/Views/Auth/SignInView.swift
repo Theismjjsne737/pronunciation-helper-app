@@ -33,7 +33,7 @@ struct SignInView: View {
                             .font(.system(size: 36, weight: .bold, design: .serif))
                             .foregroundStyle(offWhite)
 
-                        Text("The AI that makes you unforgettable")
+                        Text("Say it right. Every time.")
                             .font(.system(size: 15))
                             .foregroundStyle(muted)
                     }
