@@ -64,7 +64,7 @@ struct CoachView: View {
             .navigationBarHidden(true)
             .toolbar { toolbarItems }
             .sheet(isPresented: $showSettings,   onDismiss: rebuild) { SettingsView() }
-            .sheet(isPresented: $showOnboarding, onDismiss: rebuild) {
+            .fullScreenCover(isPresented: $showOnboarding, onDismiss: rebuild) {
                 if let p = profile { OnboardingView(profile: p) }
             }
             .sheet(isPresented: $showPaywall) {
@@ -88,11 +88,11 @@ struct CoachView: View {
         VStack(spacing: 0) {
             // ── Header ────────────────────────────────────────
             VStack(alignment: .leading, spacing: 6) {
-                Text("Your personal\nAI coach.")
+                Text("Speak every\nword perfectly.")
                     .font(.system(size: 42, weight: .bold, design: .serif))
                     .foregroundStyle(Color(red: 0.941, green: 0.933, blue: 1.0))
                     .lineSpacing(2)
-                Text("Ask about any word, name, or phrase.\nGet expert guidance tailored to your accent.")
+                Text("Ask about any word, name, or phrase.\nGet feedback tailored to your accent.")
                     .font(.system(size: 13))
                     .foregroundStyle(Color(red: 0.941, green: 0.933, blue: 1.0).opacity(0.58))
                     .lineSpacing(4)
@@ -227,12 +227,15 @@ struct CoachView: View {
     private func bootstrap() async {
         if profiles.isEmpty {
             let p = AccentProfile()
-            p.onboardingCompleted = true
             modelContext.insert(p)
             try? modelContext.save()
         }
 
         guard let p = profiles.first else { return }
+
+        if !p.onboardingCompleted {
+            showOnboarding = true
+        }
 
         let newVM = CoachViewModel(accentProfile: p, modelContext: modelContext)
         vm = newVM

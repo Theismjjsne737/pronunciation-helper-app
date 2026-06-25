@@ -72,31 +72,23 @@ struct OnboardingView: View {
         }
     }
 
+    // MARK: - Mascot helper
+
+    private func mascotImage(_ name: String, fallback: String = "MimiqParrot") -> some View {
+        let imageName = UIImage(named: name) != nil ? name : fallback
+        return Image(imageName)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 160, height: 160)
+    }
+
     // MARK: - Page 0: Welcome
 
     private var welcomePage: some View {
         VStack(spacing: 28) {
             Spacer()
 
-            ZStack {
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            colors: [.indigo.opacity(0.15), .purple.opacity(0.1)],
-                            startPoint: .topLeading, endPoint: .bottomTrailing
-                        )
-                    )
-                    .frame(width: 120, height: 120)
-
-                Image(systemName: "mouth.fill")
-                    .font(.system(size: 56))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.indigo, .purple],
-                            startPoint: .topLeading, endPoint: .bottomTrailing
-                        )
-                    )
-            }
+            mascotImage("MimiqHello")
 
             VStack(spacing: 12) {
                 Text("Your Personal\nPronunciation Coach")
@@ -182,6 +174,17 @@ struct OnboardingView: View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(spacing: 24) {
+                    let mascotName: String = {
+                        switch sentenceStep {
+                        case .recording:     return "MimiqListening"
+                        case .transcribing:  return "MimiqAnalyzing"
+                        default:             return "MimiqHello"
+                        }
+                    }()
+
+                    mascotImage(mascotName)
+                        .animation(.spring(duration: 0.4), value: mascotName)
+
                     VStack(spacing: 8) {
                         Text("Quick accent check")
                             .font(.title2.weight(.bold))
@@ -191,7 +194,7 @@ struct OnboardingView: View {
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 20)
                     }
-                    .padding(.top, 16)
+                    .padding(.top, 4)
 
                     HStack(spacing: 8) {
                         ForEach(0..<assessmentSentences.count, id: \.self) { i in
@@ -367,19 +370,7 @@ struct OnboardingView: View {
         VStack(spacing: 28) {
             Spacer()
 
-            ZStack {
-                Circle()
-                    .fill(Color.orange.opacity(0.12))
-                    .frame(width: 110, height: 110)
-                Image(systemName: "bell.badge.fill")
-                    .font(.system(size: 50))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.orange, .pink],
-                            startPoint: .topLeading, endPoint: .bottomTrailing
-                        )
-                    )
-            }
+            mascotImage("MimiqWave")
 
             VStack(spacing: 12) {
                 Text("Stay on track")
@@ -453,14 +444,7 @@ struct OnboardingView: View {
         VStack(spacing: 28) {
             Spacer()
 
-            ZStack {
-                Circle()
-                    .fill(Color.green.opacity(0.12))
-                    .frame(width: 110, height: 110)
-                Image(systemName: "checkmark.seal.fill")
-                    .font(.system(size: 56))
-                    .foregroundStyle(Color.green.gradient)
-            }
+            mascotImage("MimiqCelebrate")
 
             VStack(spacing: 12) {
                 Text("You're ready!")
